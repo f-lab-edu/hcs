@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/HCS
+    username: ENC(/vfTGzkQsvDmJGsLHCRGk8WaCVxqrAkS)
+    password: ENC(/7M0dZ5y6e2xyeC2YPa3Jj7kqrJCYaCn)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD}
