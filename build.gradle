@@ -1,48 +1,122 @@
-buildscript{
-    ext{
+buildscript {
+    ext {
+<<<<<<< HEAD
+<<<<<<< HEAD
         springBootVersion = '2.5.6'
+=======
+        springBootVersion = "2.5.6"
+>>>>>>> 1e1a224... reorganizing directory for multi-project
+=======
+        springBootVersion = "2.5.6"
+>>>>>>> 822269f... reorganizing directory for multi-project
         groovyVersion = "2.5.3"
+        gradleDependencyMgmtPluginVersion = "1.0.11.RELEASE"
     }
-    repositories{
+
+    repositories {
         mavenCentral()
-
     }
-    dependencies{
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+<<<<<<< HEAD
+<<<<<<< HEAD
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+=======
+        classpath "io.spring.gradle:dependency-management-plugin:${gradleDependencyMgmtPluginVersion}"
+>>>>>>> 1e1a224... reorganizing directory for multi-project
     }
 }
-plugins {
-    id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id "java"
-    id "org.springframework.boot" version "${springBootVersion}"
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "io.spring.dependency-management"
+    apply plugin: "org.springframework.boot"
+
+    group = 'com.hcs'
+    version = '0.0.1-SNAPSHOT'
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.5.6')
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+        implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+        implementation 'org.modelmapper:modelmapper:2.4.4'
+
+        implementation 'org.hibernate:hibernate-core:5.6.0.Final'
+        implementation 'org.projectlombok:lombok'
+
+        implementation 'com.sgcprojects:batchrequests:0.1'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        runtimeOnly 'mysql:mysql-connector-java'
+
+=======
+        classpath "io.spring.gradle:dependency-management-plugin:${gradleDependencyMgmtPluginVersion}"
+    }
 }
 
-group = 'com.hcs'
-version = '0.0.1-SNAPSHOT'
+subprojects {
+    apply plugin: "java"
+    apply plugin: "io.spring.dependency-management"
+    apply plugin: "org.springframework.boot"
 
-sourceCompatibility = 11
-targetCompatibility = 11
-[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+    group = 'com.hcs'
+    version = '0.0.1-SNAPSHOT'
 
-repositories{
-    mavenCentral()
-}
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
-dependencies {
-    implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.5.6')
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.projectlombok:lombok'
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    implementation 'com.sgcprojects:batchrequests:0.1'
-    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
-    runtimeOnly 'mysql:mysql-connector-java'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
+    repositories {
+        mavenCentral()
+    }
 
-test {
-    useJUnitPlatform()
+    dependencies {
+        implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.5.6')
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+        implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+        implementation 'org.modelmapper:modelmapper:2.4.4'
+
+        implementation 'org.hibernate:hibernate-core:5.6.0.Final'
+        implementation 'org.projectlombok:lombok'
+
+        implementation 'com.sgcprojects:batchrequests:0.1'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        runtimeOnly 'mysql:mysql-connector-java'
+
+>>>>>>> 822269f... reorganizing directory for multi-project
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.security:spring-security-test:5.5.3'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
 }
