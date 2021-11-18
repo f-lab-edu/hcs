@@ -69,7 +69,10 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON)
                         .with(csrf()))
+<<<<<<< HEAD
                 .andDo(print())
+=======
+>>>>>>> 3f3c53b... reorganizing dir for multi-pjt
                 .andExpect(status().isOk());
 
 
@@ -90,7 +93,10 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON)
                         .with(csrf()))
+<<<<<<< HEAD
                 .andDo(print())
+=======
+>>>>>>> 3f3c53b... reorganizing dir for multi-pjt
                 .andExpect(status().is3xxRedirection());
 
 
