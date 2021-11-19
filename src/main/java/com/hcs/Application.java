@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * auto-configuration을 담당하는 어노테이션
+ * @SpringBootApplication : auto-configuration을 담당하는 어노테이션
  **/
 
 @SpringBootApplication
