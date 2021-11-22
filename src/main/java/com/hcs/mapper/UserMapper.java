@@ -3,8 +3,6 @@ package com.hcs.mapper;
 import com.hcs.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-
 /**
  * @Mapper : 매퍼 등록을 위한 애노테이션
  */
@@ -12,5 +10,10 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    List<User> findAll();
+    User findByEmail(String email);
+    Boolean existsByEmail(String email);
+    Boolean existsByNickname(String nickname);
+
+    void save(User user);
+    void delete(String email);
 }

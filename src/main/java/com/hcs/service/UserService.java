@@ -9,9 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @Service
@@ -26,15 +23,37 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
 
-
     public User saveNewUser(@Valid SignUpDto signUpDto) {
         signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         User user = modelMapper.map(signUpDto, User.class);
+        try {
+            save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         return user;
+
     }
 
-    public List<User> findAll() {
-        return userMapper.findAll();
+    public User findByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userMapper.existsByEmail(email);
+    }
+
+    public boolean existsByNickname(String nickname) {
+        return userMapper.existsByNickname(nickname);
+    }
+
+    public void save(User user) {
+        userMapper.save(user);
+    }
+
+    public void delete(String email) {
+        userMapper.delete(email);
     }
 
 }
