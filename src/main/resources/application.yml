@@ -5,6 +5,13 @@ spring:
     password: ENC(/7M0dZ5y6e2xyeC2YPa3Jj7kqrJCYaCn)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+mybatis:
+  mapper-locations: mybatis-mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.hcs.domain
+
 jasypt:
   encryptor:
     password: ${JASYPT_PASSWORD}

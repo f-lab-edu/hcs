@@ -3,7 +3,9 @@ package com.hcs.controller.user;
 import com.hcs.domain.User;
 import com.hcs.dto.SignUpDto;
 import com.hcs.service.UserService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +18,7 @@ import javax.validation.Valid;
  * @RestController
  *   : Spring MVC Controller에 @ResponseBody가 추가된 것이며, Json 형태로 객체 데이터를 반환함.
  *
- * @Valid :
+ * @Valid : 유효성 검사를 진행할 파라미터에 붙여줌
  */
 
 @RestController
@@ -32,16 +34,14 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public String registerUser(@Valid SignUpDto signUpDto, Errors errors) {
+    public String registerUser(@Valid SignUpDto signUpDto, Errors errors, Model model) {
         if (errors.hasErrors()) {
             return "SignUp Fail: SignUpForm is not appropriate";
         }
-        User user = userService.saveNewUser(signUpDto);
-
+        User newUser = userService.saveNewUser(signUpDto);
+        model.addAttribute("newUser", newUser);
         return "redirect:/";
 
-
     }
-
 
 }

@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * @Data
- *      : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
+ * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
  */
 
 @Data @Builder
@@ -26,7 +25,7 @@ public class User {
     private LocalDateTime emailCheckTokenGeneratedAt;
     private LocalDateTime joinedAt;
 
-    private String age;
+    private Integer age;
     private String position;
     private String location;
 
