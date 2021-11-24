@@ -16,4 +16,3 @@ mybatis:
 jasypt:
   encryptor:
     password: ${JASYPT_PASSWORD}
-

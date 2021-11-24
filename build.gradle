@@ -11,11 +11,13 @@ buildscript{
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
+
 plugins {
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id "java"
     id "org.springframework.boot" version "${springBootVersion}"
 }
+
 
 bootJar {
     enabled = false
@@ -24,6 +26,7 @@ bootJar {
 jar {
     enabled = true
 }
+
 
 group = 'com.hcs'
 version = '0.0.1-SNAPSHOT'
@@ -39,6 +42,7 @@ repositories{
 dependencies {
     implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.5.6')
     implementation 'org.springframework.boot:spring-boot-starter'
+
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -46,10 +50,17 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
     implementation 'org.hibernate:hibernate-core:5.6.0.Final'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
+    implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.2.0'
+
     implementation 'org.projectlombok:lombok'
     implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     implementation 'com.sgcprojects:batchrequests:0.1'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
@@ -57,6 +68,10 @@ dependencies {
     implementation 'mysql:mysql-connector-java'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '5.5.3'
+
+    runtimeOnly 'mysql:mysql-connector-java'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 test {

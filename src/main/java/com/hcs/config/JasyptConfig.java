@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
  * @ConfigurationProperties : 런타임시 프로퍼티 값을 가져오기 위해 사용됨
  * @Value : properties 파일의 키-값을 주입받는데 사용됨.
@@ -16,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
+
 public class JasyptConfig {
 
     @Value("${jasypt.encryptor.password}")// 시크릿 키
@@ -34,4 +34,5 @@ public class JasyptConfig {
         encryptor.setConfig(config);
         return encryptor;
     }
+
 }
