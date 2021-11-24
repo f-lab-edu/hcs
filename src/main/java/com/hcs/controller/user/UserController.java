@@ -43,8 +43,8 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public void registerUser(@Valid @RequestBody SignUpDto signUpDto, HttpServletResponse response,
-                                         Model model) throws IOException {
+    public void registerUser(@Valid @RequestBody SignUpDto signUpDto, HttpServletResponse response, 
+                             Model model) throws IOException {
 
         User newUser = userService.saveNewUser(signUpDto);
 
