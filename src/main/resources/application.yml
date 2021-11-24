@@ -1,9 +1,17 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/HCS
-    username: ENC(/vfTGzkQsvDmJGsLHCRGk8WaCVxqrAkS)
-    password: ENC(/7M0dZ5y6e2xyeC2YPa3Jj7kqrJCYaCn)
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: "jdbc:mysql://localhost:3306/HCS?serverTimezone=UTC&characterEncoding=UTF-8"
+      username: ENC(/vfTGzkQsvDmJGsLHCRGk8WaCVxqrAkS)
+      password: ENC(/7M0dZ5y6e2xyeC2YPa3Jj7kqrJCYaCn)
+
+mybatis:
+  mapper-locations: classpath:mybatis-mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.hcs.domain
 
 jasypt:
   encryptor:
