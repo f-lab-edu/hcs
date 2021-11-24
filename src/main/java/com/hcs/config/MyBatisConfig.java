@@ -23,7 +23,7 @@ import javax.sql.DataSource;
  * @MapperScan : basePackages로 지정한 곳에 존재하는 @Mapper로 명시된 interface를 스캔함.
  *
  * @ConfigurationProperties : properties 파일의 key값이 prefix로 시작할 때, 해당 값을 묶어 Bean으로 등록.
- * @Qualifier : 사용할 의존 객체를 선택할 수 있게 해준다.
+ * @Qualifier : DI될 주입에 해당되는 의존 객체를 한정자 값을 명시하여 선택할 수 있게 해준다.
  */
 
 @Configuration
