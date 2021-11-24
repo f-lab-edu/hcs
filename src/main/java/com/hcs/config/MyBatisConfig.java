@@ -24,6 +24,7 @@ import javax.sql.DataSource;
  *
  * @ConfigurationProperties : properties 파일의 key값이 prefix로 시작할 때, 해당 값을 묶어 Bean으로 등록.
  * @Qualifier : DI될 주입에 해당되는 의존 객체를 한정자 값을 명시하여 선택할 수 있게 해준다.
+ * @Primary : 하나의 타입에 빈 객체가 여러개인 경우 우선순위를 명시해주기 위해 사용된다.
  */
 
 @Configuration
