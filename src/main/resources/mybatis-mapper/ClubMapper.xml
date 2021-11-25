@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hcs.mapper.ClubMapper">
+
+    <select id="findByTitle" parameterType="String" resultType="com.hcs.domain.Club">
+        select *
+        from Club
+        where title = #{title}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Club">
+        insert into Club (title, description, created_at, location, category)
+        values (#{title}, #{description}, #{createdAt}, #{location}, #{category})
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        delete
+        from Club
+        where HCS.Club.title = #{title}
+    </delete>
+
+</mapper>
