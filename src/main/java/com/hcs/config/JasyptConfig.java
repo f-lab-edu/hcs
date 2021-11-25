@@ -6,6 +6,7 @@ import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+<<<<<<< HEAD
 import org.springframework.context.annotation.PropertySource;
 
 /**
@@ -19,6 +20,18 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("application.yml")
+=======
+
+/**
+ * @ConfigurationProperties : 런타임시 프로퍼티 값을 가져오기 위해 사용됨
+ * @Value : properties 파일의 키-값을 주입받는데 사용됨.
+ * @Bean : 개발자가 직접 제어가 불가능한 외부라이브러리 등을 Bean으로 만들려할 때 사용됨.
+ * : 1개 이상의 @Bean을 제공하는 클래스의 경우 반드시 @Configuration을 명시해 주어야 함
+ */
+
+@Configuration
+
+>>>>>>> 49bcb431eb1b1b947fee584b1e102ee781904fc3
 public class JasyptConfig {
 
     @Value("${jasypt.encryptor.password}")// 시크릿 키
@@ -37,4 +50,9 @@ public class JasyptConfig {
         encryptor.setConfig(config);
         return encryptor;
     }
+<<<<<<< HEAD
 }
+=======
+
+}
+>>>>>>> 49bcb431eb1b1b947fee584b1e102ee781904fc3

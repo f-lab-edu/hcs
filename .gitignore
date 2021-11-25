@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 49bcb431eb1b1b947fee584b1e102ee781904fc3
 # Created by https://www.toptal.com/developers/gitignore/api/java,intellij,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij,gradle
 
@@ -121,6 +125,12 @@ fabric.properties
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+<<<<<<< HEAD
+=======
+# git PR files
+.diff
+
+>>>>>>> 49bcb431eb1b1b947fee584b1e102ee781904fc3
 # Package Files #
 *.jar
 *.war
