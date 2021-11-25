@@ -125,12 +125,9 @@ fabric.properties
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-<<<<<<< HEAD
-=======
 # git PR files
-.diff
+**/*.diff
 
->>>>>>> 49bcb431eb1b1b947fee584b1e102ee781904fc3
 # Package Files #
 *.jar
 *.war
