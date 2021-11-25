@@ -13,14 +13,12 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-
 @SpringBootTest
 @EnableEncryptableProperties
 @Transactional
 class ClubMapperTest {
     @Autowired
     ClubMapper clubMapper;
-
 
     @DisplayName("ClubMapper - club db에 저장 및 찾기 테스트")
     @Test

@@ -1,12 +1,10 @@
 package com.hcs.domain;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 
 import java.time.LocalDateTime;
 
@@ -16,7 +14,6 @@ import java.time.LocalDateTime;
  * @NoArgsConstructor
  * @EqualsAndHashCode.Include : 해당 애노테이션으로 지정한 필드만  equals(), hashCode() 에서 사용한다.
  */
-
 @Data @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
@@ -30,6 +27,5 @@ public class Club {
     private LocalDateTime createdAt;
     private String location;
     private String category;
-
 
 }

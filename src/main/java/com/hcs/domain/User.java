@@ -27,7 +27,6 @@ public class User {
     private LocalDateTime emailCheckTokenGeneratedAt;
     private LocalDateTime joinedAt;
 
-
     private Integer age;
     private String position;
     private String location;
