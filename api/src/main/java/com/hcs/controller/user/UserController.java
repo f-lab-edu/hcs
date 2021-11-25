@@ -14,17 +14,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 /**
- * <<<<<<< HEAD:api/src/main/java/com/hcs/controller/user/UserController.java
- * <<<<<<< HEAD:src/main/java/com/hcs/controller/user/UserController.java
- *
  * @RestController : Spring MVC Controller에 @ResponseBody가 추가된 것이며, Json 형태로 객체 데이터를 반환함.
- * <p>
- * =======
- * @RestController : Spring MVC Controller에 @ResponseBody가 추가된 것이며, Json 형태로 객체 데이터를 반환함.
- * >>>>>>> 1e1a224... reorganizing directory for multi-project:api/src/main/java/com/hcs/controller/user/UserController.java
- * =======
- * @RestController : Spring MVC Controller에 @ResponseBody가 추가된 것이며, Json 형태로 객체 데이터를 반환함.
- * >>>>>>> 822269f... reorganizing directory for multi-project:src/main/java/com/hcs/controller/user/UserController.java
  * @InitBinder : Spring Validator를 사용 시 @Valid 어노테이션으로 검증이 필요한 객체를 가져오기 전에 수행할 method를 지정해주는 어노테이션
  * @Valid : 유효성 검사를 진행할 파라미터에 붙여줌
  * @RequestBody : Http Request body를 읽고 HttpMessageConverter를 통해서 deserialized시켜 객체로 변환하기 위한 애노테이션
