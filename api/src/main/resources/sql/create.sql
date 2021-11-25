@@ -16,7 +16,7 @@ create table User
 create table Club
 (
     id                         int AUTO_INCREMENT PRIMARY KEY COMMENT '동호회 id key',
-    title                      VARCHAR(20) NOT NULL,
+    title                      VARCHAR(20) NOT NULL UNIQUE,
     description                VARCHAR(50),
     created_at                 datetime NOT NULL,
     location                   VARCHAR(20) NOT NULL,
