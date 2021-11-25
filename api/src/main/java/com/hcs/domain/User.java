@@ -1,5 +1,6 @@
 package com.hcs.domain;
 
+
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,4 +30,3 @@ public class User {
     private String location;
 
 }
-

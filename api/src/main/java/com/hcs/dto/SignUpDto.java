@@ -36,4 +36,3 @@ public class SignUpDto {
     @Length(min = 8, max = 15)
     private String password;
 }
-

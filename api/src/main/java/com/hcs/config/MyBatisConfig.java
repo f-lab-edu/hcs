@@ -1,7 +1,6 @@
 package com.hcs.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
-
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,7 +19,6 @@ import javax.sql.DataSource;
 
 /**
  * @MapperScan : basePackages로 지정한 곳에 존재하는 @Mapper로 명시된 interface를 스캔함.
- *
  * @ConfigurationProperties : properties 파일의 key값이 prefix로 시작할 때, 해당 값을 묶어 Bean으로 등록.
  * @Qualifier : 사용할 의존 객체를 선택할 수 있게 해준다.
  */
@@ -53,7 +50,7 @@ public class MyBatisConfig {
         return new SqlSessionTemplate(firstSqlSessionFactory);
     }
 
-    @Bean(name= "txManager")
+    @Bean(name = "txManager")
     public PlatformTransactionManager txManager(@Qualifier("dataSource") DataSource dataSource) {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource);
         dataSourceTransactionManager.setNestedTransactionAllowed(true); // nested return dataSourceTransactionManager;
@@ -61,4 +58,3 @@ public class MyBatisConfig {
     }
 
 }
-
