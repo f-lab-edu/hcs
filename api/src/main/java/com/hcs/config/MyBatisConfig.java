@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 public class MyBatisConfig {
 
     @Value("${mybatis.mapper-locations}")
-    String mPath;
+    private String mapperLocation;
 
     @Primary
     @Bean(name = "dataSource")
@@ -42,7 +42,7 @@ public class MyBatisConfig {
     public SqlSessionFactory SqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
-        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mPath));
+        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapperLocation));
         return sqlSessionFactoryBean.getObject();
     }
 
