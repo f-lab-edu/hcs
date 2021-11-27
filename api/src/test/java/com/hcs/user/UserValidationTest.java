@@ -3,6 +3,7 @@ package com.hcs.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.config.EnableMockMvc;
 import com.hcs.controller.user.test.TestUserController;
+import com.hcs.controller.user.test.TestUserControllerWithoutValid;
 import com.hcs.dto.SignUpDto;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
@@ -59,6 +60,26 @@ public class UserValidationTest {
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserController.class))
                 .andExpect(status().isOk());
+
+    }
+
+    @DisplayName("회원 가입 처리 - 입력값 오류 - @Valid 적용 안함")
+    @Test
+    void signUpSubmit_with_wrong_input_no_Valid() throws Exception {
+
+        testSignUpDto.setNickname("no");
+        testSignUpDto.setEmail("nononono");
+        testSignUpDto.setPassword("123123");
+
+        mockMvc.perform(post("/test/valid/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testSignUpDto))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+
+                .andDo(print())
+                .andExpect(handler().handlerType(TestUserControllerWithoutValid.class))
+                .andExpect(status().is3xxRedirection());
 
     }
 

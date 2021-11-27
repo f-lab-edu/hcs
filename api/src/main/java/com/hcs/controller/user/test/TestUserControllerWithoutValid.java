@@ -3,8 +3,10 @@ package com.hcs.controller.user.test;
 import com.hcs.domain.User;
 import com.hcs.dto.SignUpDto;
 import com.hcs.service.UserService;
+import com.hcs.validator.SignUpDtoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +20,17 @@ import java.io.IOException;
  */
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/test/valid")
 @RequiredArgsConstructor
 public class TestUserControllerWithoutValid { // @Valid 어노테이션을 없앤 Controller.
 
     private final UserService userService;
+    private final SignUpDtoValidator signUpDtoValidator;
+
+    @InitBinder("SignUpDto")
+    public void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(signUpDtoValidator);
+    }
 
     @GetMapping("/sign-up")
     public String signUpForm() {
