@@ -7,6 +7,10 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.lang.annotation.*;
 
+/**
+ * @AutoConfigureMockMvc : Mock 테스트 시 필요한 의존성을 제공해줌.
+ */
+
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
