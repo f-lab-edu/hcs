@@ -69,6 +69,7 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON)
                         .with(csrf()))
+                .andDo(print())
                 .andExpect(status().isOk());
 
 
@@ -89,6 +90,7 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON)
                         .with(csrf()))
+                .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
 
