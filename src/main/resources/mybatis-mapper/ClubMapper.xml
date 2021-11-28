@@ -15,10 +15,10 @@
         values (#{title}, #{description}, #{createdAt}, #{location}, #{category})
     </insert>
 
-    <delete id="delete" parameterType="String">
+    <delete id="delete" parameterType="Long">
         delete
         from Club
-        where HCS.Club.title = #{title}
+        where HCS.Club.id = #{id}
     </delete>
 
 </mapper>
