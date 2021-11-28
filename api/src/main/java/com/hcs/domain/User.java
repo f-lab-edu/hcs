@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
+    @EqualsAndHashCode.Include
     private Long id;
     private String email;
     private String nickname;
