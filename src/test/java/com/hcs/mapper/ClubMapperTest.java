@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -36,5 +37,23 @@ class ClubMapperTest {
         Club bClub = clubMapper.findByTitle("BClub");
         assertNotNull(aClub);
         assertNull(bClub);
+    }
+
+    @DisplayName("ClubMapper - club db에 저장 및 삭제 ")
+    @Test
+    void deleteTest() {
+        Club club = Club.builder()
+                .title("AClub")
+                .location("Bucheon")
+                .category("test category")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        clubMapper.save(club);
+        Club aClub = clubMapper.findByTitle("AClub");
+        clubMapper.delete(aClub.getId());
+
+        Club newClub = clubMapper.findByTitle("AClub");
+        assertNull(newClub);
     }
 }
