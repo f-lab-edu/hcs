@@ -10,5 +10,5 @@ public interface ClubMapper {
 
     void save(Club club);
 
-    void delete(String title);
+    void delete(Long id);
 }
