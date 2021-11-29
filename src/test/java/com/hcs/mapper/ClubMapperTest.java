@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -21,7 +21,7 @@ class ClubMapperTest {
     @Autowired
     ClubMapper clubMapper;
 
-    @DisplayName("ClubMapper - club db에 저장 및 찾기 테스트")
+    @DisplayName("ClubMapper - club db에 저장 및 타이틀로 찾기 ")
     @Test
     void saveAndFindByTitleTest() {
         Club club = Club.builder()
@@ -37,6 +37,25 @@ class ClubMapperTest {
         Club bClub = clubMapper.findByTitle("BClub");
         assertNotNull(aClub);
         assertNull(bClub);
+    }
+
+    @DisplayName("ClubMapper - club db에 저장 및 id로 찾기 테스트")
+    @Test
+    void saveAndFindByIdTest() {
+        Club club = Club.builder()
+                .title("AClub")
+                .location("Bucheon")
+                .category("test category")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        clubMapper.save(club);
+
+        Club club1 = clubMapper.findByTitle("AClub");
+        Club club2 = clubMapper.findById(club.getId());
+
+        assertEquals(club1,club2);
+
     }
 
     @DisplayName("ClubMapper - club db에 저장 및 삭제 ")
