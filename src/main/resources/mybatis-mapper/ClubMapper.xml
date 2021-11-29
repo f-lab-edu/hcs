@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.ClubMapper">
 
+    <select id="findById" parameterType="Long" resultType="com.hcs.domain.Club">
+        select *
+        from Club
+        where id = #{id}
+    </select>
+
     <select id="findByTitle" parameterType="String" resultType="com.hcs.domain.Club">
         select *
         from Club
