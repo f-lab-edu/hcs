@@ -5,7 +5,6 @@ import com.hcs.dto.ClubDto;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -15,23 +14,24 @@ import javax.validation.Valid;
 public class ClubService {
 
     private final ModelMapper modelMapper;
-
     private final ClubMapper clubMapper;
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
         try {
             save(club);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        return club;
+        Club newClub = clubMapper.findByTitle(club.getTitle());
+        return newClub;
     }
 
+    public void save(Club club) {
+        clubMapper.save(club);
+    }
 
-
-    public void save(Club club) { clubMapper.save(club); }
     public Club getClub(Long id) {
         Club club = clubMapper.findById(id);
         checkExistingClub(club);
@@ -39,7 +39,7 @@ public class ClubService {
     }
 
     private void checkExistingClub(Club club) {
-        if(club==null){
+        if (club == null) {
             throw new IllegalArgumentException();
         }
     }
