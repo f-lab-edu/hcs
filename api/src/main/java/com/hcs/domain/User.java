@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
@@ -30,5 +32,7 @@ public class User {
     private Integer age;
     private String position;
     private String location;
+
+    private List<TradePost> tradePostList = new ArrayList<>();
 
 }
