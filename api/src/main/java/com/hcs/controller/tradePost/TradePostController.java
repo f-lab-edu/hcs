@@ -19,5 +19,4 @@ public class TradePostController {
         return null;
     }
 
-
 }
