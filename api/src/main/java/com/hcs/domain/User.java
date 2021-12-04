@@ -1,6 +1,10 @@
 package com.hcs.domain;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -8,14 +12,12 @@ import java.time.LocalDateTime;
  * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
  */
 
-@Data
-@Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Data @Builder
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
-    @EqualsAndHashCode.Include
     private Long id;
     private String email;
     private String nickname;
