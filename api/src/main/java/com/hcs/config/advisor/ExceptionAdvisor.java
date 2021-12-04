@@ -30,7 +30,7 @@ public class ExceptionAdvisor {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ValidationResult handleIllegalArgException(IllegalArgumentException e,Locale locale){
+    public ValidationResult handleIllegalArgException(IllegalArgumentException e, Locale locale) {
         return ValidationResult.create((Errors) e, messageSource, locale);
     }
 
