@@ -4,7 +4,6 @@ import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;
 import com.hcs.service.ClubService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +23,7 @@ import java.io.IOException;
 @RequestMapping("/club")
 @RequiredArgsConstructor
 public class ClubController {
+
     private final ClubService clubService;
 
     @GetMapping("/submit")
