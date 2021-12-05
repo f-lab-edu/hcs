@@ -1,15 +1,18 @@
 package com.hcs.config.advisor;
 
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
+import com.hcs.config.advisor.result.ValidationResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Locale;
 
 /**
  * @RestControllerAdvice : @ExceptionHandler, @ModelAttribute, @InitBinder 가 적용된 메서드들에 AOP를 적용해 Controller 단에 적용하기 위해 고안된 어노테이션
- *
  * @ExceptionHandler : 해당 예외가 발생했을 때 메서드에 정의한 로직으로 처리할 수 있음.
  */
 
@@ -17,21 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ExceptionAdvisor {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public String processValidationError(MethodArgumentNotValidException exception) {
-        BindingResult bindingResult = exception.getBindingResult();
+    @Autowired
+    private MessageSource messageSource;
 
-        StringBuilder builder = new StringBuilder();
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            builder.append("[");
-            builder.append(fieldError.getField());
-            builder.append("](은)는 ");
-            builder.append(fieldError.getDefaultMessage());
-            builder.append(" 입력된 값: [");
-            builder.append(fieldError.getRejectedValue());
-            builder.append("]");
-        }
-        return builder.toString();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ValidationResult handleBindException(BindException bindException, Locale locale) {
+        return ValidationResult.create(bindException, messageSource, locale);
     }
 
 }
