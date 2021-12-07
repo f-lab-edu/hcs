@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 를 한번에 설정함.
@@ -27,5 +29,10 @@ public class Club {
     private LocalDateTime createdAt;
     private String location;
     private String category;
+
+    private Set<User> members = new HashSet<>();
+    private int memberCount;
+    private Set<User> managers = new HashSet<>();
+    private int managerCount;
 
 }

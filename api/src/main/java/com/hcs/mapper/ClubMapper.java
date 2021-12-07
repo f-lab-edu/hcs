@@ -2,13 +2,27 @@ package com.hcs.mapper;
 
 import com.hcs.domain.Club;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface ClubMapper {
 
     Club findByTitle(String title);
 
+    Club findById(Long id);
+
     void save(Club club);
 
     void delete(Long id);
+
+    Club findClubWithMembers(Long id);
+
+    Club findClubWithManagers(Long id);
+
+    void joinMemberById(@Param("clubId") Long clubId, @Param("memberId") Long userId);
+
+    void joinManagerById(@Param("clubId") Long clubId, @Param("managerId") Long userId);
+
 }
