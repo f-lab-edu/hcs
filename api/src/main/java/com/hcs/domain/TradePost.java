@@ -6,6 +6,9 @@ import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Data
 @Builder
@@ -28,7 +31,8 @@ public class TradePost {
     private String appointmentLocation;
     private Integer price;
     private Integer views;
-//    private Set<Comment> comments = new HashSet<>();
+
+    private Set<Comment> comments = new HashSet<>();
 
     private boolean salesStatus;
     @Temporal(TemporalType.TIMESTAMP)
