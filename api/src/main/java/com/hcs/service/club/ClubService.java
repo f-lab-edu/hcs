@@ -1,8 +1,8 @@
-package com.hcs.service;
+package com.hcs.service.club;
 
 import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;
-import com.hcs.mapper.ClubMapper;
+import com.hcs.mapper.club.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

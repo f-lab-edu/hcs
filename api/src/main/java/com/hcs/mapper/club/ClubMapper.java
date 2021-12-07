@@ -1,10 +1,8 @@
-package com.hcs.mapper;
+package com.hcs.mapper.club;
 
 import com.hcs.domain.Club;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 @Mapper
 public interface ClubMapper {

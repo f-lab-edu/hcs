@@ -1,8 +1,9 @@
-package com.hcs.dto;
+package com.hcs.club;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.domain.Club;
-import com.hcs.mapper.ClubMapper;
+import com.hcs.dto.ClubDto;
+import com.hcs.mapper.club.ClubMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

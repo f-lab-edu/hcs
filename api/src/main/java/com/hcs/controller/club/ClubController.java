@@ -2,7 +2,7 @@ package com.hcs.controller.club;
 
 import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;
-import com.hcs.service.ClubService;
+import com.hcs.service.club.ClubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
