@@ -3,6 +3,8 @@ package com.hcs.domain;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
@@ -28,5 +30,7 @@ public class User {
     private Integer age;
     private String position;
     private String location;
+
+    private Set<TradePost> tradePostList = new HashSet<>();
 
 }

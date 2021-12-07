@@ -1,4 +1,4 @@
-package com.hcs.mapper;
+package com.hcs.mapper.user;
 
 import com.hcs.domain.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,9 +11,12 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
 
     User findByEmail(String email);
+
     Boolean existsByEmail(String email);
+
     Boolean existsByNickname(String nickname);
 
     void save(User user);
+
     void delete(String email);
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hcs.mapper.tradePost.TradePostMapper">
+
+    <select id="findByTitle" parameterType="String" resultType="com.hcs.domain.TradePost">
+        select *
+        from TradePost
+        where title = #{title}
+    </select>
+
+    <select id="existsByTitle" parameterType="String" resultType="boolean">
+        select IF(COUNT(*) = 1, 1, 0)
+        from TradePost
+        where title = #{title}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.TradePost">
+        insert into TradePost (number, authorId, title, productStatus, category, description,
+                               pictures, appointmentLocation, price, salesStatus, registerationTime)
+        values (#{number}, #{authorId}, #{title}, #{productStatus}, #{category}, #{description},
+                #{pictures}, #{appointmentLocation}, #{price}, #{salesStatus}, #{registerationTime})
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        delete
+        from TradePost
+        where title = #{title}
+    </delete>
+
+</mapper>
