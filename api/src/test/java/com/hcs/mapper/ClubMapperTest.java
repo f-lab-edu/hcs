@@ -2,6 +2,7 @@ package com.hcs.mapper;
 
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
+import com.hcs.mapper.user.UserMapper;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
