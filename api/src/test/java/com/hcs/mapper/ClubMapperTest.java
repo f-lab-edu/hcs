@@ -93,10 +93,11 @@ class ClubMapperTest {
 
             userMapper.save(user);
             User newUser = userMapper.findByEmail(username + "@gmail.com");
-            if (target.equals("member"))
+            if (target.equals("member")) {
                 clubMapper.joinMemberById(club.getId(), newUser.getId());
-            else if (target.equals("manager"))
+            } else if (target.equals("manager")) {
                 clubMapper.joinManagerById(club.getId(), newUser.getId());
+            }
         }
     }
 
