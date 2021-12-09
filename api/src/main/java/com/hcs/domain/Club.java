@@ -31,8 +31,9 @@ public class Club {
     private String category;
 
     private Set<User> members = new HashSet<>();
+    private Set<User> managers = new HashSet<>(); // 관리자를 여러명 두어 최고, 서브 관리자로 role을 나눌 예정
+
     // private int memberCount; 성능 개선시 사용 예정
-    private Set<User> managers = new HashSet<>();
     // private int managerCount; 성능 개선시 사용 예정
 
 }
