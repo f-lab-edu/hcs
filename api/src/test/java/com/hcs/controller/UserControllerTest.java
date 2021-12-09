@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -67,8 +66,8 @@ public class UserControllerTest {
         mockMvc.perform(post("/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .accept(MediaType.APPLICATION_JSON))
+                        //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -89,8 +88,8 @@ public class UserControllerTest {
         mockMvc.perform(post("/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .accept(MediaType.APPLICATION_JSON))
+                        //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
