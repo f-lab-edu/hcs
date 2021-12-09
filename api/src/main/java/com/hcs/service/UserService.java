@@ -5,7 +5,7 @@ import com.hcs.dto.SignUpDto;
 import com.hcs.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder; // security 설정 이후 코드 사용 예정
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -18,12 +18,12 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final PasswordEncoder passwordEncoder;
+    //private final PasswordEncoder passwordEncoder; // security 설정 이후 코드 사용 예정
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
 
     public User saveNewUser(@Valid SignUpDto signUpDto) {
-        signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        //signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword())); // security 설정 이후 코드 사용 예정
         User user = modelMapper.map(signUpDto, User.class);
         try {
             save(user);
