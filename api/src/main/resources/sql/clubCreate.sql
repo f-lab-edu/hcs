@@ -6,6 +6,6 @@ create table Club
     createdAt                  datetime NOT NULL,
     location                   VARCHAR(20) NOT NULL,
     category                   VARCHAR(20) NOT NULL
-    managerCount               int DEFAULT 0,
-    memberCount                int DEFAULT 0
+    #managerCount               int DEFAULT 0,
+    #memberCount                int DEFAULT 0 성능 개선시 사용 예정
 )

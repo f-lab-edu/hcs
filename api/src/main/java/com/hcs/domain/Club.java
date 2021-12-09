@@ -31,8 +31,8 @@ public class Club {
     private String category;
 
     private Set<User> members = new HashSet<>();
-    private int memberCount;
+    // private int memberCount; 성능 개선시 사용 예정
     private Set<User> managers = new HashSet<>();
-    private int managerCount;
+    // private int managerCount; 성능 개선시 사용 예정
 
 }
