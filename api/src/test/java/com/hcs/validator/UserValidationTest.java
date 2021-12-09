@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -54,8 +53,8 @@ public class UserValidationTest {
         mockMvc.perform(post("/test/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .accept(MediaType.APPLICATION_JSON))
+                        //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserController.class))
@@ -74,8 +73,8 @@ public class UserValidationTest {
         mockMvc.perform(post("/test/valid/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                        .accept(MediaType.APPLICATION_JSON))
+                        //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserControllerWithoutValid.class))

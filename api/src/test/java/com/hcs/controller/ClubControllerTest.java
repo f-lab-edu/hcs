@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,8 +51,8 @@ class ClubControllerTest {
         MvcResult mvcResult = mockMvc.perform(post("/club/submit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(clubDto))
-                .accept(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .accept(MediaType.APPLICATION_JSON))
+                //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andReturn();
@@ -82,8 +81,8 @@ class ClubControllerTest {
         mockMvc.perform(post("/club/submit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(clubDto))
-                .accept(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .accept(MediaType.APPLICATION_JSON))
+                //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andExpect(status().isOk());
 
         Club club = clubMapper.findByTitle("");
