@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ClubMapper {
 
+    Club findById(Long id);
+
     Club findByTitle(String title);
 
     Club findById(Long id);

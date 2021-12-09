@@ -1,10 +1,17 @@
 server:
+  port: 8443
+  http:
+    port: 8080
   ssl:
     enabled: true
     key-alias: fstore
     key-store: fstore.pkcs12
     key-store-type: pkcs12
     key-store-password: ENC(K+rAN6CootgaBSdYOvkSbtLBuEtsqnQ7)
+  tomcat:
+    remoteip:
+      host-header: x-forwarded-for
+      protocol-header: x-forwarded-proto
 
 spring:
   datasource:
