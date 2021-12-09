@@ -1,4 +1,4 @@
-package com.hcs.controller.club;
+package com.hcs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.domain.Club;

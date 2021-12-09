@@ -1,8 +1,8 @@
-package com.hcs.controller.user;
+package com.hcs.controller;
 
 import com.hcs.domain.User;
 import com.hcs.dto.SignUpDto;
-import com.hcs.service.user.UserService;
+import com.hcs.service.UserService;
 import com.hcs.validator.SignUpDtoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;

@@ -1,4 +1,4 @@
-package com.hcs.controller.club;
+package com.hcs.controller;
 
 import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;

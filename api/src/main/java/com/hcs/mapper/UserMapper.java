@@ -1,4 +1,4 @@
-package com.hcs.mapper.user;
+package com.hcs.mapper;
 
 import com.hcs.domain.User;
 import org.apache.ibatis.annotations.Mapper;

@@ -1,4 +1,4 @@
-package com.hcs.controller.comment;
+package com.hcs.controller;
 
 import com.hcs.dto.CommentDto;
 import lombok.RequiredArgsConstructor;

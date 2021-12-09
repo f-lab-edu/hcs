@@ -1,4 +1,4 @@
-package com.hcs.mapper.comment;
+package com.hcs.mapper;
 
 import com.hcs.domain.Comment;
 import org.apache.ibatis.annotations.Mapper;

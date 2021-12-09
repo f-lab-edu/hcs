@@ -27,12 +27,6 @@
         where HCS.Club.id = #{id}
     </delete>
 
-    <select id="findById" parameterType="Long" resultType="com.hcs.domain.Club">
-        select *
-        from Club
-        where id = #{id}
-    </select>
-
     <insert id="joinMemberById" parameterType="map">
         insert into club_members (clubId, memberId)
         values(#{clubId}, #{memberId})

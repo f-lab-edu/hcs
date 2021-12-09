@@ -1,4 +1,4 @@
-package com.hcs.service.comment;
+package com.hcs.service;
 
 import com.hcs.dto.CommentDto;
 import lombok.RequiredArgsConstructor;

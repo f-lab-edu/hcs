@@ -1,8 +1,8 @@
-package com.hcs.service.user;
+package com.hcs.service;
 
 import com.hcs.domain.User;
 import com.hcs.dto.SignUpDto;
-import com.hcs.mapper.user.UserMapper;
+import com.hcs.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;

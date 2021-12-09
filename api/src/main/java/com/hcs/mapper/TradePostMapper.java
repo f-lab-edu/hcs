@@ -1,4 +1,4 @@
-package com.hcs.mapper.tradePost;
+package com.hcs.mapper;
 
 import com.hcs.domain.TradePost;
 import org.apache.ibatis.annotations.Mapper;
