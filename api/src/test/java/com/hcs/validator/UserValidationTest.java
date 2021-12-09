@@ -1,9 +1,9 @@
-package com.hcs.user;
+package com.hcs.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.config.EnableMockMvc;
-import com.hcs.controller.user.test.TestUserController;
-import com.hcs.controller.user.test.TestUserControllerWithoutValid;
+import com.hcs.controller.test.TestUserController;
+import com.hcs.controller.test.TestUserControllerWithoutValid;
 import com.hcs.dto.SignUpDto;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;

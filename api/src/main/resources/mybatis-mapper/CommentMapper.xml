@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hcs.mapper.comment.CommentMapper">
+<mapper namespace="com.hcs.mapper.CommentMapper">
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Comment">
         insert into Comment (authorId, contents, tradePostId, registerationTime)

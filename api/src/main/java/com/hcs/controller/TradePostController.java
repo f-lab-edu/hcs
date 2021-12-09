@@ -1,4 +1,4 @@
-package com.hcs.controller.tradePost;
+package com.hcs.controller;
 
 import com.hcs.domain.TradePost;
 import lombok.RequiredArgsConstructor;

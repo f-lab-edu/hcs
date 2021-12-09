@@ -1,7 +1,7 @@
 package com.hcs.validator.test;
 
 import com.hcs.dto.SignUpDto;
-import com.hcs.service.user.UserService;
+import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

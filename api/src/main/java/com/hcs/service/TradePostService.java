@@ -1,4 +1,4 @@
-package com.hcs.service.tradePost;
+package com.hcs.service;
 
 import com.hcs.dto.TradePostDto;
 import lombok.RequiredArgsConstructor;
