@@ -58,6 +58,7 @@ subprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         //testImplementation 'org.springframework.security:spring-security-test:5.5.3'
         testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+        testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.2.0'
     }
 
     test {

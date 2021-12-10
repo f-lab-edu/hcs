@@ -6,9 +6,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CommentMapper {
 
-    void save(Comment comment);
+    Comment findById(long id);
 
-    void delete(Comment comment);
+    int insertComment(Comment comment);
+
+    int deleteComment(long id);
 
     // TODO 댓글 수정 추가
 }
