@@ -2,6 +2,8 @@ package com.hcs.domain;
 
 import lombok.*;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +23,7 @@ public class Comment {
     private TradePost tradePost;
     private Set<Comment> replys = new HashSet<>();
 
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime registerationTime;
 
 }

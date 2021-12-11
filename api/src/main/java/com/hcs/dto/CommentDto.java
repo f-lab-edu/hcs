@@ -3,6 +3,7 @@ package com.hcs.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 public class CommentDto {
 
     @NotBlank
-    private String description;
+    @Length(min = 5, max = 200)
+    private String contents;
 
 }
