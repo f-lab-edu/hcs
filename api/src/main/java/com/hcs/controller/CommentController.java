@@ -6,11 +6,11 @@ import com.hcs.dto.CommentDto;
 import com.hcs.dto.RespCommentDto;
 import com.hcs.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class CommentController {
                 .id(tradePostId)
                 .build();
 
-        int commentId = commentService.saveNewComment(commentDto, user, tradePost);
+        long commentId = commentService.saveNewComment(commentDto, user, tradePost);
         boolean success = false;
 
         if (commentId > 0) {

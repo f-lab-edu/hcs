@@ -41,7 +41,7 @@ class CommentMapperTest {
 
         Comment testComment = makeTestComment();
 
-        int commentId = commentMapper.insertComment(testComment);
+        long commentId = commentMapper.insertComment(testComment);
 
         assertEquals(commentId, 1L);
     }

@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class RespCommentDto {
 
-    private int commentId;
+    private long commentId;
     private boolean success;
 }

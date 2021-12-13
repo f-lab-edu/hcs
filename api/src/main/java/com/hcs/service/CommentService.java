@@ -18,7 +18,7 @@ public class CommentService {
     private final CommentMapper commentMapper;
     private final ModelMapper modelMapper;
 
-    public int saveNewComment(@Valid CommentDto commentDto, User user, TradePost tradePost) {
+    public long saveNewComment(@Valid CommentDto commentDto, User user, TradePost tradePost) {
         Comment comment = modelMapper.map(commentDto, Comment.class);
         comment.setAuthor(user);
         comment.setTradePost(tradePost);
