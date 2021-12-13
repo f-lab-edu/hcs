@@ -6,7 +6,11 @@ import com.hcs.dto.CommentDto;
 import com.hcs.dto.RespCommentDto;
 import com.hcs.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -22,14 +26,14 @@ public class CommentController {
 
 
     @PostMapping("/{id}/comment/add")
-    public RespCommentDto addComment(@Valid @RequestBody CommentDto commentDto, @PathVariable("id") Long id) throws IOException {
+    public RespCommentDto addComment(@Valid @RequestBody CommentDto commentDto, @PathVariable("id") Long tradePostId) throws IOException {
 
         User user = User.builder()
                 .id(31L)
                 .build(); // Dummy 데이터
 
         TradePost tradePost = TradePost.builder() // Dummy 데이터
-                .id(1L)
+                .id(tradePostId)
                 .build();
 
         int commentId = commentService.saveNewComment(commentDto, user, tradePost);
