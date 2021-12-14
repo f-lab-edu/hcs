@@ -36,4 +36,7 @@ public class Club {
     // private int memberCount; 성능 개선시 사용 예정
     // private int managerCount; 성능 개선시 사용 예정
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt.withNano(0); //나노 초 단위 절삭
+    }
 }

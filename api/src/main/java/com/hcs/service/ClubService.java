@@ -18,6 +18,7 @@ public class ClubService {
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
+        club.setCreatedAt(club.getCreatedAt()); // setter로 밀리초 단위 절삭
         try {
             save(club);
         } catch (Exception e) {
