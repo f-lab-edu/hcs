@@ -16,12 +16,12 @@
         where title = #{title}
     </select>
 
-    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Club">
+    <insert id="insertClub" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Club">
         insert into Club (title, description, createdAt, location, category)
         values (#{title}, #{description}, #{createdAt}, #{location}, #{category})
     </insert>
 
-    <delete id="delete" parameterType="Long">
+    <delete id="deleteClubById" parameterType="Long">
         delete
         from Club
         where HCS.Club.id = #{id}
