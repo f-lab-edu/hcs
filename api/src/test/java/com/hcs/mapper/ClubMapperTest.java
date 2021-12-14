@@ -90,7 +90,7 @@ class ClubMapperTest {
                     .nickname(username)
                     .password(username + "pass").build();
 
-            userMapper.save(user);
+            userMapper.insertUser(user);
             User newUser = userMapper.findByEmail(username + "@gmail.com");
             if (target.equals("member")) {
                 clubMapper.joinMemberById(club.getId(), newUser.getId());

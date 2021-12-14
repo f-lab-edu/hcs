@@ -5,7 +5,6 @@ import com.hcs.dto.SignUpDto;
 import com.hcs.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-//import org.springframework.security.crypto.password.PasswordEncoder; // security 설정 이후 코드 사용 예정
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -26,7 +25,7 @@ public class UserService {
         //signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword())); // security 설정 이후 코드 사용 예정
         User user = modelMapper.map(signUpDto, User.class);
         try {
-            save(user);
+            insertUser(user);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -47,12 +46,12 @@ public class UserService {
         return userMapper.existsByNickname(nickname);
     }
 
-    public void save(User user) {
-        userMapper.save(user);
+    public long insertUser(User user) {
+        return userMapper.insertUser(user);
     }
 
-    public void delete(String email) {
-        userMapper.delete(email);
+    public long deleteUserByEmail(String email) {
+        return userMapper.deleteUserByEmail(email);
     }
 
 }

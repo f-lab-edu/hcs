@@ -24,14 +24,14 @@
 
     </select>
 
-    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.User">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.User">
         insert into User (email, nickname, password, emailVerified, emailCheckToken, emailCheckTokenGeneratedAt,
                           joinedAt, age, position, location)
         values (#{email}, #{nickname}, #{password}, #{emailVerified}, #{emailCheckToken}, #{emailCheckTokenGeneratedAt},
                 #{joinedAt}, #{age}, #{position}, #{location})
     </insert>
 
-    <delete id="delete" parameterType="String">
+    <delete id="deleteUserByEmail" parameterType="String">
         delete
         from User
         where HCS.User.email = #{email}
