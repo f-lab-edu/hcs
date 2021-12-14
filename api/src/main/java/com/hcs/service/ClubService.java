@@ -29,7 +29,7 @@ public class ClubService {
     }
 
     public void save(Club club) {
-        clubMapper.save(club);
+        clubMapper.insertClub(club);
     }
 
     public Club getClub(Long id) {
