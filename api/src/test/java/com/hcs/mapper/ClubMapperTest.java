@@ -92,6 +92,8 @@ class ClubMapperTest {
         Club aClubWithMembers = clubMapper.findClubWithMembers(testClub.getId());
         Set<User> memberSet = aClubWithMembers.getMembers();
         assertEquals(userSet, memberSet);
+
+
     }
 
     @DisplayName("ClubMapper - club manager 저장 및 가져오기")
