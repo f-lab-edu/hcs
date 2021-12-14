@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public long insertUserByEmail(User user) {
-        return userMapper.insertUserByEmail(user);
+        return userMapper.insertUser(user);
     }
 
     public long deleteUserByEmail(String email) {
