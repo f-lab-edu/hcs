@@ -25,7 +25,7 @@ public class UserService {
         //signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword())); // security 설정 이후 코드 사용 예정
         User user = modelMapper.map(signUpDto, User.class);
         try {
-            insertUserByEmail(user);
+            insertUser(user);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -46,7 +46,7 @@ public class UserService {
         return userMapper.existsByNickname(nickname);
     }
 
-    public long insertUserByEmail(User user) {
+    public long insertUser(User user) {
         return userMapper.insertUser(user);
     }
 
