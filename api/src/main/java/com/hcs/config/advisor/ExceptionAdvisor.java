@@ -3,12 +3,16 @@ package com.hcs.config.advisor;
 import com.hcs.config.advisor.result.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.util.NestedServletException;
 
 import java.util.Locale;
 
@@ -29,9 +33,5 @@ public class ExceptionAdvisor {
         return ValidationResult.create(bindException, messageSource, locale);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ValidationResult handleIllegalArgException(IllegalArgumentException e, Locale locale) {
-        return ValidationResult.create((Errors) e, messageSource, locale);
-    }
 
 }

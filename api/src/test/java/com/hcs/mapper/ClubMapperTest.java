@@ -91,32 +91,8 @@ class ClubMapperTest {
         Set<User> userSet = generateAndJoinClub(testClub, "member", memberSize);
 
         Club aClubWithMembers = clubMapper.findClubWithMembers(testClub.getId());
-<<<<<<< HEAD
-        assertNotNull(aClubWithMembers);
-        assertEquals(memberSize, aClubWithMembers.getMembers().size());
-
-    }
-
-    private void generateAndJoinClub(Club club, String target, int userSize) {
-        for (int i = 0; i < userSize; i++) {
-            String username = "testuser" + i;
-            User user = User.builder()
-                    .email(username + "@gmail.com")
-                    .nickname(username)
-                    .password(username + "pass").build();
-
-            userMapper.insertUser(user);
-            User newUser = userMapper.findByEmail(username + "@gmail.com");
-            if (target.equals("member")) {
-                clubMapper.joinMemberById(club.getId(), newUser.getId());
-            } else if (target.equals("manager")) {
-                clubMapper.joinManagerById(club.getId(), newUser.getId());
-            }
-        }
-=======
         Set<User> memberSet = aClubWithMembers.getMembers();
         assertEquals(userSet, memberSet);
->>>>>>> d782e4a (test fix : fix  club mapper test)
     }
 
     @DisplayName("ClubMapper - club manager 저장 및 가져오기")
@@ -149,7 +125,7 @@ class ClubMapperTest {
                     .nickname(username)
                     .password(username + "pass").build();
 
-            userMapper.save(user);
+            userMapper.insertUser(user);
             User newUser = userMapper.findByEmail(username + "@gmail.com");
             if (userType.equals("member")) {
                 clubMapper.joinMemberById(club.getId(), newUser.getId());
