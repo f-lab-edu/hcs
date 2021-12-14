@@ -67,13 +67,13 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                        //.with(csrf())) // security 설정 이후 코드 사용 예정
+                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(status().isOk());
 
-
-        userMapper.delete(testSignUpDto.getEmail());
+        // TODO 이름 변경으로 인하여 주석처리됨. UserControllerTest를 리팩토링하는 PR에서 다시 구현될것임.
+//        userMapper.delete(testSignUpDto.getEmail());
 
     }
 
@@ -89,7 +89,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                        //.with(csrf())) // security 설정 이후 코드 사용 예정
+                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -99,7 +99,8 @@ public class UserControllerTest {
         assertNotNull(user);
         assertNotEquals(user.getPassword(), "12345678");
 
-        userMapper.delete(testSignUpDto.getEmail());
+        // TODO 이름 변경으로 인하여 주석처리됨. UserControllerTest를 리팩토링하는 PR에서 다시 구현될것임.
+//        userMapper.delete(testSignUpDto.getEmail());
 
     }
 

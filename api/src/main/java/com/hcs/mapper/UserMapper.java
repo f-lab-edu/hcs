@@ -16,7 +16,7 @@ public interface UserMapper {
 
     Boolean existsByNickname(String nickname);
 
-    long insertUser(User user);
+    long insertUserByEmail(User user);
 
-    void delete(String email);
+    long deleteUserByEmail(String email);
 }
