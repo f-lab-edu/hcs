@@ -38,7 +38,6 @@ class ClubMapperTest {
                 .category("test category")
                 .createdAt(LocalDateTime.now().withNano(0)) // 밀리초 단위 절삭
                 .build();
-        club.setCreatedAt(LocalDateTime.now());
 
         clubMapper.insertClub(club);
 
