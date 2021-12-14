@@ -8,7 +8,7 @@ public interface CommentMapper {
 
     Comment findById(long id);
 
-    int insertComment(Comment comment);
+    long insertComment(Comment comment);
 
     int deleteComment(long id);
 
