@@ -79,4 +79,20 @@
         </collection>
     </resultMap>
 
+    <select id="findClubWithPaging" resultType="com.hcs.domain.Club">
+        select *
+        from Club
+    </select>
+
+    <delete id="deleteClub" parameterType="Long">
+        delete
+        from Club c
+        where c.id = #{id}
+    </delete>
+
+    <select id="findAllClubs" resultType="com.hcs.domain.Club">
+        select *
+        from Club
+    </select>
+
 </mapper>
