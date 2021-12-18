@@ -1,1 +1,65 @@
 description = 'Hobby Community Service for my town'
+
+configurations {
+    integrationImplementation.extendsFrom(testImplementation)
+    integrationRuntimeOnly.extendsFrom(testRuntimeOnly)
+
+    unitRuntimeOnly.extendsFrom(testRuntimeOnly)
+    unitImplementation.extendsFrom(testImplementation)
+}
+
+sourceSets {
+    integration {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        java {
+            srcDir file('src/test/integration/java')
+        }
+        resources {
+            srcDir file('src/test/integration/resources')
+        }
+    }
+
+    unit {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        java {
+            srcDir file('src/test/unit/java')
+        }
+        resources {
+            srcDir file('src/test/unit/resources')
+        }
+    }
+}
+
+test {
+    testClassesDirs += sourceSets.integration.output.classesDirs
+    testClassesDirs += sourceSets.unit.output.classesDirs
+    classpath += sourceSets.integration.runtimeClasspath
+    classpath += sourceSets.unit.runtimeClasspath
+}
+
+task integration(type: Test) {
+    filter {
+        includeTestsMatching "com.hcs.controller.*"
+    }
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+}
+
+task unit(type: Test) {
+    filter {
+        includeTestsMatching "*Test"
+        excludeTestsMatching "com.hcs.controller.*"
+    }
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+}
