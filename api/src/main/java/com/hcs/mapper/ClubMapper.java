@@ -15,9 +15,9 @@ public interface ClubMapper {
 
     Club findByTitle(String title);
 
-    void save(Club club);
+    void insertClub(Club club);
 
-    void delete(Long id);
+    void deleteClubById(Long id);
 
     Club findClubWithMembers(Long id);
 
