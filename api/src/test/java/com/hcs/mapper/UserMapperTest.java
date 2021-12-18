@@ -2,38 +2,55 @@ package com.hcs.mapper;
 
 import com.hcs.domain.User;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
-import org.apache.ibatis.annotations.Mapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@MybatisTest(includeFilters = {@ComponentScan.Filter(classes = {Configuration.class, Mapper.class, Bean.class})})
+@MybatisTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[MyBatisConfig]")})
 class UserMapperTest {
-
-    User testUser = new User(); // Dummy 데이터
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    void insertTestUser(String newEmail, String newNickname, String newPassword) {
+
+        String insertSql = "insert into User (email, nickname, password)\n" +
+                "values (?, ?, ?)";
+
+        jdbcTemplate.update(insertSql, new Object[]{newEmail, newNickname, newPassword});
+    }
 
     @DisplayName("UserMapper - 이메일로 User 찾기")
     @Test
     void findByEmailTest() {
 
-        String realEmail = "test@naver.com";
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
 
-        User returnedBy = userMapper.findByEmail(realEmail);
+        insertTestUser(newEmail, newNickname, newPassword);
 
-        assertThat(returnedBy.getClass()).isEqualTo(User.class);
-        assertThat(returnedBy.getEmail()).isEqualTo(realEmail);
+        Optional<User> returnedBy = Optional.ofNullable(userMapper.findByEmail(newEmail));
+
+        assertThat(returnedBy).isNotEmpty();
+        assertThat(returnedBy.get().getEmail()).isEqualTo(newEmail);
+        assertThat(returnedBy.get().getNickname()).isEqualTo(newNickname);
+        assertThat(returnedBy.get().getPassword()).isEqualTo(newPassword);
+
     }
 
     @DisplayName("UserMapper - parameter로 주어진 email의 User가 존재하는지의 여부 - 존재하는 경우")
@@ -65,7 +82,12 @@ class UserMapperTest {
         String newEmail = "test2@naver.com";
         String newNickname = "test2";
         String newPassword = "password";
-        settingTestUser(newEmail, newNickname, newPassword); // Dummy 데이터 셋팅 완료.
+
+        User testUser = User.builder()
+                .email(newEmail)
+                .nickname(newNickname)
+                .password(newPassword)
+                .build();
 
         long newUserId = userMapper.insertUser(testUser);
 
@@ -82,12 +104,4 @@ class UserMapperTest {
 
         assertThat(deletedUserId).isGreaterThan(0);
     }
-
-    public void settingTestUser(String email, String nickname, String password) {
-        testUser.setEmail(email);
-        testUser.setNickname(nickname);
-        testUser.setPassword(password);
-    }
-
-
 }
