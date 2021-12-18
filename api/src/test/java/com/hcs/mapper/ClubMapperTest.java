@@ -113,7 +113,28 @@ class ClubMapperTest {
 
         Club clubWithManagers = clubMapper.findClubWithManagers(testClub.getId());
         assertEquals(userSet, clubWithManagers.getManagers());
+    }
 
+
+    private Set<User> generateAndJoinClub(Club club, String userType, int userSize) {
+        Set<User> userSet = new HashSet<>();
+        for (int i = 0; i < userSize; i++) {
+            String username = "testuser" + i;
+            User user = User.builder()
+                    .email(username + "@gmail.com")
+                    .nickname(username)
+                    .password(username + "pass").build();
+
+            userMapper.save(user);
+            User newUser = userMapper.findByEmail(username + "@gmail.com");
+            if (userType.equals("member")) {
+                clubMapper.joinMemberById(club.getId(), newUser.getId());
+            } else if (userType.equals("manager")) {
+                clubMapper.joinManagerById(club.getId(), newUser.getId());
+            }
+            userSet.add(user);
+        }
+        return userSet;
     }
 
     private Set<User> generateAndJoinClub(Club club, String userType, int userSize) {
