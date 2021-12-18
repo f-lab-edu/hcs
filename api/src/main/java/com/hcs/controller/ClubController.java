@@ -54,13 +54,13 @@ public class ClubController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NumberFormatException.class)
-    public ExceptionResult handleNestedServletException(NumberFormatException e) {
+    public ExceptionResult handleNumberFormatException(NumberFormatException e) {
         return new ExceptionResult("잘못된 club id 값을 넣었습니다.", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ExceptionResult handle(IllegalArgumentException e) {
+    public ExceptionResult handleIllegalArgException(IllegalArgumentException e) {
         return new ExceptionResult("존재하지 않는 club id 값입니다.", e.getMessage());
     }
 
