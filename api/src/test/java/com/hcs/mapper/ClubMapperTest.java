@@ -8,9 +8,12 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,13 +22,13 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest
 @EnableEncryptableProperties
-@Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@MybatisTest(includeFilters = {@ComponentScan.Filter(classes = {Configuration.class, org.apache.ibatis.annotations.Mapper.class, Bean.class})})
 class ClubMapperTest {
+
     @Autowired
     ClubMapper clubMapper;
     @Autowired
@@ -40,14 +43,21 @@ class ClubMapperTest {
                 .title("testClub")
                 .location("Bucheon")
                 .category("test category")
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now().withNano(0)) // 밀리초 단위 절삭
                 .build();
 
-        clubMapper.save(club);
+        clubMapper.insertClub(club);
 
         Club aClub = clubMapper.findByTitle("testClub");
         Club bClub = clubMapper.findByTitle("BClub");
-        assertNotNull(aClub);
+
+        assertEquals(club.getId(), aClub.getId());
+        assertEquals(club.getTitle(), aClub.getTitle());
+        assertEquals(club.getLocation(), aClub.getLocation());
+        assertEquals(club.getDescription(), aClub.getDescription());
+        assertEquals(club.getCreatedAt(), aClub.getCreatedAt());
+        assertEquals(club.getCategory(), aClub.getCategory());
+
         assertNull(bClub);
     }
 
@@ -61,11 +71,12 @@ class ClubMapperTest {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        clubMapper.save(club);
+        clubMapper.insertClub(club);
         Club aClub = clubMapper.findByTitle("testDeleteClub");
-        clubMapper.delete(aClub.getId());
+        assertEquals(club.getId(), aClub.getId());
+        clubMapper.deleteClubById(aClub.getId());
 
-        Club newClub = clubMapper.findByTitle("testDeleteClub");
+        Club newClub = clubMapper.findById(aClub.getId());
         assertNull(newClub);
     }
 
@@ -79,34 +90,17 @@ class ClubMapperTest {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        clubMapper.save(club);
+        clubMapper.insertClub(club);
         Club testClub = clubMapper.findByTitle("testClub");
 
         int memberSize = 3;
         Set<User> userSet = generateAndJoinClub(testClub, UserType.MEMBER, memberSize);
 
         Club aClubWithMembers = clubMapper.findClubWithMembers(testClub.getId());
-        assertNotNull(aClubWithMembers);
-        assertEquals(memberSize, aClubWithMembers.getMembers().size());
+        Set<User> memberSet = aClubWithMembers.getMembers();
+        assertEquals(userSet, memberSet);
 
-    }
 
-    private void generateAndJoinClub(Club club, String target, int userSize) {
-        for (int i = 0; i < userSize; i++) {
-            String username = "testuser" + i;
-            User user = User.builder()
-                    .email(username + "@gmail.com")
-                    .nickname(username)
-                    .password(username + "pass").build();
-
-            userMapper.insertUser(user);
-            User newUser = userMapper.findByEmail(username + "@gmail.com");
-            if (target.equals("member")) {
-                clubMapper.joinMemberById(club.getId(), newUser.getId());
-            } else if (target.equals("manager")) {
-                clubMapper.joinManagerById(club.getId(), newUser.getId());
-            }
-        }
     }
 
     @DisplayName("ClubMapper - club manager 저장 및 가져오기")
@@ -119,16 +113,36 @@ class ClubMapperTest {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        clubMapper.save(club);
+        clubMapper.insertClub(club);
         Club testClub = clubMapper.findByTitle("testClub");
 
         int managerSize = 5;
         Set<User> userSet = generateAndJoinClub(testClub, UserType.MANAGER, managerSize);
 
         Club clubWithManagers = clubMapper.findClubWithManagers(testClub.getId());
-        assertNotNull(clubWithManagers);
-        assertEquals(managerSize, clubWithManagers.getManagers().size());
+        assertEquals(userSet, clubWithManagers.getManagers());
 
+    }
+
+    private Set<User> generateAndJoinClub(Club club, String userType, int userSize) {
+        Set<User> userSet = new HashSet<>();
+        for (int i = 0; i < userSize; i++) {
+            String username = "testuser" + i;
+            User user = User.builder()
+                    .email(username + "@gmail.com")
+                    .nickname(username)
+                    .password(username + "pass").build();
+
+            userMapper.save(user);
+            User newUser = userMapper.findByEmail(username + "@gmail.com");
+            if (userType.equals("member")) {
+                clubMapper.joinMemberById(club.getId(), newUser.getId());
+            } else if (userType.equals("manager")) {
+                clubMapper.joinManagerById(club.getId(), newUser.getId());
+            }
+            userSet.add(user);
+        }
+        return userSet;
     }
 
     private Set<User> generateAndJoinClub(Club club, UserType userType, int userSize) {

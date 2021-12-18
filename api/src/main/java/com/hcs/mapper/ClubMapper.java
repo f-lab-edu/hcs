@@ -19,9 +19,9 @@ public interface ClubMapper {
     //TODO: return type 을 List 로 변경하기
     Club findByTitle(String title);
 
-    void save(Club club);
+    void insertClub(Club club);
 
-    void delete(Long id);
+    void deleteClubById(Long id);
 
     Club findClubWithMembers(Long id);
 
