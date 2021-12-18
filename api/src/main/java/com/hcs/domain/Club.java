@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +28,7 @@ public class Club {
     private Long id;
     private String title;
     private String description;
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
     private String location;
     private String category;
