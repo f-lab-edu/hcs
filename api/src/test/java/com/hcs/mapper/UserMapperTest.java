@@ -53,28 +53,6 @@ class UserMapperTest {
 
     }
 
-    @DisplayName("UserMapper - parameter로 주어진 email의 User가 존재하는지의 여부 - 존재하는 경우")
-    @Test
-    void existsByEmailTest_correct_input() {
-
-        String realEmail = "test@naver.com";
-
-        boolean ifUserExists = userMapper.existsByEmail(realEmail);
-
-        assertThat(ifUserExists).isTrue();
-    }
-
-    @DisplayName("UserMapper - parameter로 주어진 email의 User가 존재하는지의 여부 - 존재하지 않는 경우")
-    @Test
-    void existsByEmailTest_wrong_input() {
-
-        String fakeEmail = "fake@naver.com";
-
-        boolean ifUserExists = userMapper.existsByEmail(fakeEmail);
-
-        assertThat(ifUserExists).isFalse();
-    }
-
     @DisplayName("UserMapper - insert 테스트")
     @Test
     void insertUserTest() {
