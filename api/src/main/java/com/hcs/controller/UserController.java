@@ -3,13 +3,12 @@ package com.hcs.controller;
 import com.hcs.domain.User;
 import com.hcs.dto.SignUpDto;
 import com.hcs.service.UserService;
-import com.hcs.validator.SignUpDtoValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -25,12 +24,6 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final SignUpDtoValidator signUpDtoValidator;
-
-    @InitBinder("SignUpDto")
-    public void initBinder(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(signUpDtoValidator);
-    }
 
     @GetMapping("/sign-up")
     public String signUpForm() {
@@ -38,12 +31,10 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public void registerUser(@Valid @RequestBody SignUpDto signUpDto, HttpServletResponse response,
-                             Model model) throws IOException {
+    public void registerUser(@Valid @RequestBody SignUpDto signUpDto) throws IOException {
 
         User newUser = userService.saveNewUser(signUpDto);
 
-        response.sendRedirect("/");
+        // TODO HcsResponse로 JSON형식의 내용이 리턴될 것임
     }
-
 }
