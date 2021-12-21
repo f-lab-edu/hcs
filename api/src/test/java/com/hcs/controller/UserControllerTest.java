@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -126,5 +127,41 @@ public class UserControllerTest {
         assertNotNull(user);
         assertEquals(user.getPassword(), "12345678");
     }
+
+    @DisplayName("사용자 정보 요청시 리턴되는 body를 확인")
+    @Test
+    void userInfo_with_correct_req() throws Exception {
+        // TODO (테스트를 위해) 사용자 추가
+
+        User user = userMapper.findByEmail("noah0504@naver.com");
+
+        MvcResult mvcResult = mockMvc.perform(get("/user/info")
+                        .param("userEmail", "noah0504@naver.com"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // TODO mvcResult의 Body를 테스트
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.hcs.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.hcs.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("userId")).isEqualTo(user.getId().intValue());
+
+        HashMap<String, Object> profile = (HashMap<String, Object>) item.get("profile");
+
+        assertThat(profile.get("email")).isEqualTo(user.getEmail());
+        assertThat(profile.get("nickname")).isEqualTo(user.getNickname());
+        assertThat(profile.get("emailVerified")).isEqualTo(user.isEmailVerified());
+        assertThat(profile.get("joinedAt")).isEqualTo(user.getJoinedAt().toString());
+        assertThat(profile.get("age")).isEqualTo(user.getAge());
+        assertThat(profile.get("position")).isEqualTo(user.getPosition());
+        assertThat(profile.get("location")).isEqualTo(user.getLocation());
+    }
+
 
 }
