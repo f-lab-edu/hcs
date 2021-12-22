@@ -4,6 +4,6 @@ create table club_members
     memberId            int NOT NULL,
 
     PRIMARY KEY (clubId, memberId),
-    FOREIGN KEY (clubId) REFERENCES Club (id),
-    FOREIGN KEY (memberId) REFERENCES User (id)
+    FOREIGN KEY (clubId) REFERENCES Club (id) on delete cascade,
+    FOREIGN KEY (memberId) REFERENCES User (id) on delete cascade
 )
