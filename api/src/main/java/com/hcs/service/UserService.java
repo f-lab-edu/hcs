@@ -38,14 +38,6 @@ public class UserService {
         return userMapper.findByEmail(email);
     }
 
-    public boolean existsByEmail(String email) {
-        return userMapper.existsByEmail(email);
-    }
-
-    public boolean existsByNickname(String nickname) {
-        return userMapper.existsByNickname(nickname);
-    }
-
     public long insertUser(User user) {
         return userMapper.insertUser(user);
     }

@@ -24,12 +24,12 @@ public class ClubService {
             e.printStackTrace();
             return null;
         }
-        Club newClub = clubMapper.findByTitle(club.getTitle());
+        Club newClub = clubMapper.findById(club.getId());
         return newClub;
     }
 
     public void save(Club club) {
-        clubMapper.save(club);
+        clubMapper.insertClub(club);
     }
 
     public Club getClub(Long id) {
