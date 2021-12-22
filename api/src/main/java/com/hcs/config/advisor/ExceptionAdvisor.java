@@ -1,18 +1,19 @@
 package com.hcs.config.advisor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hcs.config.advisor.result.ExceptionResult;
 import com.hcs.config.advisor.result.ValidationResult;
+import com.hcs.dto.HcsResponse;
+import com.hcs.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.util.NestedServletException;
 
 import java.util.Locale;
 
@@ -28,11 +29,21 @@ public class ExceptionAdvisor {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ValidationResult handleBindException(BindException bindException, Locale locale) {
         return ValidationResult.create(bindException, messageSource, locale);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NumberFormatException.class)
+    public HcsResponse NumberFormatExceptionHandler() {
+        ErrorCode error = ErrorCode.NUMBER_FORMAT;
+        return HcsResponse.HcsResponseException(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), objectMapper);
+    }
 
+    // TODO 추후 Response가 만들어지면 공통으로 처리될 error에 대한 전역적인 @ExceptionHandler 추가 작성될 것임.
 }

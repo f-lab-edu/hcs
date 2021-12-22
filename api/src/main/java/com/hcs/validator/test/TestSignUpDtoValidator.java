@@ -29,12 +29,11 @@ public class TestSignUpDtoValidator implements Validator {
         Optional<User> userOptional = Optional.ofNullable(user);
 
         if (userOptional.isPresent()) {
-            errors.rejectValue("email", "invalid.email", new Object[]{signUpDto.getEmail()}, "이미 사용중인 이메일입니다.");
+            errors.rejectValue("email", "invalid.email", new Object[]{signUpDto.getEmail()}, "<테스트> 이미 사용중인 이메일입니다.");
         }
 
         if (user.getNickname() == signUpDto.getNickname()) {
-            errors.rejectValue("nickname", "invalid.nickname", new Object[]{signUpDto.getEmail()}, "이미 사용중인 닉네임입니다.");
+            errors.rejectValue("nickname", "invalid.nickname", new Object[]{signUpDto.getNickname()}, "<테스트> 이미 사용중인 닉네임입니다.");
         }
-
     }
 }
