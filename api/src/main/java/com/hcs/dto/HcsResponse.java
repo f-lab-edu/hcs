@@ -25,7 +25,7 @@ public class HcsResponse {
     @JsonProperty("createdAt")
     private String createdAt;
 
-    public static HcsResponse HcsResponseUser(int status, User user, ObjectMapper objectMapper) {
+    private static HcsResponse HcsResponseUser(int status, User user, ObjectMapper objectMapper) {
         ObjectNode hcs = objectMapper.createObjectNode();
 
         ObjectNode item = objectMapper.createObjectNode();
@@ -40,7 +40,7 @@ public class HcsResponse {
         return makeHcsResponse(hcs);
     }
 
-    public static HcsResponse HcsResponseException(int status, ExceptionResult exceptionResult, ObjectMapper objectMapper) {
+    private static HcsResponse HcsResponseException(int status, ExceptionResult exceptionResult, ObjectMapper objectMapper) {
 
         ObjectNode hcs = objectMapper.createObjectNode();
 
