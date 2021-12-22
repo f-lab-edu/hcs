@@ -1,5 +1,7 @@
 package com.hcs.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hcs.config.advisor.result.ExceptionResult;
@@ -8,12 +10,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Data
 @AllArgsConstructor
 @Builder
+@JsonPropertyOrder({"HCS", "createdAt"})
 public class HcsResponse {
 
+    @JsonProperty("HCS")
     private ObjectNode HCS;
+
+    @JsonProperty("createdAt")
+    private String createdAt;
 
     public static HcsResponse HcsResponseUser(int status, User user, ObjectMapper objectMapper) {
         ObjectNode hcs = objectMapper.createObjectNode();
@@ -27,11 +37,7 @@ public class HcsResponse {
         hcs.put("status", status);
         hcs.set("item", item);
 
-        HcsResponse response = HcsResponse.builder()
-                .HCS(hcs)
-                .build();
-
-        return response;
+        return makeHcsResponse(hcs);
     }
 
     public static HcsResponse HcsResponseException(int status, ExceptionResult exceptionResult, ObjectMapper objectMapper) {
@@ -43,8 +49,14 @@ public class HcsResponse {
         hcs.put("status", status);
         hcs.set("item", item);
 
+        return makeHcsResponse(hcs);
+    }
+
+    private static HcsResponse makeHcsResponse(ObjectNode hcs) {
+
         HcsResponse response = HcsResponse.builder()
                 .HCS(hcs)
+                .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
 
         return response;
