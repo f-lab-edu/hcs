@@ -38,6 +38,7 @@ class ClubMapperTest {
                 .category("test category")
                 .createdAt(LocalDateTime.now().withNano(0)) // 밀리초 단위 절삭
                 .build();
+        club.setCreatedAt(LocalDateTime.now());
 
         clubMapper.insertClub(club);
 
@@ -92,8 +93,6 @@ class ClubMapperTest {
         Club aClubWithMembers = clubMapper.findClubWithMembers(testClub.getId());
         Set<User> memberSet = aClubWithMembers.getMembers();
         assertEquals(userSet, memberSet);
-
-
     }
 
     @DisplayName("ClubMapper - club manager 저장 및 가져오기")
@@ -114,8 +113,8 @@ class ClubMapperTest {
 
         Club clubWithManagers = clubMapper.findClubWithManagers(testClub.getId());
         assertEquals(userSet, clubWithManagers.getManagers());
-
     }
+    
 
     private Set<User> generateAndJoinClub(Club club, String userType, int userSize) {
         Set<User> userSet = new HashSet<>();
@@ -126,7 +125,7 @@ class ClubMapperTest {
                     .nickname(username)
                     .password(username + "pass").build();
 
-            userMapper.save(user);
+            userMapper.insertUser(user);
             User newUser = userMapper.findByEmail(username + "@gmail.com");
             if (userType.equals("member")) {
                 clubMapper.joinMemberById(club.getId(), newUser.getId());
