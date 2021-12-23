@@ -14,6 +14,7 @@ import java.util.Set;
 
 /**
  * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
+ * @JsonIgnore : jackson 라이브러리로 직렬화 할 경우 제외할 필드를 지정할 경우 사용됨
  */
 
 @Data
