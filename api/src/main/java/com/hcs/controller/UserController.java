@@ -1,12 +1,15 @@
 package com.hcs.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.domain.User;
+import com.hcs.dto.HcsResponse;
 import com.hcs.dto.SignUpDto;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -24,6 +27,7 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/sign-up")
     public String signUpForm() {
@@ -36,5 +40,13 @@ public class UserController {
         User newUser = userService.saveNewUser(signUpDto);
 
         // TODO HcsResponse로 JSON형식의 내용이 리턴될 것임
+    }
+
+    @GetMapping("/user/info")
+    public HcsResponse userInfo(@RequestParam("userEmail") String userEmail) {
+
+        User user = userService.findByEmail(userEmail);
+
+        return HcsResponse.HcsResponseUser(200, user, objectMapper);
     }
 }
