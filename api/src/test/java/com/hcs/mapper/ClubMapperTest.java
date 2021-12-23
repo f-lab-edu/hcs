@@ -121,7 +121,7 @@ class ClubMapperTest {
         Club clubWithManagers = clubMapper.findClubWithManagers(testClub.getId());
         assertEquals(userSet, clubWithManagers.getManagers());
     }
-    
+
 
     private Set<User> generateAndJoinClub(Club club, String userType, int userSize) {
         Set<User> userSet = new HashSet<>();
