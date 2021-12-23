@@ -14,7 +14,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,8 +48,9 @@ class ClubMapperTest {
                 .title("testClub")
                 .location("Bucheon")
                 .category("test category")
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now().withNano(0)) // 밀리초 단위 절삭
                 .build();
+        club.setCreatedAt(LocalDateTime.now());
 
         clubMapper.insertClub(club);
 
@@ -55,6 +62,7 @@ class ClubMapperTest {
         assertEquals(club.getLocation(), aClub.getLocation());
         assertEquals(club.getDescription(), aClub.getDescription());
         //assertEquals(club.getCreatedAt(), aClub.getCreatedAt()); // TODO : 필드에 값 할당시 나노 초 단위 절삭 구현 또는 해당기능을 하는 annotation 추가하기
+
         assertEquals(club.getCategory(), aClub.getCategory());
 
         assertNull(bClub);
@@ -176,6 +184,8 @@ class ClubMapperTest {
         return clubList;
     }
 
+
+ 
     enum UserType {
         MANAGER,
         MEMBER
