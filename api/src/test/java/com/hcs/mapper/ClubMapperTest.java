@@ -2,7 +2,6 @@ package com.hcs.mapper;
 
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
-import com.hcs.mapper.user.UserMapper;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -14,13 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -184,8 +177,6 @@ class ClubMapperTest {
         return clubList;
     }
 
-
- 
     enum UserType {
         MANAGER,
         MEMBER
