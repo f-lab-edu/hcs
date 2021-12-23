@@ -79,11 +79,6 @@
         </collection>
     </resultMap>
 
-    <select id="findClubWithPaging" resultType="com.hcs.domain.Club">
-        select *
-        from Club
-    </select>
-
     <delete id="deleteClub" parameterType="Long">
         delete
         from Club c
