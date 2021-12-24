@@ -53,23 +53,16 @@ public class HcsResponseManager {
             return item;
         }
 
-        public HcsResponse User(Object domain) {
-
+        public HcsResponse User(User user) {
             ObjectNode hcs = objectMapper.createObjectNode();
-            ObjectNode item = null;
+            ObjectNode item = profile(user);
 
             hcs.put("status", 200);
-
-            if (domain.getClass() == User.class) {
-                User user = (User) domain;
-                item = profile(user);
-            }
-
-            // TODO 다른 도메인들은 private static 함수를 태워 분기처리하여 item 필드 값을 채움
-
             hcs.set("item", item);
 
             return makeHcsResponse(hcs);
         }
+
+        // TODO 다른 도메인들은 함수를 태워 분기처리하여 item 필드 값을 채움
     }
 }
