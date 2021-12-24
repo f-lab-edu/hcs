@@ -39,8 +39,8 @@ public class ExceptionAdvisorTest {
 
         String response = mvcResult.getResponse().getContentAsString();
 
-        int status = JsonPath.parse(response).read("$.hcs.status");
-        HashMap<String, Object> item = JsonPath.parse(response).read("$.hcs.item");
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
 
         ErrorCode error = ErrorCode.NUMBER_FORMAT;
 
