@@ -146,8 +146,8 @@ public class UserControllerTest {
 
         String response = mvcResult.getResponse().getContentAsString();
 
-        int status = JsonPath.parse(response).read("$.hcs.status");
-        HashMap<String, Object> item = JsonPath.parse(response).read("$.hcs.item");
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
 
         assertThat(status).isEqualTo(200);
         assertThat(item.get("userId")).isEqualTo(user.getId().intValue());
@@ -162,6 +162,4 @@ public class UserControllerTest {
         assertThat(profile.get("position")).isEqualTo(user.getPosition());
         assertThat(profile.get("location")).isEqualTo(user.getLocation());
     }
-
-
 }

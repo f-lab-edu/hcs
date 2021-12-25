@@ -1,9 +1,9 @@
 package com.hcs.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.domain.User;
-import com.hcs.dto.HcsResponse;
 import com.hcs.dto.SignUpDto;
+import com.hcs.dto.response.HcsResponse;
+import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,7 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final ObjectMapper objectMapper;
+    private final HcsResponseManager hcsResponseManager;
 
     @GetMapping("/sign-up")
     public String signUpForm() {
@@ -47,6 +47,6 @@ public class UserController {
 
         User user = userService.findByEmail(userEmail);
 
-        return HcsResponse.HcsResponseUser(200, user, objectMapper);
+        return hcsResponseManager.info.User(user);
     }
 }
