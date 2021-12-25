@@ -19,18 +19,15 @@ public class ClubService {
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
         try {
-            save(club);
+            clubMapper.insertClub(club);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        Club newClub = clubMapper.findById(club.getId());
-        return newClub;
+        //Club newClub = clubMapper.findById(club.getId());
+        return club;
     }
 
-    public void save(Club club) {
-        clubMapper.insertClub(club);
-    }
 
     public Club getClub(Long id) {
         Club club = clubMapper.findById(id);
