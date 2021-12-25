@@ -1,5 +1,6 @@
 package com.hcs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class Club {
 
     @EqualsAndHashCode.Include
+    @JsonIgnore
     private Long id;
     private String title;
     private String description;
@@ -33,7 +35,9 @@ public class Club {
     private String location;
     private String category;
 
+    @JsonIgnore
     private Set<User> members = new HashSet<>();
+    @JsonIgnore
     private Set<User> managers = new HashSet<>(); // 관리자를 여러명 두어 최고, 서브 관리자로 role을 나눌 예정
 
     // private int memberCount; 성능 개선시 사용 예정
