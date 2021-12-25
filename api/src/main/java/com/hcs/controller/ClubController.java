@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 
 /**
  * @ExceptionHandler : 컨트롤러 내에서 특정 예외가 발생했을때 실행될 메소드 위에 사용한다.
@@ -30,7 +28,7 @@ public class ClubController {
     private final HcsResponseManager responseManager;
 
     @PostMapping("/submit")
-    public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto, HttpServletResponse response) throws IOException {
+    public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto) {
         //TODO : 로그인한 유저인지 검증 추가
 
         Club newClub = clubService.saveNewClub(clubDto);
