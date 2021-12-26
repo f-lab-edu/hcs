@@ -20,7 +20,7 @@ import java.util.Set;
 public class ChatRoom {
 
     @EqualsAndHashCode.Include
-    private long id;
+    private String id;
 
     private Set<ChatMessage> chatMessages = new HashSet<>();
     private Set<User> members = new HashSet<>();
