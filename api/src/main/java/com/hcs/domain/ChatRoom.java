@@ -22,8 +22,6 @@ public class ChatRoom {
     @EqualsAndHashCode.Include
     private long id;
 
-    private String roomId;
-
     private Set<ChatMessage> chatMessages = new HashSet<>();
     private Set<User> members = new HashSet<>();
 

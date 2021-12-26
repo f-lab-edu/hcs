@@ -1,6 +1,5 @@
 create table ChatRoom
 (
-    id        int AUTO_INCREMENT PRIMARY KEY COMMENT '채팅방 id key',
-    roomId    VARCHAR(255) NOT NULL,
+    id        VARCHAR(255) PRIMARY KEY COMMENT '채팅방 id key',
     createdAt datetime
 )
