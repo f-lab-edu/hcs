@@ -5,6 +5,7 @@ import com.hcs.config.EnableMockMvc;
 import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;
 import com.hcs.mapper.ClubMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -90,7 +93,8 @@ class ClubControllerTest {
         clubMapper.insertClub(club);
 
         //when
-        mockMvc.perform(get("/club/info")
+
+        MvcResult mvcResult = mockMvc.perform(get("/club/info")
                         .param("clubId", club.getId().toString())//올바른 id
                         .accept(MediaType.APPLICATION_JSON))
                 //then
@@ -99,8 +103,17 @@ class ClubControllerTest {
                 .andExpect(jsonPath("$.HCS.item.club.title").value(club.getTitle()))
                 .andExpect(jsonPath("$.HCS.status").value("200"))
                 .andExpect(jsonPath("$.HCS.item.clubId").exists())
-                //.andExpect(jsonPath("$.HCS.item.club.clubUrl").exists()) //TODO : clubUrl 추가 후 테스트 수정
-                .andExpect(jsonPath("$.HCS.item.club.location").value(club.getLocation()));
+                .andExpect(jsonPath("$.HCS.item.club.location").value(club.getLocation()))
+                .andReturn();
+
+        String paramName = mvcResult.getRequest().getParameterNames().nextElement();
+        String paramValue = mvcResult.getRequest().getParameter(paramName);
+        String requestUrl = mvcResult.getRequest().getRequestURL()
+                + "?" + paramName
+                + "=" + paramValue; //params
+        String responseJsonClubUrl = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.HCS.item.club.clubUrl");
+        assertEquals(requestUrl, responseJsonClubUrl);
+
         //TODO : managers , members 객체 추가 후 테스트 수정
 
         //TODO : exception 추가 후 잘못된 입력 테스트 수정
