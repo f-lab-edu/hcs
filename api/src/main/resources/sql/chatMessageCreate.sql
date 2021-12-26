@@ -6,6 +6,6 @@ create table ChatMessage
     message   VARCHAR(255) NOT NULL,
     createdAt datetime,
 
-#     FOREIGN KEY (roomId) REFERENCES ChatRoom (id) ON DELETE CASCADE, # ChatRoom 이 생성되면 활성화 할 것
+    FOREIGN KEY (roomId) REFERENCES ChatRoom (id) ON DELETE CASCADE,
     FOREIGN KEY (authorId) REFERENCES User (id) ON DELETE CASCADE
 )
