@@ -24,10 +24,8 @@ public class ClubService {
             e.printStackTrace();
             return null;
         }
-        //Club newClub = clubMapper.findById(club.getId());
         return club;
     }
-
 
     public Club getClub(Long id) {
         Club club = clubMapper.findById(id);
@@ -37,7 +35,7 @@ public class ClubService {
 
     private void checkExistingClub(Club club) {
         if (club == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(); //TODO : exception 만들어서 교체하기
         }
     }
 
