@@ -60,7 +60,7 @@ class ClubServiceTest {
     @Test
     void getClub() {
         //given
-        Long testId = fixtureClub.getId(); // 테스트용 id
+        long testId = fixtureClub.getId(); // 테스트용 id
         given(clubMapper.findById(testId)).willReturn(fixtureClub);
 
         //when
