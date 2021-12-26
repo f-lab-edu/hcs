@@ -5,8 +5,8 @@
 <mapper namespace="com.hcs.mapper.ChatRoomMapper">
 
     <insert id="insertChatRoom" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.ChatRoom">
-        insert into ChatRoom (roomId, createdAt)
-        values (#{roomId}, #{createdAt})
+        insert into ChatRoom (id, createdAt)
+        values (#{id}, #{createdAt})
     </insert>
 
 </mapper>
