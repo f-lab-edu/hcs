@@ -105,5 +105,17 @@ public class HcsResponseManager {
             hcs.set("item", item);
             return makeHcsResponse(hcs);
         }
+
+        public HcsResponse chatRoom(String chatRoomId) {
+            ObjectNode hcs = objectMapper.createObjectNode();
+            ObjectNode item = objectMapper.createObjectNode();
+
+            hcs.put("status", 200);
+
+            item.put("chatRoomId", chatRoomId);
+
+            hcs.set("item", item);
+            return makeHcsResponse(hcs);
+        }
     }
 }

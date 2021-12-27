@@ -11,6 +11,7 @@ import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -27,4 +28,11 @@ public class ChatRoom {
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
+
+    public static ChatRoom create() {
+        ChatRoom room = new ChatRoom();
+
+        room.setId(UUID.randomUUID().toString());
+        return room;
+    }
 }
