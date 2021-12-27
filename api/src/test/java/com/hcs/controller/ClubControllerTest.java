@@ -50,9 +50,9 @@ class ClubControllerTest {
         clubDto.setCreatedAt(LocalDateTime.now());
 
         mockMvc.perform(post("/club/submit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clubDto))
-                        .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clubDto))
+                .accept(MediaType.APPLICATION_JSON))
                 //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -95,8 +95,8 @@ class ClubControllerTest {
         //when
 
         MvcResult mvcResult = mockMvc.perform(get("/club/info")
-                        .param("clubId", club.getId().toString())//올바른 id
-                        .accept(MediaType.APPLICATION_JSON))
+                .param("clubId", club.getId().toString())//올바른 id
+                .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -106,11 +106,8 @@ class ClubControllerTest {
                 .andExpect(jsonPath("$.HCS.item.club.location").value(club.getLocation()))
                 .andReturn();
 
-        String paramName = mvcResult.getRequest().getParameterNames().nextElement();
-        String paramValue = mvcResult.getRequest().getParameter(paramName);
-        String requestUrl = mvcResult.getRequest().getRequestURL()
-                + "?" + paramName
-                + "=" + paramValue; //params
+        //clubUrl 검증
+        String requestUrl = getBaseUrl(mvcResult) + "club/" + club.getId();
         String responseJsonClubUrl = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.HCS.item.club.clubUrl");
         assertEquals(requestUrl, responseJsonClubUrl);
 
@@ -132,6 +129,12 @@ class ClubControllerTest {
 //                .andExpect(status().is4xxClientError())
 //                .andExpect(jsonPath("message").value("존재하지 않는 club id 값입니다."));
 
+    }
+
+    private String getBaseUrl(MvcResult mvcResult) {
+        String url = mvcResult.getRequest().getRequestURL().toString();
+        String uri = mvcResult.getRequest().getRequestURI();
+        return mvcResult.getRequest().getRequestURL().toString().replace(mvcResult.getRequest().getRequestURI(), "") + "/";
     }
 
 }

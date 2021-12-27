@@ -80,7 +80,7 @@ public class HcsResponseManager {
         private ObjectNode clubInfo(Club club, String baseUrl) {
             ObjectNode item = objectMapper.createObjectNode();
             ObjectNode clubNode = objectMapper.valueToTree(club);
-            clubNode.put("clubUrl", baseUrl + "club/info?clubId=" + club.getId());
+            clubNode.put("clubUrl", baseUrl + "club/" + club.getId());
 
             //TODO : managers ,members 객체 추가
 
@@ -100,7 +100,7 @@ public class HcsResponseManager {
             ObjectNode item = objectMapper.createObjectNode();
 
             item.put("clubId", clubId);
-            item.put("clubUrl", baseUrl + "club/info?clubId=" + clubId.toString());
+            item.put("clubUrl", baseUrl + "club/" + clubId.toString());
 
             hcs.put("status", 200);
             hcs.set("item", item);
