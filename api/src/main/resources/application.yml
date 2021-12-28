@@ -20,6 +20,9 @@ spring:
       jdbc-url: "jdbc:mysql://localhost:3306/HCS?serverTimezone=UTC&characterEncoding=UTF-8"
       username: ENC(/vfTGzkQsvDmJGsLHCRGk8WaCVxqrAkS)
       password: ENC(/7M0dZ5y6e2xyeC2YPa3Jj7kqrJCYaCn)
+  redis:
+    host: localhost
+    port: 6379
 
 mybatis:
   mapper-locations: classpath:mybatis-mapper/*.xml
