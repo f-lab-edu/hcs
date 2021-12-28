@@ -13,6 +13,10 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * @EnableRedisRepositories : Redis 관련 설정을 세팅하는 파일로 Spring이 redis 사용시 적용하도록 하도록 알려주게된다
+ */
+
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
