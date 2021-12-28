@@ -67,9 +67,9 @@ public class HcsResponseManager {
             return makeHcsResponse(hcs);
         }
 
-        public HcsResponse club(Club club) {
+        public HcsResponse club(Club club, String baseUrl) {
             ObjectNode hcs = objectMapper.createObjectNode();
-            ObjectNode item = clubInfo(club);
+            ObjectNode item = clubInfo(club, baseUrl);
 
             hcs.put("status", 200);
             hcs.set("item", item);
@@ -77,9 +77,10 @@ public class HcsResponseManager {
             return makeHcsResponse(hcs);
         }
 
-        private ObjectNode clubInfo(Club club) {
+        private ObjectNode clubInfo(Club club, String baseUrl) {
             ObjectNode item = objectMapper.createObjectNode();
             ObjectNode clubNode = objectMapper.valueToTree(club);
+            clubNode.put("clubUrl", baseUrl + "club/" + club.getId());
 
             //TODO : managers ,members 객체 추가
 
@@ -94,12 +95,12 @@ public class HcsResponseManager {
     @Component
     public class Submit {
 
-        public HcsResponse club(Long clubId) {
+        public HcsResponse club(Long clubId, String baseUrl) {
             ObjectNode hcs = objectMapper.createObjectNode();
             ObjectNode item = objectMapper.createObjectNode();
 
             item.put("clubId", clubId);
-            item.put("clubUrl", "club/Info?clubId=" + clubId.toString()); //TODO : base url 가져오기
+            item.put("clubUrl", baseUrl + "club/" + clubId.toString());
 
             hcs.put("status", 200);
             hcs.set("item", item);

@@ -5,6 +5,7 @@ import com.hcs.config.EnableMockMvc;
 import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;
 import com.hcs.mapper.ClubMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,9 +50,9 @@ class ClubControllerTest {
         clubDto.setCreatedAt(LocalDateTime.now());
 
         mockMvc.perform(post("/club/submit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clubDto))
-                        .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clubDto))
+                .accept(MediaType.APPLICATION_JSON))
                 //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -90,17 +93,24 @@ class ClubControllerTest {
         clubMapper.insertClub(club);
 
         //when
-        mockMvc.perform(get("/club/info")
-                        .param("clubId", club.getId().toString())//올바른 id
-                        .accept(MediaType.APPLICATION_JSON))
+
+        MvcResult mvcResult = mockMvc.perform(get("/club/info")
+                .param("clubId", club.getId().toString())//올바른 id
+                .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.club.title").value(club.getTitle()))
                 .andExpect(jsonPath("$.HCS.status").value("200"))
                 .andExpect(jsonPath("$.HCS.item.clubId").exists())
-                //.andExpect(jsonPath("$.HCS.item.club.clubUrl").exists()) //TODO : clubUrl 추가 후 테스트 수정
-                .andExpect(jsonPath("$.HCS.item.club.location").value(club.getLocation()));
+                .andExpect(jsonPath("$.HCS.item.club.location").value(club.getLocation()))
+                .andReturn();
+
+        //clubUrl 검증
+        String requestUrl = getBaseUrl(mvcResult) + "club/" + club.getId();
+        String responseJsonClubUrl = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.HCS.item.club.clubUrl");
+        assertEquals(requestUrl, responseJsonClubUrl);
+
         //TODO : managers , members 객체 추가 후 테스트 수정
 
         //TODO : exception 추가 후 잘못된 입력 테스트 수정
@@ -119,6 +129,12 @@ class ClubControllerTest {
 //                .andExpect(status().is4xxClientError())
 //                .andExpect(jsonPath("message").value("존재하지 않는 club id 값입니다."));
 
+    }
+
+    private String getBaseUrl(MvcResult mvcResult) {
+        String url = mvcResult.getRequest().getRequestURL().toString();
+        String uri = mvcResult.getRequest().getRequestURI();
+        return mvcResult.getRequest().getRequestURL().toString().replace(mvcResult.getRequest().getRequestURI(), "") + "/";
     }
 
 }
