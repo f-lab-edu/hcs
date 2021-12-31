@@ -2,11 +2,20 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
 <mapper namespace="com.hcs.mapper.ChatRoomMapper">
+    <cache/>
 
     <insert id="insertChatRoom" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.ChatRoom">
         insert into ChatRoom (id, createdAt)
         values (#{id}, #{createdAt})
+
+        <foreach collection="members" item="member">
+            insert into ChatRoom_members (chatRoomId, memberId)
+            values (#{id}, #{member.Id})
+        </foreach>
+
     </insert>
 
 </mapper>
