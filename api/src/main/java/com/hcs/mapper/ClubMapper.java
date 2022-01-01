@@ -31,11 +31,13 @@ public interface ClubMapper {
 
     void joinManagerById(@Param("clubId") Long clubId, @Param("managerId") Long userId);
 
-    List<Club> findClubWithPaging(RowBounds rowBounds);
-
     void deleteClub(Long id);
 
     List<Club> findAllClubs();
+
+    List<Club> findByPageAndCategory(@Param("page") int page, @Param("categoryId") Long categoryId);
+
+    Long countByAllClubs();
 
     //TODO: sort
 
