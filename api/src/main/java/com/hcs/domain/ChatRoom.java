@@ -35,4 +35,8 @@ public class ChatRoom {
         room.setId(UUID.randomUUID().toString());
         return room;
     }
+
+    public void addMember(User user) {
+        this.members.add(user);
+    }
 }
