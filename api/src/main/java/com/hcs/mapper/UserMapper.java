@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserMapper {
 
+    User findById(long userId);
+
     User findByEmail(String email);
 
     long insertUser(User user);
