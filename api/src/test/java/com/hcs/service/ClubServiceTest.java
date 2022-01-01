@@ -44,7 +44,7 @@ class ClubServiceTest {
                 "club description",
                 LocalDateTime.now(),
                 "test location",
-                "test category");
+                1L);
 
         given(modelMapper.map(correctClubDto, Club.class)).willReturn(fixtureClub);
 
