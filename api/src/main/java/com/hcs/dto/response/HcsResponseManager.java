@@ -89,12 +89,22 @@ public class HcsResponseManager {
             item.set("club", clubNode);
             return item;
         }
-
-        // TODO 다른 도메인들은 함수를 태워 분기처리하여 item 필드 값을 채움
     }
 
     @Component
     public class Submit {
+
+        public HcsResponse user(long userId) {
+            ObjectNode hcs = objectMapper.createObjectNode();
+            ObjectNode item = objectMapper.createObjectNode();
+
+            hcs.put("status", 200);
+
+            item.put("userId", userId);
+
+            hcs.set("item", item);
+            return makeHcsResponse(hcs);
+        }
 
         public HcsResponse club(Long clubId, String baseUrl) {
             ObjectNode hcs = objectMapper.createObjectNode();

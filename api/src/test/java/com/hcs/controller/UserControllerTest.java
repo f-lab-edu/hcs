@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -110,22 +108,29 @@ public class UserControllerTest {
     void signUpSubmit_with_correct_input() throws Exception {
 
         testSignUpDto.setNickname("noah");
-        testSignUpDto.setEmail("noah0504@naver.com");
+        testSignUpDto.setEmail("noah0969@gmail.com");
         testSignUpDto.setPassword("12345678");
 
-        mockMvc.perform(post("/sign-up")
+        MvcResult mvcResult = mockMvc.perform(post("/user/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
                 //.with(csrf())) // security 설정 이후 코드 사용 예정
 
-                .andDo(print());
-//                .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
 
+        User user = userMapper.findByEmail("noah0969@gmail.com");
 
-        User user = userMapper.findByEmail("noah0504@naver.com");
-        assertNotNull(user);
-        assertEquals(user.getPassword(), "12345678");
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("userId")).isEqualTo(user.getId().intValue());
+
     }
 
     @DisplayName("사용자 정보 요청시 리턴되는 body를 확인")
