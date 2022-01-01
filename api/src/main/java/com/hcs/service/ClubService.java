@@ -15,6 +15,7 @@ public class ClubService {
 
     private final ModelMapper modelMapper;
     private final ClubMapper clubMapper;
+    private final CategoryService categoryService;
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
