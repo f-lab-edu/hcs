@@ -2,6 +2,7 @@ package com.hcs.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.domain.Club;
+import com.hcs.dto.request.ClubDto;
 import com.hcs.mapper.ClubMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

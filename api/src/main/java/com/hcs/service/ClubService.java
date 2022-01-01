@@ -1,7 +1,7 @@
 package com.hcs.service;
 
 import com.hcs.domain.Club;
-import com.hcs.dto.ClubDto;
+import com.hcs.dto.request.ClubDto;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

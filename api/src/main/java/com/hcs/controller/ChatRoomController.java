@@ -5,6 +5,7 @@ import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
+import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/chat")
 public class ChatRoomController {
 
-    private final HcsResponseManager hcsResponseManager;
     private final ChatRoomService chatRoomService;
     private final SimpMessagingTemplate template;
+    private final HcsResponseManager hcsResponseManager;
+    private final HcsSubmit submit;
 
     @PostMapping("/room/submit")
     public HcsResponse createChatRoom(@RequestParam("userId") User buyer, @RequestParam(name = "tradePostId", required = false) TradePost saleTradePost) {
@@ -35,7 +37,7 @@ public class ChatRoomController {
 
         // 구매자에게 알람 날리기 : 구매자는 알람을 통해 자신의 기본 DM창으로 이동할 수 있음
 
-        return hcsResponseManager.submit.chatRoom(newRoom.getId());
+        return hcsResponseManager.makeHcsResponse(submit.chatRoom(newRoom.getId()));
     }
 
 }

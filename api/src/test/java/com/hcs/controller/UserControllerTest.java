@@ -3,7 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.config.EnableMockMvc;
 import com.hcs.domain.User;
-import com.hcs.dto.SignUpDto;
+import com.hcs.dto.request.SignUpDto;
 import com.hcs.mapper.UserMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;

@@ -1,7 +1,7 @@
 package com.hcs.service;
 
 import com.hcs.domain.ChatMessage;
-import com.hcs.dto.ChatMessageDto;
+import com.hcs.dto.request.ChatMessageDto;
 import com.hcs.mapper.ChatMessageMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

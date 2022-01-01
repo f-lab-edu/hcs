@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.config.EnableMockMvc;
 import com.hcs.controller.test.TestUserController;
 import com.hcs.controller.test.TestUserControllerWithoutValid;
-import com.hcs.dto.SignUpDto;
+import com.hcs.dto.request.SignUpDto;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

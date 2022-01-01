@@ -1,4 +1,4 @@
-package com.hcs.dto;
+package com.hcs.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
