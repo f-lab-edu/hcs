@@ -33,6 +33,7 @@ public class HcsResponseManager {
         return response;
     }
 
+
     public HcsResponse Exception(int status, ExceptionResult exceptionResult) {
 
         ObjectNode hcs = objectMapper.createObjectNode();
@@ -114,6 +115,18 @@ public class HcsResponseManager {
             hcs.put("status", 200);
 
             item.put("chatRoomId", chatRoomId);
+
+            hcs.set("item", item);
+            return makeHcsResponse(hcs);
+        }
+
+        public HcsResponse chatMessage(long chatMessageId) {
+            ObjectNode hcs = objectMapper.createObjectNode();
+            ObjectNode item = objectMapper.createObjectNode();
+
+            hcs.put("status", 200);
+
+            item.put("chatRoomId", chatMessageId);
 
             hcs.set("item", item);
             return makeHcsResponse(hcs);
