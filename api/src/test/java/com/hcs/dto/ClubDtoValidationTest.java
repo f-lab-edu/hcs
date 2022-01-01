@@ -1,6 +1,7 @@
 package com.hcs.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hcs.config.EnableMockMvc;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.mapper.ClubMapper;
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@EnableMockMvc
 @Transactional
 class ClubDtoValidationTest {
 
@@ -49,7 +50,7 @@ class ClubDtoValidationTest {
                 .accept(MediaType.APPLICATION_JSON))
                 //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().is4xxClientError())
                 .andExpect(
                         (result) -> assertTrue(result.getResolvedException().getClass()
                                 .isAssignableFrom(MethodArgumentNotValidException.class))
