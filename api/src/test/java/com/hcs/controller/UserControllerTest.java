@@ -136,7 +136,7 @@ public class UserControllerTest {
         User user = userMapper.findByEmail("noah0504@naver.com");
 
         MvcResult mvcResult = mockMvc.perform(get("/user/info")
-                        .param("userEmail", "noah0504@naver.com"))
+                        .param("userId", "31"))
 
                 .andDo(print())
                 .andExpect(status().isOk())

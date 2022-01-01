@@ -43,9 +43,9 @@ public class UserController {
     }
 
     @GetMapping("/user/info")
-    public HcsResponse userInfo(@RequestParam("userEmail") String userEmail) {
+    public HcsResponse userInfo(@RequestParam("userId") long userId) {
 
-        User user = userService.findByEmail(userEmail);
+        User user = userService.findById(userId);
 
         return hcsResponseManager.info.User(user);
     }

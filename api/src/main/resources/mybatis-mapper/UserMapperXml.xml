@@ -3,25 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.UserMapper">
+    <cache/>
+
+    <select id="findById" parameterType="long" resultType="com.hcs.domain.User">
+        select *
+        from User
+        where id = #{userId}
+    </select>
 
     <select id="findByEmail" parameterType="String" resultType="com.hcs.domain.User">
         select *
         from User
         where email = #{email}
-    </select>
-
-    <select id="existsByEmail" parameterType="String" resultType="boolean">
-        select IF(COUNT(*) = 1, 1, 0)
-        from User
-        where email = #{email}
-
-    </select>
-
-    <select id="existsByNickname" parameterType="String" resultType="boolean">
-        select IF(COUNT(*) = 1, 1, 0)
-        from User
-        where nickname = #{nickname}
-
     </select>
 
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.User">
