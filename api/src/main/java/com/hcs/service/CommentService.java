@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -18,7 +16,7 @@ public class CommentService {
     private final CommentMapper commentMapper;
     private final ModelMapper modelMapper;
 
-    public long saveNewComment(@Valid CommentDto commentDto, User user, TradePost tradePost) {
+    public long saveNewComment(CommentDto commentDto, User user, TradePost tradePost) {
         Comment comment = modelMapper.map(commentDto, Comment.class);
         comment.setAuthor(user);
         comment.setTradePost(tradePost);

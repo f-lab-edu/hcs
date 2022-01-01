@@ -42,11 +42,12 @@ public class CommentControllerTest {
 
         String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
 
-        long tradePostId = 1L;
+        String tradePostId = "1";
 
         testCommentDto.setContents(contents);
 
-        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "{tradePostId}/comment/add", tradePostId)
+        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment/submit")
+                        .param("postId", tradePostId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testCommentDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -62,7 +63,6 @@ public class CommentControllerTest {
 
         assertThat(commentId).isGreaterThan(0);
         assertThat(success).isTrue();
-
     }
 
     @DisplayName("댓글 달기 - commentDto 오류 - 허용된 댓글 길이 초과")
@@ -71,11 +71,12 @@ public class CommentControllerTest {
 
         String contents = "(테스트용) 허용된 길이를 초과하는 댓글입니다.".repeat(30);
 
-        long tradePostId = 1L;
+        String tradePostId = "1";
 
         testCommentDto.setContents(contents);
 
-        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "{tradePostId}/comment/add", tradePostId)
+        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment/submit")
+                        .param("postId", tradePostId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testCommentDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -94,8 +95,6 @@ public class CommentControllerTest {
 
         assertThat(errorCode).isEqualTo("Length");
         assertThat(message).isEqualTo("길이가 5에서 200 사이여야 합니다");
-
     }
-
 
 }
