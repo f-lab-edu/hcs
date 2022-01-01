@@ -19,6 +19,7 @@ public class ClubService {
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
+        club.setCategoryId(categoryService.getCategoryId(clubDto.getCategory()));
         try {
             clubMapper.insertClub(club);
         } catch (Exception e) {
