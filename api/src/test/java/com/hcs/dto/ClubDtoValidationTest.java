@@ -39,7 +39,7 @@ class ClubDtoValidationTest {
     @DisplayName("club dto validation - 잘못된 입력")
     void ClubDto_wrong_input() throws Exception {
         clubDto.setTitle("");
-        clubDto.setCategoryId(1L);
+        clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
         clubDto.setCreatedAt(LocalDateTime.now());
 
