@@ -7,8 +7,9 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.Lob;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Data
 @AllArgsConstructor
@@ -31,12 +32,18 @@ public class TradePostDto {
     @Lob
     private byte[] pictures;
 
+    @Length(min = 5, max = 100)
+    private String locationName;
+
+    @Min(-90)
+    @Max(90)
+    private double lat;
+
+    @Min(-180)
+    @Max(180)
+    private double lng;
+
     @NotBlank
     @Range(min = 1_000, max = 1_000_000, message = "1,000원 이상 1,000,000원 이하의 범위까지 가능합니다.")
     private Integer price;
-
-    @NotBlank
-    @Pattern(regexp = "^010[-](\\d{4})[-](\\d{4})$")
-    private String phoneNumber;
-
 }
