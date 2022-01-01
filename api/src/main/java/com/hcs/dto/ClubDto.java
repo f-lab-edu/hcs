@@ -24,7 +24,7 @@ public class ClubDto {
     @NotBlank
     private String location;
     @NotBlank
-    private Long categoryId;
+    private String category;
 
     public void setTitle(String title) {
         this.title = title.trim();
