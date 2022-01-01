@@ -3,7 +3,7 @@ package com.hcs.service;
 import com.hcs.domain.Comment;
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
-import com.hcs.dto.CommentDto;
+import com.hcs.dto.request.CommentDto;
 import com.hcs.mapper.CommentMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

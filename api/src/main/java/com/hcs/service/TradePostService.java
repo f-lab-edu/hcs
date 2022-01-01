@@ -1,6 +1,6 @@
 package com.hcs.service;
 
-import com.hcs.dto.TradePostDto;
+import com.hcs.dto.request.TradePostDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

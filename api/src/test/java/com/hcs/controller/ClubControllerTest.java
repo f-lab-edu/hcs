@@ -3,7 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.config.EnableMockMvc;
 import com.hcs.domain.Club;
-import com.hcs.dto.ClubDto;
+import com.hcs.dto.request.ClubDto;
 import com.hcs.mapper.ClubMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;

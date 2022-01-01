@@ -1,7 +1,7 @@
 package com.hcs.service;
 
 import com.hcs.domain.User;
-import com.hcs.dto.SignUpDto;
+import com.hcs.dto.request.SignUpDto;
 import com.hcs.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

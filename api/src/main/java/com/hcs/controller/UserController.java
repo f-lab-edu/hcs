@@ -1,9 +1,11 @@
 package com.hcs.controller;
 
 import com.hcs.domain.User;
-import com.hcs.dto.SignUpDto;
+import com.hcs.dto.request.SignUpDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
+import com.hcs.dto.response.method.HcsInfo;
+import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,8 @@ public class UserController {
 
     private final UserService userService;
     private final HcsResponseManager hcsResponseManager;
+    private final HcsInfo info;
+    private final HcsSubmit submit;
 
     // 테스트 성격의 핸들러. 서비스 후반부터는 deprecated 될것임
     @GetMapping("/sign-up")
@@ -40,7 +44,7 @@ public class UserController {
 
         User newUser = userService.saveNewUser(signUpDto);
 
-        return hcsResponseManager.submit.user(newUser.getId());
+        return hcsResponseManager.makeHcsResponse(submit.user(newUser.getId()));
     }
 
     @GetMapping("/user/info")
@@ -48,6 +52,6 @@ public class UserController {
 
         User user = userService.findById(userId);
 
-        return hcsResponseManager.info.User(user);
+        return hcsResponseManager.makeHcsResponse(info.user(user));
     }
 }
