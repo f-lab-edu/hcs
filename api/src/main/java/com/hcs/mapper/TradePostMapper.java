@@ -8,9 +8,7 @@ public interface TradePostMapper {
 
     TradePost findByTitle(String title);
 
-    Boolean existsByTitle(String title);
-
-    void save(TradePost tradePost);
+    void insert(TradePost tradePost);
 
     void delete(String title);
 
