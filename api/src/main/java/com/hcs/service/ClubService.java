@@ -2,6 +2,7 @@ package com.hcs.service;
 
 import com.hcs.domain.Club;
 import com.hcs.dto.ClubDto;
+import com.hcs.mapper.CategoryMapper;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +16,7 @@ public class ClubService {
 
     private final ModelMapper modelMapper;
     private final ClubMapper clubMapper;
+    private final CategoryService categoryService;
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
