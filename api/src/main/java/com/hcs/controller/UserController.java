@@ -29,17 +29,18 @@ public class UserController {
     private final UserService userService;
     private final HcsResponseManager hcsResponseManager;
 
+    // 테스트 성격의 핸들러. 서비스 후반부터는 deprecated 될것임
     @GetMapping("/sign-up")
     public String signUpForm() {
         return "hi, here is sign-up page";
     }
 
-    @PostMapping("/sign-up")
-    public void registerUser(@Valid @RequestBody SignUpDto signUpDto) throws IOException {
+    @PostMapping("/user/submit")
+    public HcsResponse registerUser(@Valid @RequestBody SignUpDto signUpDto) throws IOException {
 
         User newUser = userService.saveNewUser(signUpDto);
 
-        // TODO HcsResponse로 JSON형식의 내용이 리턴될 것임
+        return hcsResponseManager.submit.user(newUser.getId());
     }
 
     @GetMapping("/user/info")
