@@ -17,8 +17,8 @@
     </select>
 
     <insert id="insertClub" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Club">
-        insert into Club (title, description, createdAt, location, category)
-        values (#{title}, #{description}, #{createdAt}, #{location}, #{category})
+        insert into Club (title, description, createdAt, location, categoryId)
+        values (#{title}, #{description}, #{createdAt}, #{location}, #{categoryId})
     </insert>
 
     <delete id="deleteClubById" parameterType="Long">
@@ -51,7 +51,7 @@
         <result property="description" column="description"/>
         <result property="createdAt" column="createdAt"/>
         <result property="location" column="location"/>
-        <result property="category" column="category"/>
+        <result property="categoryId" column="categoryId"/>
         <collection property="members" javaType="java.util.HashSet" ofType="com.hcs.domain.User">
             <id property="id" column="userId"/>
             <result property="nickname" column="userNickname"/>
@@ -72,7 +72,7 @@
         <result property="description" column="description"/>
         <result property="createdAt" column="createdAt"/>
         <result property="location" column="location"/>
-        <result property="category" column="category"/>
+        <result property="categoryId" column="categoryId"/>
         <collection property="managers" javaType="java.util.HashSet" ofType="com.hcs.domain.User">
             <id property="id" column="userId"/>
             <result property="nickname" column="userNickname"/>
