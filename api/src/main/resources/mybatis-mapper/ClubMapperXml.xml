@@ -92,12 +92,12 @@
 
     <select id="findByPageAndCategory" resultType="com.hcs.domain.Club">
         select *
-        from Club c
-        where c.categoryId = #{categoryId}
+        from Club
+        where categoryId = #{categoryId}
     </select>
 
-    <select id="countByAllClubs"> <!-- TODO : mysql 의 InnoDB engine으로 매번 개수를 구하는 것에 대해 비용 개선 필요 -->
-        select COUNT (*)
+    <select id="countByAllClubs" resultType="long"> <!-- TODO : mysql 의 InnoDB engine으로 매번 개수를 구하는 것에 대해 비용 개선 필요 -->
+        select COUNT(*)
         from Club
     </select>
 
