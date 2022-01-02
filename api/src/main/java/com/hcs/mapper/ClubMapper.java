@@ -35,7 +35,7 @@ public interface ClubMapper {
 
     List<Club> findAllClubs();
 
-    List<Club> findByPageAndCategory(@Param("page") int page, @Param("categoryId") Long categoryId);
+    List<Club> findByPageAndCategory(long categoryId);
 
     Long countByAllClubs();
 

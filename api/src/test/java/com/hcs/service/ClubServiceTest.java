@@ -3,6 +3,8 @@ package com.hcs.service;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.mapper.ClubMapper;
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +15,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class ClubServiceTest {
@@ -25,8 +33,12 @@ class ClubServiceTest {
 
     @Mock
     ClubMapper clubMapper;
+
     @Mock
     ModelMapper modelMapper;
+
+    @Mock
+    SqlSession sqlSession;
 
     static Club fixtureClub;
 
@@ -69,5 +81,40 @@ class ClubServiceTest {
         //then
         assertEquals(club, fixtureClub);
 
+    }
+
+    @DisplayName("페이지숫자, 개수가 주어지면 clubList 반환하기")
+    @Test
+    void getClubListWithPagingAndCategory() {
+        //given
+        int page = 2;
+        int count = 10;
+        long categoryId = 2;
+        List<Club> givenClubList = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            givenClubList.add(new Club());
+        }
+        doReturn(givenClubList).when(sqlSession).selectList(eq("com.hcs.mapper.ClubMapper.findByPageAndCategory"), anyLong(), any(RowBounds.class));
+
+        //when
+        List<Club> clubList = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
+
+        //then
+        assertEquals(givenClubList, clubList);
+        assertEquals(clubList.size(), count);
+    }
+
+    @DisplayName("전체 club 개수 반환하기")
+    @Test
+    void getAllClubCounts() {
+        //given
+        long givenTotalClubCount = 10;
+        given(clubMapper.countByAllClubs()).willReturn(givenTotalClubCount);
+
+        //when
+        long totalClubCount = clubService.getAllClubCounts();
+
+        //then
+        assertEquals(totalClubCount, givenTotalClubCount);
     }
 }

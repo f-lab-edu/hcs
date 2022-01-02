@@ -38,7 +38,7 @@ public class CategoryService {
     public String getCategoryName(long categoryId) {
         List<Category> categoryList = getAllCategory();
         for (Category category : categoryList) {
-            if (category.getId()==categoryId) {
+            if (category.getId() == categoryId) {
                 return category.getName();
             }
         }

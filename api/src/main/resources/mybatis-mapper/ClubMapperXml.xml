@@ -90,7 +90,7 @@
         from Club
     </select>
 
-    <select id="findByPageAndCategory" resultType="com.hcs.domain.Club">
+    <select id="findByPageAndCategory" parameterType="long" resultType="com.hcs.domain.Club">
         select *
         from Club
         where categoryId = #{categoryId}

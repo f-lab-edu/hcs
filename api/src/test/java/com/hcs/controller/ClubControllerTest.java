@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,9 +52,9 @@ class ClubControllerTest {
         clubDto.setCreatedAt(LocalDateTime.now());
 
         mockMvc.perform(post("/club/submit")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clubDto))
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clubDto))
+                        .accept(MediaType.APPLICATION_JSON))
                 //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -93,10 +95,9 @@ class ClubControllerTest {
         clubMapper.insertClub(club);
 
         //when
-
         MvcResult mvcResult = mockMvc.perform(get("/club/info")
-                .param("clubId", club.getId().toString())//올바른 id
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())//올바른 id
+                        .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -131,10 +132,47 @@ class ClubControllerTest {
 
     }
 
+    @DisplayName("특정 카테고리의 club list를 페이징을 사용해 가져오기")
+    @Test
+    void clubList() throws Exception {
+        //given
+        int page = 1, generatedClubSize = 20;
+        long givenCategoryId = 1;
+        String givenCategory = "sports";
+        List<Club> generatedClubList = generateClubWithCategory(generatedClubSize, givenCategoryId);
+
+        //when
+        mockMvc.perform(get("/club/list")
+                        .param("page", String.valueOf(page))
+                        .param("category", givenCategory))
+                //then
+                .andExpect(jsonPath("$.HCS.item.category").value(givenCategory))
+                .andExpect(jsonPath("$.HCS.item.page").value(page))
+                .andExpect(jsonPath("$.HCS.item.totalCount").value(generatedClubSize));
+
+        assertEquals(generatedClubList.get(0).getCategoryId(), givenCategoryId);
+
+    }
+
     private String getBaseUrl(MvcResult mvcResult) {
         String url = mvcResult.getRequest().getRequestURL().toString();
         String uri = mvcResult.getRequest().getRequestURI();
         return mvcResult.getRequest().getRequestURL().toString().replace(mvcResult.getRequest().getRequestURI(), "") + "/";
+    }
+
+    private List<Club> generateClubWithCategory(int clubSize, long categoryId) {
+        List<Club> clubList = new ArrayList<>();
+        for (int i = 0; i < clubSize; i++) {
+            Club club = Club.builder().title("testClub_" + i)
+                    .createdAt(LocalDateTime.now())
+                    .description("this is club for test")
+                    .location("Mars")
+                    .categoryId(categoryId)
+                    .build();
+            clubMapper.insertClub(club);
+            clubList.add(club);
+        }
+        return clubList;
     }
 
 }

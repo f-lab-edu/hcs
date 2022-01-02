@@ -57,13 +57,13 @@ public class ClubController {
     }
 
     @GetMapping("/list")
-    public HcsResponse clubList(@RequestParam("page") int page, @RequestParam("category") long categoryId) {
+    public HcsResponse clubList(@RequestParam("page") int page, @RequestParam("category") String category) {
         //TODO : managers, members 필드 대신 managerCount, memberCount 필드로 변경
 
         int count = 10;
+        long categoryId = categoryService.getCategoryId(category);
         List<Club> clubList = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
         long allClubCounts = clubService.getAllClubCounts();
-        String category = categoryService.getCategoryName(categoryId);
         return responseManager.makeHcsResponse(hcsList.club(clubList, category, page, count, allClubCounts));
     }
 

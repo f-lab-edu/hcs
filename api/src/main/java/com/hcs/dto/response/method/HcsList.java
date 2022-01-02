@@ -68,7 +68,9 @@ public class HcsList {
         for (Club c: clubList) {
             ObjectNode clubNode = objectMapper.valueToTree(c);
             clubNode.remove("categoryId");
+            clubNode.put("clubId", c.getId());
             clubNode.put("clubUrl",domainUrl+"club/"+c.getId());
+            //TODO : member count, manager count 필드 추가
             clubs.add(clubNode);
         }
         return clubs;
