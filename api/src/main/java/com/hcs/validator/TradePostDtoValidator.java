@@ -1,7 +1,7 @@
 package com.hcs.validator;
 
 import com.hcs.domain.TradePost;
-import com.hcs.dto.TradePostDto;
+import com.hcs.dto.request.TradePostDto;
 import com.hcs.service.TradePostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
