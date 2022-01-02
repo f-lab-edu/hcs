@@ -5,7 +5,9 @@ import com.hcs.dto.request.ClubDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsInfo;
+import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
+import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,8 @@ public class ClubController {
     private final HcsResponseManager responseManager;
     private final HcsInfo info;
     private final HcsSubmit submit;
+    private final HcsList hcsList;
+    private final CategoryService categoryService;
 
     @PostMapping("/submit")
     public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto, HttpServletRequest request) {
@@ -42,7 +46,7 @@ public class ClubController {
     }
 
     @GetMapping("/info")
-    public HcsResponse clubInfo(@RequestParam("clubId") Long id, HttpServletRequest request) {
+    public HcsResponse clubInfo(@RequestParam("clubId") long id, HttpServletRequest request) {
         Club club = clubService.getClub(id);
         return responseManager.makeHcsResponse(info.club(club, getBaseUrl(request)));
 
@@ -53,12 +57,14 @@ public class ClubController {
     }
 
     @GetMapping("/list")
-    public HcsResponse clubList(@RequestParam("page")int page,@RequestParam("category") Long categoryId) {
+    public HcsResponse clubList(@RequestParam("page") int page, @RequestParam("category") long categoryId) {
         //TODO : managers, members 필드 대신 managerCount, memberCount 필드로 변경
 
-        List<Club> clubList = clubService.getClubsWithPagingAndCategory(page, categoryId);
-        long allClubCount = clubService.getAllClubCounts();
-        return  responseManager.clubList.club(clubList,clubList.get(0).getCategoryId(),);
+        int count = 10;
+        List<Club> clubList = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
+        long allClubCounts = clubService.getAllClubCounts();
+        String category = categoryService.getCategoryName(categoryId);
+        return responseManager.makeHcsResponse(hcsList.club(clubList, category, page, count, allClubCounts));
     }
 
     //TODO : delete club
