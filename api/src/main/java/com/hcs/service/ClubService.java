@@ -19,6 +19,7 @@ public class ClubService {
     private final ModelMapper modelMapper;
     private final ClubMapper clubMapper;
     private final SqlSession sqlSession;
+    private final CategoryService categoryService;
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
@@ -44,8 +45,7 @@ public class ClubService {
         }
     }
 
-    public List<Club> getClubsWithPagingAndCategory(int page, Long categoryId) {
-        int count = 10;
+    public List<Club> getClubListWithPagingAndCategory(int page, int count, Long categoryId) {
         RowBounds rowBounds = new RowBounds(page * count - 1, count);
         return sqlSession.selectList("com.hcs.mapper.ClubMapper.findByPageAndCategory", categoryId, rowBounds);
     }
