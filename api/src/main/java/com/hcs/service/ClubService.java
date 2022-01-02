@@ -45,12 +45,12 @@ public class ClubService {
         }
     }
 
-    public List<Club> getClubListWithPagingAndCategory(int page, int count, Long categoryId) {
-        RowBounds rowBounds = new RowBounds(page * count - 1, count);
+    public List<Club> getClubListWithPagingAndCategory(int page, int count, long categoryId) {
+        RowBounds rowBounds = new RowBounds((page - 1) * count, count);
         return sqlSession.selectList("com.hcs.mapper.ClubMapper.findByPageAndCategory", categoryId, rowBounds);
     }
 
-    public Long getAllClubCounts() {
+    public long getAllClubCounts() {
         return clubMapper.countByAllClubs();
     }
 }

@@ -7,6 +7,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -124,7 +126,7 @@ class ClubMapperTest {
     @DisplayName("mybatis mapper pagination test")
     @Test
     void findAllClubWithPageTest() {
-        List<Club> clubList = generateClub(30);
+        List<Club> clubList = generateClubWithCategory(30, 1);
         int limit = 5, start = 0;
         RowBounds rowBounds = new RowBounds(start, limit);
         List<Club> pagingClubList = session.selectList("com.hcs.mapper.ClubMapper.findAllClubs", null, rowBounds);
@@ -139,6 +141,41 @@ class ClubMapperTest {
         assertEquals(pagingClubList.size(), limit);
         assertEquals(clubList.get(start).getId(), pagingClubList.get(0).getId());
         assertEquals(clubList.get(start + limit - 1).getId(), pagingClubList.get(limit - 1).getId());
+    }
+
+    @DisplayName("페이지를 적용해 특정카테고리의 club list 가져오기")
+    @ParameterizedTest
+    @ValueSource(ints = {5, 10, 20})
+    void findByPageAndCategory(int count) {
+        //given
+        int start = 1;
+        int givenClubSize = 10;
+        RowBounds rowBounds = new RowBounds(start - 1, count);
+        long givenCategoryId = 2;
+        generateClubWithCategory(givenClubSize, givenCategoryId);
+
+        //when
+        List<Club> clubList = session.selectList("com.hcs.mapper.ClubMapper.findByPageAndCategory", givenCategoryId, rowBounds);
+
+        //then
+        assertEquals(clubList.size(), givenClubSize > count ? count : givenClubSize);
+        for (Club c : clubList) {
+            assertEquals(c.getCategoryId(), givenCategoryId);
+        }
+    }
+
+    @DisplayName("모든 클럽 수 세기")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 10})
+    void countByAllClubs(int givenClubSize){
+        //given
+        List<Club> givenClubList  = generateClubWithCategory(givenClubSize, 1);
+
+        //when
+        long totalClubCount = clubMapper.countByAllClubs();
+
+        //then
+        assertEquals(givenClubSize,totalClubCount);
     }
 
     private Set<User> generateAndJoinClub(Club club, UserType userType, int userSize) {
@@ -162,14 +199,14 @@ class ClubMapperTest {
         return userSet;
     }
 
-    private List<Club> generateClub(int clubSize) {
+    private List<Club> generateClubWithCategory(int clubSize, long categoryId) {
         List<Club> clubList = new ArrayList<>();
         for (int i = 0; i < clubSize; i++) {
             Club club = Club.builder().title("testClub_" + i)
                     .createdAt(LocalDateTime.now())
                     .description("this is club for test")
                     .location("Mars")
-                    .categoryId(1L)
+                    .categoryId(categoryId)
                     .build();
             clubMapper.insertClub(club);
             clubList.add(club);
