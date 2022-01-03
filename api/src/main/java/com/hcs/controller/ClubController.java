@@ -48,7 +48,8 @@ public class ClubController {
     @GetMapping("/info")
     public HcsResponse clubInfo(@RequestParam("clubId") long id, HttpServletRequest request) {
         Club club = clubService.getClub(id);
-        return responseManager.makeHcsResponse(info.club(club, getBaseUrl(request)));
+        String category = categoryService.getCategoryName(club.getCategoryId());
+        return responseManager.makeHcsResponse(info.club(club, getBaseUrl(request),category));
 
     }
 

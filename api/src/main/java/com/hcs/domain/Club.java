@@ -1,6 +1,8 @@
 package com.hcs.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,7 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder({"title","description","category","location","createdAt"})
 public class Club {
 
     @EqualsAndHashCode.Include
@@ -30,10 +33,12 @@ public class Club {
     private Long id;
     private String title;
     private String description;
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdAt;
-    private String location;
+    @JsonProperty("category")
     private Long categoryId;
+    @Temporal(TemporalType.TIMESTAMP)
+    private String location;
+    private LocalDateTime createdAt;
+
 
     @JsonIgnore
     private Set<User> members = new HashSet<>();

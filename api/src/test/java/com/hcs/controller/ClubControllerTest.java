@@ -148,7 +148,9 @@ class ClubControllerTest {
                 //then
                 .andExpect(jsonPath("$.HCS.item.category").value(givenCategory))
                 .andExpect(jsonPath("$.HCS.item.page").value(page))
-                .andExpect(jsonPath("$.HCS.item.totalCount").value(generatedClubSize));
+                .andExpect(jsonPath("$.HCS.item.totalCount").value(generatedClubSize))
+                .andDo(print());
+
 
         assertEquals(generatedClubList.get(0).getCategoryId(), givenCategoryId);
 

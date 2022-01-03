@@ -8,6 +8,7 @@ import com.hcs.domain.TradePost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -66,10 +67,13 @@ public class HcsList {
     private ArrayNode clubs(List<Club> clubList){
         ArrayNode clubs = objectMapper.createArrayNode();
         for (Club c: clubList) {
-            ObjectNode clubNode = objectMapper.valueToTree(c);
-            clubNode.remove("categoryId");
+            ObjectNode clubNode = objectMapper.createObjectNode();
+            ObjectNode club = objectMapper.valueToTree(c);
             clubNode.put("clubId", c.getId());
             clubNode.put("clubUrl",domainUrl+"club/"+c.getId());
+            clubNode.setAll(club);
+            clubNode.remove("category");
+            clubNode.put("createdAt", c.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             //TODO : member count, manager count 필드 추가
             clubs.add(clubNode);
         }
