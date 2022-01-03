@@ -64,13 +64,14 @@ public class HcsList {
 
         return hcs;
     }
-    private ArrayNode clubs(List<Club> clubList){
+
+    private ArrayNode clubs(List<Club> clubList) {
         ArrayNode clubs = objectMapper.createArrayNode();
-        for (Club c: clubList) {
+        for (Club c : clubList) {
             ObjectNode clubNode = objectMapper.createObjectNode();
             ObjectNode club = objectMapper.valueToTree(c);
             clubNode.put("clubId", c.getId());
-            clubNode.put("clubUrl",domainUrl+"club/"+c.getId());
+            clubNode.put("clubUrl", domainUrl + "club/" + c.getId());
             clubNode.setAll(club);
             clubNode.remove("category");
             clubNode.put("createdAt", c.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
