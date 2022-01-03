@@ -33,7 +33,7 @@ public class ClubService {
         return club;
     }
 
-    public Club getClub(Long id) {
+    public Club getClub(long id) {
         Club club = clubMapper.findById(id);
         checkExistingClub(club);
         return club;

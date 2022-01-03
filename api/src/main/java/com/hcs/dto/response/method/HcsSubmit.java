@@ -23,12 +23,12 @@ public class HcsSubmit {
         return hcs;
     }
 
-    public ObjectNode club(Long clubId, String baseUrl) {
+    public ObjectNode club(long clubId, String baseUrl) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
         item.put("clubId", clubId);
-        item.put("clubUrl", baseUrl + "club/" + clubId.toString());
+        item.put("clubUrl", baseUrl + "club/" + clubId);
 
         hcs.put("status", 200);
         hcs.set("item", item);

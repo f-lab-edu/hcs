@@ -14,30 +14,30 @@ import java.util.List;
 @Mapper
 public interface ClubMapper {
 
-    Club findById(Long id);
+    Club findById(long id);
 
     //TODO: return type 을 List 로 변경하기
     Club findByTitle(String title);
 
     void insertClub(Club club);
 
-    void deleteClubById(Long id);
+    void deleteClubById(long id);
 
-    Club findClubWithMembers(Long id);
+    Club findClubWithMembers(long id);
 
-    Club findClubWithManagers(Long id);
+    Club findClubWithManagers(long id);
 
-    void joinMemberById(@Param("clubId") Long clubId, @Param("memberId") Long userId);
+    void joinMemberById(@Param("clubId") long clubId, @Param("memberId") long userId);
 
-    void joinManagerById(@Param("clubId") Long clubId, @Param("managerId") Long userId);
+    void joinManagerById(@Param("clubId") long clubId, @Param("managerId") long userId);
 
-    void deleteClub(Long id);
+    void deleteClub(long id);
 
     List<Club> findAllClubs();
 
     List<Club> findByPageAndCategory(long categoryId);
 
-    Long countByAllClubs();
+    long countByAllClubs();
 
     //TODO: sort
 

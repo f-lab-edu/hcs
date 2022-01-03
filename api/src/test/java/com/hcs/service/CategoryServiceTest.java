@@ -53,12 +53,12 @@ class CategoryServiceTest {
         given(categoryMapper.selectAllCategory()).willReturn(givenCategoryList);
 
         //when
-        Long categoryId = categoryService.getCategoryId(categoryName);
+        long categoryId = categoryService.getCategoryId(categoryName);
 
         //then
         String givenCategoryName="";
         for (Category c: givenCategoryList) {
-            if(categoryId.equals(c.getId()))
+            if(categoryId==c.getId())
                 givenCategoryName = c.getName();
         }
         assertEquals(categoryName,givenCategoryName);
