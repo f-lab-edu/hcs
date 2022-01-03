@@ -22,4 +22,16 @@ public class CategoryService {
     public List<Category> getAllCategory() {
         return categoryMapper.selectAllCategory();
     }
+
+    @Cacheable(value = "categoryId", key = "#categoryName")
+    public Long getCategoryId(String categoryName) {
+        List<Category> categoryList = getAllCategory();
+        for (Category category : categoryList) {
+            if (category.getName().equals(categoryName)) {
+                return category.getId();
+            }
+        }
+        return null; //TODO : 에러 추가
+    }
+
 }

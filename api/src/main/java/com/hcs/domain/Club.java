@@ -33,7 +33,7 @@ public class Club {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
     private String location;
-    private String category;
+    private Long categoryId;
 
     @JsonIgnore
     private Set<User> members = new HashSet<>();

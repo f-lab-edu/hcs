@@ -45,7 +45,7 @@ class ClubControllerTest {
     void createClub_with_correct_input() throws Exception {
         clubDto.setTitle("새마을농구동호회");
         clubDto.setDescription("농구하고싶은사람 모여라");
-        clubDto.setCategory("스포츠/농구");
+        clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
         clubDto.setCreatedAt(LocalDateTime.now());
 
@@ -87,7 +87,7 @@ class ClubControllerTest {
         Club club = Club.builder()
                 .title("testClub")
                 .location("Bucheon")
-                .category("test category")
+                .categoryId(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
         clubMapper.insertClub(club);
