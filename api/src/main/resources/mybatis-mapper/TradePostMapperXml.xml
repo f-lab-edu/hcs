@@ -11,6 +11,12 @@
         where title = #{title}
     </select>
 
+    <select id="findById" parameterType="long" resultType="com.hcs.domain.TradePost">
+        select *
+        from TradePost
+        where id = #{Id}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.TradePost">
         insert into TradePost (authorId, title, productStatus, category, description,
                                pictures, locationName, lat, lng, price, salesStatus, registerationTime)
