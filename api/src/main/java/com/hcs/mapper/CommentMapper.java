@@ -8,6 +8,8 @@ public interface CommentMapper {
 
     Comment findById(long id);
 
+    Comment findByTradePostId(long tradePostId);
+
     long insertComment(Comment comment);
 
     int deleteComment(long id);

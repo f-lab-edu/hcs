@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.CommentMapper">
 
+    <select id="findByTradePostId" parameterType="long" resultType="com.hcs.domain.Comment">
+        select *
+        from Comment
+        where tradePostId = #{tradePostId}
+    </select>
+
     <select id="findById" parameterType="long" resultType="com.hcs.domain.Comment">
         select *
         from Comment
