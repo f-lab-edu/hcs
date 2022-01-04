@@ -7,6 +7,8 @@ import com.hcs.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class HcsInfo {
 
@@ -24,10 +26,14 @@ public class HcsInfo {
         return item;
     }
 
-    private ObjectNode clubInfo(Club club, String baseUrl) {
+    private ObjectNode clubInfo(Club club, String baseUrl, String category) { // baseUrl은 다른 pr에서 삭제예정
         ObjectNode item = objectMapper.createObjectNode();
-        ObjectNode clubNode = objectMapper.valueToTree(club);
+        ObjectNode clubNode = objectMapper.createObjectNode();
         clubNode.put("clubUrl", baseUrl + "club/" + club.getId());
+        ObjectNode clubObject = objectMapper.valueToTree(club).require();
+        clubNode.setAll(clubObject);
+        clubNode.put("category", category);
+        clubNode.put("createdAt", club.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         //TODO : managers ,members 객체 추가
 
@@ -46,9 +52,9 @@ public class HcsInfo {
         return hcs;
     }
 
-    public ObjectNode club(Club club, String baseUrl) {
+    public ObjectNode club(Club club, String baseUrl, String category) {
         ObjectNode hcs = objectMapper.createObjectNode();
-        ObjectNode item = clubInfo(club, baseUrl);
+        ObjectNode item = clubInfo(club, baseUrl, category);
 
         hcs.put("status", 200);
         hcs.set("item", item);

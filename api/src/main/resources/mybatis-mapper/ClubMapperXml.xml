@@ -29,21 +29,21 @@
 
     <insert id="joinMemberById" parameterType="map">
         insert into club_members (clubId, memberId)
-        values(#{clubId}, #{memberId})
+        values (#{clubId}, #{memberId})
     </insert>
 
     <insert id="joinManagerById" parameterType="map">
         insert into club_managers (clubId, managerId)
-        values(#{clubId}, #{managerId})
+        values (#{clubId}, #{managerId})
     </insert>
 
     <select id="findClubWithMembers" parameterType="Long" resultMap="clubWithMemberResult">
-        select c.*, u.id as userId , u.nickname as userNickname
+        select c.*, u.id as userId, u.nickname as userNickname
         from Club c
-        left join Club_members cm on c.id = cm.clubId
-        left join User u on cm.memberId = u.id
+                 left join Club_members cm on c.id = cm.clubId
+                 left join User u on cm.memberId = u.id
         where c.id = #{id}
-       </select>
+    </select>
 
     <resultMap id="clubWithMemberResult" type="com.hcs.domain.Club">
         <id property="id" column="id"/>
@@ -59,12 +59,12 @@
     </resultMap>
 
     <select id="findClubWithManagers" parameterType="Long" resultMap="clubWithManagersResult">
-        select c.*, u.id as userId , u.nickname as userNickname
+        select c.*, u.id as userId, u.nickname as userNickname
         from Club c
-        left join Club_managers cm on c.id = cm.clubId
-        left join User u on cm.managerId = u.id
+                 left join Club_managers cm on c.id = cm.clubId
+                 left join User u on cm.managerId = u.id
         where c.id = #{id}
-       </select>
+    </select>
 
     <resultMap id="clubWithManagersResult" type="com.hcs.domain.Club">
         <id property="id" column="id"/>
@@ -87,6 +87,17 @@
 
     <select id="findAllClubs" resultType="com.hcs.domain.Club">
         select *
+        from Club
+    </select>
+
+    <select id="findByPageAndCategory" parameterType="long" resultType="com.hcs.domain.Club">
+        select *
+        from Club
+        where categoryId = #{categoryId}
+    </select>
+
+    <select id="countByAllClubs" resultType="long"> <!-- TODO : mysql 의 InnoDB engine으로 매번 개수를 구하는 것에 대해 비용 개선 필요 -->
+        select COUNT(*)
         from Club
     </select>
 

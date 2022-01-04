@@ -5,7 +5,9 @@ import com.hcs.dto.request.ClubDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsInfo;
+import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
+import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @ExceptionHandler : 컨트롤러 내에서 특정 예외가 발생했을때 실행될 메소드 위에 사용한다.
@@ -31,6 +34,8 @@ public class ClubController {
     private final HcsResponseManager responseManager;
     private final HcsInfo info;
     private final HcsSubmit submit;
+    private final HcsList hcsList;
+    private final CategoryService categoryService;
 
     @PostMapping("/submit")
     public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto, HttpServletRequest request) {
@@ -41,9 +46,10 @@ public class ClubController {
     }
 
     @GetMapping("/info")
-    public HcsResponse clubInfo(@RequestParam("clubId") Long id, HttpServletRequest request) {
+    public HcsResponse clubInfo(@RequestParam("clubId") long id, HttpServletRequest request) {
         Club club = clubService.getClub(id);
-        return responseManager.makeHcsResponse(info.club(club, getBaseUrl(request)));
+        String category = categoryService.getCategoryName(club.getCategoryId());
+        return responseManager.makeHcsResponse(info.club(club, getBaseUrl(request),category));
 
     }
 
@@ -51,14 +57,16 @@ public class ClubController {
         return request.getRequestURL().toString().replace(request.getRequestURI(), "") + "/";
     }
 
-    //TODO : club list
-//    @GetMapping("/list")
-//    public HcsResponse clubList(@RequestParam("page")int page,@RequestParam("category") String category) {
-//        //TODO : managers, members 필드 대신 managerCount, memberCount 필드로 변경
-//
-//        List<Club> clubList = clubService.getClubsWithPaging(page, category);
-//        return  responseManager.clubList(clubList);
-//    }
+    @GetMapping("/list")
+    public HcsResponse clubList(@RequestParam("page") int page, @RequestParam("category") String category) {
+        //TODO : managers, members 필드 대신 managerCount, memberCount 필드로 변경
+
+        int count = 10;
+        long categoryId = categoryService.getCategoryId(category);
+        List<Club> clubList = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
+        long allClubCounts = clubService.getAllClubCounts();
+        return responseManager.makeHcsResponse(hcsList.club(clubList, category, page, count, allClubCounts));
+    }
 
     //TODO : delete club
 
