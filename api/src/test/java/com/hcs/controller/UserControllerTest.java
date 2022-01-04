@@ -83,7 +83,7 @@ public class UserControllerTest {
         testSignUpDto.setNickname(nickname);
         testSignUpDto.setPassword(password);
 
-        MvcResult mvcResult = mockMvc.perform(post("/sign-up")
+        MvcResult mvcResult = mockMvc.perform(post("/user/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
