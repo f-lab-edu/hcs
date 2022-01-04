@@ -24,14 +24,14 @@ public class CategoryService {
     }
 
     @Cacheable(value = "categoryId", key = "#categoryName")
-    public Long getCategoryId(String categoryName) {
+    public long getCategoryId(String categoryName) {
         List<Category> categoryList = getAllCategory();
         for (Category category : categoryList) {
             if (category.getName().equals(categoryName)) {
                 return category.getId();
             }
         }
-        return null; //TODO : 에러 추가
+        return 0; //TODO : 에러 추가
     }
 
     @Cacheable(value = "categoryName", key = "#categoryId")

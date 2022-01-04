@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.ClubMapper">
 
-    <select id="findById" parameterType="Long" resultType="com.hcs.domain.Club">
+    <select id="findById" parameterType="long" resultType="com.hcs.domain.Club">
         select *
         from Club
         where id = #{id}
@@ -21,7 +21,7 @@
         values (#{title}, #{description}, #{createdAt}, #{location}, #{categoryId})
     </insert>
 
-    <delete id="deleteClubById" parameterType="Long">
+    <delete id="deleteClubById" parameterType="long">
         delete
         from Club
         where HCS.Club.id = #{id}
@@ -37,7 +37,7 @@
         values (#{clubId}, #{managerId})
     </insert>
 
-    <select id="findClubWithMembers" parameterType="Long" resultMap="clubWithMemberResult">
+    <select id="findClubWithMembers" parameterType="long" resultMap="clubWithMemberResult">
         select c.*, u.id as userId, u.nickname as userNickname
         from Club c
                  left join Club_members cm on c.id = cm.clubId
@@ -58,7 +58,8 @@
         </collection>
     </resultMap>
 
-    <select id="findClubWithManagers" parameterType="Long" resultMap="clubWithManagersResult">
+
+    <select id="findClubWithManagers" parameterType="long" resultMap="clubWithManagersResult">
         select c.*, u.id as userId, u.nickname as userNickname
         from Club c
                  left join Club_managers cm on c.id = cm.clubId
@@ -79,7 +80,7 @@
         </collection>
     </resultMap>
 
-    <delete id="deleteClub" parameterType="Long">
+    <delete id="deleteClub" parameterType="long">
         delete
         from Club c
         where c.id = #{id}
