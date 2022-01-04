@@ -35,13 +35,13 @@ public class TradePostDto {
     @Length(min = 5, max = 100)
     private String locationName;
 
-    @Min(-90)
-    @Max(90)
-    private double lat;
-
     @Min(-180)
     @Max(180)
     private double lng;
+
+    @Min(-90)
+    @Max(90)
+    private double lat;
 
     @NotBlank
     @Range(min = 1_000, max = 1_000_000, message = "1,000원 이상 1,000,000원 이하의 범위까지 가능합니다.")
