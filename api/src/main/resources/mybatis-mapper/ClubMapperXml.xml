@@ -58,6 +58,7 @@
         </collection>
     </resultMap>
 
+
     <select id="findClubWithManagers" parameterType="long" resultMap="clubWithManagersResult">
         select c.*, u.id as userId, u.nickname as userNickname
         from Club c
