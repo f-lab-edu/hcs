@@ -93,7 +93,8 @@ class CommentMapperTest {
 
         String insertSql = "insert into Comment (authorId, tradePostId, contents)\n" +
                 "values (?, ?, ?)";
-
+        
+        // 댓글 4개를 
         jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 0});
         jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 1});
         jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 2});
