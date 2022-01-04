@@ -53,6 +53,26 @@ class UserMapperTest {
 
     }
 
+    @DisplayName("UserMapper - 사용자 Id(DB의 Prmiary Key)로 User 찾기")
+    @Test
+    void findByIdTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        insertTestUser(newEmail, newNickname, newPassword);
+
+        Optional<User> insertedUser = Optional.ofNullable(userMapper.findByEmail(newEmail));
+        Optional<User> returnedBy = Optional.ofNullable(userMapper.findById(insertedUser.get().getId()));
+
+        assertThat(returnedBy).isNotEmpty();
+        assertThat(returnedBy.get().getEmail()).isEqualTo(newEmail);
+        assertThat(returnedBy.get().getNickname()).isEqualTo(newNickname);
+        assertThat(returnedBy.get().getPassword()).isEqualTo(newPassword);
+    }
+
+
     @DisplayName("UserMapper - insert 테스트")
     @Test
     void insertUserTest() {
