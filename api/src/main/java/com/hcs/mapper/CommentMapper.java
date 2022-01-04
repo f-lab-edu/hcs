@@ -3,12 +3,14 @@ package com.hcs.mapper;
 import com.hcs.domain.Comment;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface CommentMapper {
 
     Comment findById(long id);
 
-    Comment findByTradePostId(long tradePostId);
+    List<Comment> findByTradePostId(long tradePostId);
 
     long insertComment(Comment comment);
 

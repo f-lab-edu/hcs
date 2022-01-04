@@ -14,6 +14,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,12 +81,12 @@ class CommentMapperTest {
     long insertTestComment(String contents) {
 
         String userEmail = "test@naver.com";
-        String title = "test";
+        String tradePostTitle = "test";
 
-        insertTestUserAndTradePost(userEmail, title);
+        insertTestUserAndTradePost(userEmail, tradePostTitle);
 
         Optional<User> insertedUser = Optional.ofNullable(userMapper.findByEmail(userEmail));
-        Optional<TradePost> insertedTradePost = Optional.ofNullable(tradePostMapper.findByTitle(title));
+        Optional<TradePost> insertedTradePost = Optional.ofNullable(tradePostMapper.findByTitle(tradePostTitle));
 
         long authorId = insertedUser.get().getId();
         long tradePostId = insertedTradePost.get().getId();
@@ -93,7 +94,10 @@ class CommentMapperTest {
         String insertSql = "insert into Comment (authorId, tradePostId, contents)\n" +
                 "values (?, ?, ?)";
 
-        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents});
+        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 0});
+        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 1});
+        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 2});
+        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 3});
 
         return insertedTradePost.get().getId(); // 생성된 comment의 tradePostId를 리턴함
     }
@@ -103,23 +107,32 @@ class CommentMapperTest {
     @Test
     void findByTradePostIdTest() {
 
+        int i = 0;
         String contents = "test 댓글내용";
 
-        Comment selectdComment = commentMapper.findByTradePostId(insertTestComment(contents));
+        List<Comment> selectdComments = commentMapper.findByTradePostId(insertTestComment(contents));
 
-        assertThat(selectdComment.getContents()).isEqualTo("test 댓글내용");
+        for (Comment selectedComment : selectdComments) {
+            Comment comment = commentMapper.findById(selectedComment.getId());
+            assertThat(comment.getContents()).isEqualTo(contents + i);
+            i++;
+        }
     }
 
     @DisplayName("CommentMapper - findById 테스트")
     @Test
     void findByIdTest() {
 
+        int i = 0;
         String contents = "test 댓글내용";
 
-        Comment selectdComment = commentMapper.findByTradePostId(insertTestComment(contents));
-        Comment comment = commentMapper.findById(selectdComment.getId());
+        List<Comment> selectdComments = commentMapper.findByTradePostId(insertTestComment(contents));
 
-        assertThat(comment.getContents()).isEqualTo("test 댓글내용");
+        for (Comment selectedComment : selectdComments) {
+            Comment comment = commentMapper.findById(selectedComment.getId());
+            assertThat(comment.getContents()).isEqualTo(contents + i);
+            i++;
+        }
     }
 
     @DisplayName("CommentMapper - insertComment 테스트")
@@ -133,9 +146,10 @@ class CommentMapperTest {
 
         commentMapper.insertComment(testComment);
 
-        Comment insertedComment = commentMapper.findByTradePostId(8L);
-
-        assertThat(insertedComment).isEqualTo(testComment);
+        List<Comment> insertedComments = commentMapper.findByTradePostId(tradePostId);
+        for (Comment insertedComment : insertedComments) {
+            assertThat(insertedComment).isEqualTo(testComment);
+        }
     }
 
     @DisplayName("CommentMapper - deleteComment 테스트")
