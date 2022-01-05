@@ -1,5 +1,6 @@
 package com.hcs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,18 +22,19 @@ import java.util.Set;
 public class TradePost {
 
     @EqualsAndHashCode.Include
+    @JsonIgnore
     private long id;
 
-    private User author;
     private String title;
+    private User author;
     private String productStatus;
     private String category;
     private String description;
     @Lob
     private byte[] pictures;
     private String locationName;
-    private double lat;
     private double lng;
+    private double lat;
     private int price;
     private int views;
 
