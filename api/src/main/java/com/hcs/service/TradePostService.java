@@ -1,7 +1,6 @@
 package com.hcs.service;
 
 import com.hcs.domain.TradePost;
-
 import com.hcs.dto.request.TradePostDto;
 import com.hcs.mapper.TradePostMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,10 @@ public class TradePostService {
 
     public TradePost findByTitle(String title) {
         return tradePostMapper.findByTitle(title);
+    }
+
+    public TradePost findById(long Id) {
+        return tradePostMapper.findById(Id);
     }
 
 }
