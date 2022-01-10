@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class HcsSubmit {
 
+    private final String domainUrl = "https://localhost:8443/";
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -23,12 +25,12 @@ public class HcsSubmit {
         return hcs;
     }
 
-    public ObjectNode club(long clubId, String baseUrl) {
+    public ObjectNode club(long clubId) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
         item.put("clubId", clubId);
-        item.put("clubUrl", baseUrl + "club/" + clubId);
+        item.put("clubUrl", domainUrl + "club/" + clubId);
 
         hcs.put("status", 200);
         hcs.set("item", item);

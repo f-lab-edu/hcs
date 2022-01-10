@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -38,23 +37,19 @@ public class ClubController {
     private final CategoryService categoryService;
 
     @PostMapping("/submit")
-    public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto, HttpServletRequest request) {
+    public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto) {
         //TODO : 로그인한 유저인지 검증 추가
 
         Club newClub = clubService.saveNewClub(clubDto);
-        return responseManager.makeHcsResponse(submit.club(newClub.getId(), getBaseUrl(request)));
+        return responseManager.makeHcsResponse(submit.club(newClub.getId()));
     }
 
     @GetMapping("/info")
-    public HcsResponse clubInfo(@RequestParam("clubId") long id, HttpServletRequest request) {
+    public HcsResponse clubInfo(@RequestParam("clubId") long id) {
         Club club = clubService.getClub(id);
         String category = categoryService.getCategoryName(club.getCategoryId());
-        return responseManager.makeHcsResponse(info.club(club, getBaseUrl(request),category));
+        return responseManager.makeHcsResponse(info.club(club, category));
 
-    }
-
-    private String getBaseUrl(HttpServletRequest request) {
-        return request.getRequestURL().toString().replace(request.getRequestURI(), "") + "/";
     }
 
     @GetMapping("/list")
@@ -71,18 +66,5 @@ public class ClubController {
     //TODO : delete club
 
     //TODO : update club
-
-    //TODO : exception 옮기기
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ExceptionHandler(NumberFormatException.class)
-//    public ExceptionResult handleNumberFormatException(NumberFormatException e) {
-//        return new ExceptionResult("잘못된 club id 값을 넣었습니다.", e.getMessage());
-//    }
-//
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ExceptionHandler(IllegalArgumentException.class)
-//    public ExceptionResult handleIllegalArgException(IllegalArgumentException e) {
-//        return new ExceptionResult("존재하지 않는 club id 값입니다.", e.getMessage());
-//    }
 
 }

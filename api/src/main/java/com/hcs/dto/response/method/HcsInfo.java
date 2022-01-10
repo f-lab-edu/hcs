@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class HcsInfo {
 
+    private final String domainUrl = "https://localhost:8443/";
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -26,10 +28,10 @@ public class HcsInfo {
         return item;
     }
 
-    private ObjectNode clubInfo(Club club, String baseUrl, String category) { // baseUrl은 다른 pr에서 삭제예정
+    private ObjectNode clubInfo(Club club, String category) {
         ObjectNode item = objectMapper.createObjectNode();
         ObjectNode clubNode = objectMapper.createObjectNode();
-        clubNode.put("clubUrl", baseUrl + "club/" + club.getId());
+        clubNode.put("clubUrl", domainUrl + "club/" + club.getId());
         ObjectNode clubObject = objectMapper.valueToTree(club).require();
         clubNode.setAll(clubObject);
         clubNode.put("category", category);
@@ -52,9 +54,9 @@ public class HcsInfo {
         return hcs;
     }
 
-    public ObjectNode club(Club club, String baseUrl, String category) {
+    public ObjectNode club(Club club, String category) {
         ObjectNode hcs = objectMapper.createObjectNode();
-        ObjectNode item = clubInfo(club, baseUrl, category);
+        ObjectNode item = clubInfo(club, category);
 
         hcs.put("status", 200);
         hcs.set("item", item);
