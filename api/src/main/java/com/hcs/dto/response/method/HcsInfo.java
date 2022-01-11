@@ -1,9 +1,11 @@
 package com.hcs.dto.response.method;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hcs.domain.Club;
 import com.hcs.domain.User;
+import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.dto.response.club.ClubUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +13,6 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class HcsInfo {
-
-    private final String domainUrl = "https://localhost:8443/";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -28,18 +28,30 @@ public class HcsInfo {
         return item;
     }
 
-    private ObjectNode clubInfo(Club club, String category) {
+    private ObjectNode clubInfo(ClubInfoDto clubInfoDto) {
         ObjectNode item = objectMapper.createObjectNode();
         ObjectNode clubNode = objectMapper.createObjectNode();
-        clubNode.put("clubUrl", domainUrl + "club/" + club.getId());
-        ObjectNode clubObject = objectMapper.valueToTree(club).require();
+
+        ObjectNode clubObject = objectMapper.valueToTree(clubInfoDto);
         clubNode.setAll(clubObject);
-        clubNode.put("category", category);
-        clubNode.put("createdAt", club.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        clubNode.remove("clubId"); //상위 json 에서 사용
+        clubNode.put("createdAt", clubInfoDto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-        //TODO : managers ,members 객체 추가
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+        for (ClubUserDto dto : clubInfoDto.getManagers()) {
+            ObjectNode node = objectMapper.valueToTree(dto);
+            arrayNode.add(node);
+        }
+        clubNode.set("managers", arrayNode);
 
-        item.put("clubId", club.getId());
+        arrayNode = objectMapper.createArrayNode();
+        for (ClubUserDto dto : clubInfoDto.getMembers()) {
+            ObjectNode node = objectMapper.valueToTree(dto);
+            arrayNode.add(node);
+        }
+        clubNode.set("members", arrayNode);
+
+        item.put("clubId", clubInfoDto.getClubId());
         item.set("club", clubNode);
         return item;
     }
@@ -54,9 +66,9 @@ public class HcsInfo {
         return hcs;
     }
 
-    public ObjectNode club(Club club, String category) {
+    public ObjectNode club(ClubInfoDto clubInfoDto) {
         ObjectNode hcs = objectMapper.createObjectNode();
-        ObjectNode item = clubInfo(club, category);
+        ObjectNode item = clubInfo(clubInfoDto);
 
         hcs.put("status", 200);
         hcs.set("item", item);
