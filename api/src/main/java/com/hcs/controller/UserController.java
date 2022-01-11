@@ -6,8 +6,10 @@ import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsSubmit;
+import com.hcs.dto.response.user.UserInfoDto;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final ModelMapper modelMapper;
     private final UserService userService;
     private final HcsResponseManager hcsResponseManager;
     private final HcsInfo info;
@@ -51,7 +54,8 @@ public class UserController {
     public HcsResponse userInfo(@RequestParam("userId") long userId) {
 
         User user = userService.findById(userId);
+        UserInfoDto userInfoDto = modelMapper.map(user, UserInfoDto.class);
 
-        return hcsResponseManager.makeHcsResponse(info.user(user));
+        return hcsResponseManager.makeHcsResponse(info.user(userInfoDto));
     }
 }

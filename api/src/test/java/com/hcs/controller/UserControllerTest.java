@@ -71,7 +71,6 @@ public class UserControllerTest {
         mockMvc.perform(get("/sign-up"))
                 .andDo(print())
                 .andExpect(status().isOk());
-
     }
 
     @DisplayName("회원 가입 처리 - 입력값 오류")
@@ -87,7 +86,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
@@ -115,7 +113,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -129,15 +126,13 @@ public class UserControllerTest {
         HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
 
         assertThat(status).isEqualTo(200);
-        assertThat(item.get("userId")).isEqualTo(user.getId().intValue());
+        assertThat(item.get("userId")).isEqualTo((int) user.getId());
 
     }
 
     @DisplayName("사용자 정보 요청시 리턴되는 body를 확인")
     @Test
     void userInfo_with_correct_req() throws Exception {
-        // TODO (테스트를 위해) 사용자 추가
-
         User user = userMapper.findByEmail("noah0504@naver.com");
 
         MvcResult mvcResult = mockMvc.perform(get("/user/info")
@@ -147,18 +142,16 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // TODO mvcResult의 Body를 테스트
-
         String response = mvcResult.getResponse().getContentAsString();
 
         int status = JsonPath.parse(response).read("$.HCS.status");
         HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
 
         assertThat(status).isEqualTo(200);
-        assertThat(item.get("userId")).isEqualTo(user.getId().intValue());
 
         HashMap<String, Object> profile = (HashMap<String, Object>) item.get("profile");
 
+        assertThat(profile.get("userId")).isEqualTo((int) user.getId());
         assertThat(profile.get("email")).isEqualTo(user.getEmail());
         assertThat(profile.get("nickname")).isEqualTo(user.getNickname());
         assertThat(profile.get("emailVerified")).isEqualTo(user.isEmailVerified());

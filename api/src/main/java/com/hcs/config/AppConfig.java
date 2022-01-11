@@ -3,6 +3,8 @@ package com.hcs.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hcs.domain.User;
+import com.hcs.dto.response.user.UserInfoDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTokenizers;
@@ -30,6 +32,11 @@ public class AppConfig {
                 .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE)
                 .setSourceNameTokenizer(NameTokenizers.UNDERSCORE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.typeMap(User.class, UserInfoDto.class).addMappings(mapping -> {
+            mapping.map(User::getId, UserInfoDto::setUserId);
+        });
+
         return modelMapper;
     }
 
