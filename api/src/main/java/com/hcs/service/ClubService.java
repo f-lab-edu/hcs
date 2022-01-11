@@ -59,6 +59,7 @@ public class ClubService {
         for (Club c : clubList) {
             ClubInListDto dto = modelMapper.map(c, ClubInListDto.class);
             dto.setClubUrl(domainUrl + "club/" + dto.getClubId());
+            dto.setCategory(categoryService.getCategoryName(c.getCategoryId()));
             clubInListDtos.add(dto);
         }
         return clubInListDtos;
