@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class ClubInListDto extends ClubDto {
-    private Long clubId;
     private int managerCount;
     private int memberCount;
 }
