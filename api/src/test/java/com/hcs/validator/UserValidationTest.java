@@ -1,7 +1,7 @@
 package com.hcs.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcs.config.EnableMockMvc;
+import com.hcs.annotation.EnableMockMvc;
 import com.hcs.controller.test.TestUserController;
 import com.hcs.controller.test.TestUserControllerWithoutValid;
 import com.hcs.dto.request.SignUpDto;
@@ -54,7 +54,7 @@ public class UserValidationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                        //.with(csrf())) // security 설정 이후 코드 사용 예정
+                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserController.class))
@@ -74,7 +74,7 @@ public class UserValidationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                        //.with(csrf())) // security 설정 이후 코드 사용 예정
+                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserControllerWithoutValid.class))
