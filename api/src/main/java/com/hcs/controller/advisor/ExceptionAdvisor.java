@@ -38,15 +38,16 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ValidationResult handleBindException(BindException bindException, Locale locale) {
-        return ValidationResult.create(bindException, messageSource, locale);
+    public HcsResponse handleBindException(BindException bindException, Locale locale) {
+        ErrorCode error = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
+        ValidationResult errorResults = ValidationResult.create(bindException, messageSource, locale);
+        return hcsResponseManager.makeHcsResponse(hcsException.validation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), errorResults));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NumberFormatException.class)
     public HcsResponse NumberFormatExceptionHandler() {
         ErrorCode error = ErrorCode.NUMBER_FORMAT;
-//        return hcsResponseManager.Exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()));
         return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
