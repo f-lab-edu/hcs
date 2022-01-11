@@ -40,7 +40,6 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-websocket'
-        //implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-jdbc'
         implementation 'org.springframework.boot:spring-boot-test-autoconfigure:2.6.0'
         implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
@@ -59,7 +58,6 @@ subprojects {
         runtimeOnly 'mysql:mysql-connector-java'
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        //testImplementation 'org.springframework.security:spring-security-test:5.5.3'
         testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
         testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.2.0'
     }
