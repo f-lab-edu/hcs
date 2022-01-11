@@ -12,6 +12,7 @@ public class ClubDto {
     private String clubUrl;
     private String title;
     private String description;
+    private String category;
     private String location;
     private LocalDateTime createdAt;
 }
