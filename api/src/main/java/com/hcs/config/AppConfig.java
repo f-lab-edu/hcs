@@ -8,6 +8,7 @@ import com.hcs.domain.User;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.user.UserInfoDto;
+import com.hcs.dto.response.club.ClubInfoDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTokenizers;
