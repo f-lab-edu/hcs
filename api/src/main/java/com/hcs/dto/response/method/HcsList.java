@@ -3,8 +3,8 @@ package com.hcs.dto.response.method;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hcs.domain.Club;
 import com.hcs.domain.TradePost;
+import com.hcs.dto.response.club.ClubInListDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +14,6 @@ import java.util.Map;
 
 @Component
 public class HcsList {
-
-    private final String domainUrl = "https://localhost:8443/";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -48,7 +46,7 @@ public class HcsList {
         return hcs;
     }
 
-    public ObjectNode club(List<Club> clubList, String category, int page, int count, long totalCount) {
+    public ObjectNode club(List<ClubInListDto> clubInListDtos, String category, int page, int count, long totalCount) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
         item.put("page", page);
@@ -56,7 +54,7 @@ public class HcsList {
         item.put("totalCount", totalCount);
         item.put("category", category);
 
-        ArrayNode clubs = clubs(clubList);
+        ArrayNode clubs = clubs(clubInListDtos);
         item.set("clubs", clubs);
 
         hcs.put("status", 200);
@@ -65,17 +63,14 @@ public class HcsList {
         return hcs;
     }
 
-    private ArrayNode clubs(List<Club> clubList) {
+    private ArrayNode clubs(List<ClubInListDto> clubList) {
         ArrayNode clubs = objectMapper.createArrayNode();
-        for (Club c : clubList) {
+        for (ClubInListDto c : clubList) {
             ObjectNode clubNode = objectMapper.createObjectNode();
             ObjectNode club = objectMapper.valueToTree(c);
-            clubNode.put("clubId", c.getId());
-            clubNode.put("clubUrl", domainUrl + "club/" + c.getId());
             clubNode.setAll(club);
             clubNode.remove("category");
             clubNode.put("createdAt", c.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            //TODO : member count, manager count 필드 추가
             clubs.add(clubNode);
         }
         return clubs;

@@ -3,25 +3,17 @@ package com.hcs.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hcs.domain.Club;
+import com.hcs.dto.response.club.ClubInListDto;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTokenizers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-/*
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
- */
 
 @Configuration
 public class AppConfig {
-
-    /* security 설정 이후 코드 사용 예정
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    */
 
     @Bean
     public ModelMapper modelMapper() {
@@ -30,6 +22,11 @@ public class AppConfig {
                 .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE)
                 .setSourceNameTokenizer(NameTokenizers.UNDERSCORE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.typeMap(Club.class, ClubInListDto.class).addMappings(mapping -> {
+            mapping.map(Club::getId, ClubInListDto::setClubId);
+        });
+
         return modelMapper;
     }
 
