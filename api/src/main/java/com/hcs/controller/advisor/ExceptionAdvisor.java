@@ -1,4 +1,4 @@
-package com.hcs.config.advisor;
+package com.hcs.controller.advisor;
 
 import com.hcs.config.advisor.result.ExceptionResult;
 import com.hcs.config.advisor.result.ValidationResult;
