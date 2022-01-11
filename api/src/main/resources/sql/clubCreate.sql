@@ -5,7 +5,7 @@ create table Club
     description                VARCHAR(50),
     createdAt                  datetime NOT NULL,
     location                   VARCHAR(20) NOT NULL,
-    categoryId                 int NOT NULL
-    #managerCount               int DEFAULT 0,
-    #memberCount                int DEFAULT 0 성능 개선시 사용 예정
+    categoryId                 int NOT NULL,
+    managerCount               int DEFAULT 0,
+    memberCount                int DEFAULT 0
 )

@@ -2,6 +2,7 @@ package com.hcs.service;
 
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
+import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.mapper.ClubMapper;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,10 +42,13 @@ class ClubServiceTest {
     @Mock
     SqlSession sqlSession;
 
+    @Mock
+    CategoryService categoryService;
+
     static Club fixtureClub;
 
     @BeforeAll
-    static void init() { //TODO : 추후 test 용 fixer 만들기기
+    static void init() { //TODO : 추후 test 용 fixer 만들기
         fixtureClub = Club.builder().id(1L).title("test club").build();
     }
 
@@ -59,6 +64,7 @@ class ClubServiceTest {
                 "sports");
 
         given(modelMapper.map(correctClubDto, Club.class)).willReturn(fixtureClub);
+        given(categoryService.getCategoryId(eq("sports"))).willReturn(1L);
 
         //when
         Club savedClub = clubService.saveNewClub(correctClubDto);
@@ -90,18 +96,29 @@ class ClubServiceTest {
         int page = 2;
         int count = 10;
         long categoryId = 2;
-        List<Club> givenClubList = new ArrayList<>();
+        List<ClubInListDto> givenClubInListDtos = new ArrayList<>();
+        List<Club> givnClubList = new ArrayList<>();
+        ClubInListDto dto;
         for (int i = 0; i < count; i++) {
-            givenClubList.add(new Club());
+            givnClubList.add(new Club());
+            dto = new ClubInListDto();
+            dto.setClubId(1L);
+            givenClubInListDtos.add(dto);
         }
-        doReturn(givenClubList).when(sqlSession).selectList(eq("com.hcs.mapper.ClubMapper.findByPageAndCategory"), anyLong(), any(RowBounds.class));
+        doReturn(givnClubList).when(sqlSession).selectList(eq("com.hcs.mapper.ClubMapper.findByPageAndCategory"), anyLong(), any(RowBounds.class));
+        ClubInListDto clubInListDto = new ClubInListDto();
+        clubInListDto.setClubId(1L);
+        Club c = new Club();
+        given(modelMapper.map(c, ClubInListDto.class)).willReturn(clubInListDto);
+        String domainUrl = "https://localhost:8443/";
+        ReflectionTestUtils.setField(clubService, "domainUrl", domainUrl); //private field 에 값 주입
 
         //when
-        List<Club> clubList = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
+        List<ClubInListDto> clubInListDtos = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
 
         //then
-        assertEquals(givenClubList, clubList);
-        assertEquals(clubList.size(), count);
+        assertEquals(clubInListDtos.size(), count);
+        assertEquals(clubInListDtos.get(0).getClubUrl(), domainUrl + "club/" + clubInListDtos.get(0).getClubId());
     }
 
     @DisplayName("전체 club 개수 반환하기")
