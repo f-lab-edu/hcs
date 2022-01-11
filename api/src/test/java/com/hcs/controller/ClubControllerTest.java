@@ -44,7 +44,7 @@ class ClubControllerTest {
     private ObjectMapper objectMapper;
 
     @Value("${domain.url}")
-    private String domainUrl = "";
+    private String domainUrl;
 
     @DisplayName("Club Submit - 입력값 정상")
     @Test

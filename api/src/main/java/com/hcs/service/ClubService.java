@@ -24,7 +24,7 @@ public class ClubService {
     private final SqlSession sqlSession;
     private final CategoryService categoryService;
     @Value("${domain.url}")
-    private String domainUrl = "";
+    private String domainUrl;
 
     public Club saveNewClub(@Valid ClubDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
@@ -56,7 +56,7 @@ public class ClubService {
         List<ClubInListDto> clubInListDtos = new ArrayList<>();
         for (Club c : clubList) {
             ClubInListDto dto = modelMapper.map(c, ClubInListDto.class);
-            dto.setClubUrl(domainUrl +"club/"+ dto.getClubId());
+            dto.setClubUrl(domainUrl + "club/" + dto.getClubId());
             clubInListDtos.add(dto);
         }
         return clubInListDtos;
