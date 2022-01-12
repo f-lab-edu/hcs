@@ -108,7 +108,7 @@ class ClubServiceTest {
         List<Club> givnClubList = new ArrayList<>();
         ClubInListDto dto;
         for (int i = 0; i < count; i++) {
-            givnClubList.add(new Club());
+            givnClubList.add(fixtureClub);
             dto = new ClubInListDto();
             dto.setClubId(1L);
             givenClubInListDtos.add(dto);
@@ -116,10 +116,10 @@ class ClubServiceTest {
         doReturn(givnClubList).when(sqlSession).selectList(eq("com.hcs.mapper.ClubMapper.findByPageAndCategory"), anyLong(), any(RowBounds.class));
         ClubInListDto clubInListDto = new ClubInListDto();
         clubInListDto.setClubId(1L);
-        Club c = new Club();
-        given(modelMapper.map(c, ClubInListDto.class)).willReturn(clubInListDto);
+        given(modelMapper.map(fixtureClub, ClubInListDto.class)).willReturn(clubInListDto);
         String domainUrl = "https://localhost:8443/";
         ReflectionTestUtils.setField(clubService, "domainUrl", domainUrl); //private field 에 값 주입
+        given(categoryService.getCategoryName(anyLong())).willReturn("sports");
 
         //when
         List<ClubInListDto> clubInListDtos = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
