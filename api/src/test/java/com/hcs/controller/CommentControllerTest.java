@@ -1,7 +1,7 @@
 package com.hcs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcs.config.EnableMockMvc;
+import com.hcs.annotation.EnableMockMvc;
 import com.hcs.dto.request.CommentDto;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;

@@ -1,7 +1,7 @@
 package com.hcs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcs.config.EnableMockMvc;
+import com.hcs.annotation.EnableMockMvc;
 import com.hcs.domain.User;
 import com.hcs.dto.request.SignUpDto;
 import com.hcs.mapper.UserMapper;

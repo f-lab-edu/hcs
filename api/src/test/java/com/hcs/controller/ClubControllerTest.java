@@ -1,7 +1,7 @@
 package com.hcs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcs.config.EnableMockMvc;
+import com.hcs.annotation.EnableMockMvc;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.mapper.ClubMapper;
@@ -10,6 +10,7 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClubControllerTest {
 
     private static ClubDto clubDto = new ClubDto();
-
+    private final String domainUrl = "https://localhost:8443/";
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -42,7 +43,8 @@ class ClubControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String domainUrl = "https://localhost:8443/";
+    @Value("${domain.url}")
+    private String domainUrl;
 
     @DisplayName("Club Submit - 입력값 정상")
     @Test

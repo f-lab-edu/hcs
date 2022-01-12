@@ -1,6 +1,6 @@
 package com.hcs.controller;
 
-import com.hcs.config.EnableMockMvc;
+import com.hcs.annotation.EnableMockMvc;
 import com.hcs.exception.ErrorCode;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
