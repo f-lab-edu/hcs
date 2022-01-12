@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClubControllerTest {
 
     private static ClubDto clubDto = new ClubDto();
-    private final String domainUrl = "https://localhost:8443/";
+    //    private final String domainUrl = "https://localhost:8443/";
     @Autowired
     private MockMvc mockMvc;
     @Autowired
