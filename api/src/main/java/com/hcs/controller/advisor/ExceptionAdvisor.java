@@ -1,11 +1,11 @@
 package com.hcs.controller.advisor;
 
-import com.hcs.config.advisor.result.ExceptionResult;
-import com.hcs.config.advisor.result.ValidationResult;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
+import com.hcs.exception.result.ExceptionResult;
+import com.hcs.exception.result.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;

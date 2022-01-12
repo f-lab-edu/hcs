@@ -2,7 +2,7 @@ package com.hcs.dto.response.method;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hcs.config.advisor.result.ExceptionResult;
+import com.hcs.exception.result.ExceptionResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.hcs.config.advisor.result;
+package com.hcs.exception.result;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
