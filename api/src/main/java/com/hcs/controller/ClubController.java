@@ -1,15 +1,20 @@
 package com.hcs.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
+import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -54,13 +60,11 @@ public class ClubController {
 
     @GetMapping("/list")
     public HcsResponse clubList(@RequestParam("page") int page, @RequestParam("category") String category) {
-        //TODO : managers, members 필드 대신 managerCount, memberCount 필드로 변경
-
         int count = 10;
         long categoryId = categoryService.getCategoryId(category);
-        List<Club> clubList = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
+        List<ClubInListDto> clubInListDtos = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
         long allClubCounts = clubService.getAllClubCounts();
-        return responseManager.makeHcsResponse(hcsList.club(clubList, category, page, count, allClubCounts));
+        return responseManager.makeHcsResponse(hcsList.club(clubInListDtos, category, page, count, allClubCounts));
     }
 
     //TODO : delete club

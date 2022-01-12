@@ -10,6 +10,7 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,6 +42,9 @@ class ClubControllerTest {
     private ClubMapper clubMapper;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${domain.url}")
+    private String domainUrl;
 
     @DisplayName("Club Submit - 입력값 정상")
     @Test
