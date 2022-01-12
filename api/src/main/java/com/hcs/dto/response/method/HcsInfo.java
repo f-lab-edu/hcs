@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hcs.domain.User;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubUserDto;
+import com.hcs.domain.Club;
+import com.hcs.dto.response.user.UserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +19,10 @@ public class HcsInfo {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private ObjectNode profile(User user) {
-        ObjectNode item = objectMapper.createObjectNode();
-        ObjectNode profile = objectMapper.valueToTree(user);
+    private ObjectNode profile(UserInfoDto userInfoDto) {
 
-        item.put("userId", user.getId());
+        ObjectNode item = objectMapper.createObjectNode();
+        ObjectNode profile = objectMapper.valueToTree(userInfoDto);
 
         item.set("profile", profile);
 
@@ -56,9 +57,9 @@ public class HcsInfo {
         return item;
     }
 
-    public ObjectNode user(User user) {
+    public ObjectNode user(UserInfoDto userInfoDto) {
         ObjectNode hcs = objectMapper.createObjectNode();
-        ObjectNode item = profile(user);
+        ObjectNode item = profile(userInfoDto);
 
         hcs.put("status", 200);
         hcs.set("item", item);

@@ -3,7 +3,9 @@ package com.hcs.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hcs.domain.User;
 import com.hcs.domain.Club;
+import com.hcs.dto.response.user.UserInfoDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import org.modelmapper.ModelMapper;
@@ -23,8 +25,12 @@ public class AppConfig {
                 .setSourceNameTokenizer(NameTokenizers.UNDERSCORE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
+        modelMapper.typeMap(User.class, UserInfoDto.class).addMappings(mapping -> {
+            mapping.map(User::getId, UserInfoDto::setUserId);
+
         modelMapper.typeMap(Club.class, ClubInListDto.class).addMappings(mapping -> {
             mapping.map(Club::getId, ClubInListDto::setClubId);
+
         });
 
         modelMapper.typeMap(Club.class, ClubInfoDto.class).addMappings(mapping -> {
