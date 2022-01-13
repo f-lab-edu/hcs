@@ -9,9 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@MybatisTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[MyBatisConfig]")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")})
 class ClubMapperTest {
 
     @Autowired
@@ -167,15 +167,15 @@ class ClubMapperTest {
     @DisplayName("모든 클럽 수 세기")
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10})
-    void countByAllClubs(int givenClubSize){
+    void countByAllClubs(int givenClubSize) {
         //given
-        List<Club> givenClubList  = generateClubWithCategory(givenClubSize, 1);
+        List<Club> givenClubList = generateClubWithCategory(givenClubSize, 1);
 
         //when
         long totalClubCount = clubMapper.countByAllClubs();
 
         //then
-        assertEquals(givenClubSize,totalClubCount);
+        assertEquals(givenClubSize, totalClubCount);
     }
 
     private Set<User> generateAndJoinClub(Club club, UserType userType, int userSize) {
