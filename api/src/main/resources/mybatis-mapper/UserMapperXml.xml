@@ -3,8 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.UserMapper">
-    <cache/>
-
     <select id="findById" parameterType="long" resultType="com.hcs.domain.User">
         select *
         from User
@@ -30,4 +28,9 @@
         where HCS.User.email = #{email}
     </delete>
 
+    <select id="findUserForJpaByEmail" parameterType="String" resultType="com.hcs.domain.UserForJPA">
+        select *
+        from user_forjpa
+        where email = #{email}
+    </select>
 </mapper>

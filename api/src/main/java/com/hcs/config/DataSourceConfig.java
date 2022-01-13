@@ -6,14 +6,17 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
 
@@ -25,8 +28,9 @@ import javax.sql.DataSource;
  */
 
 @Configuration
+@EnableJpaRepositories(basePackages = "com.hcs.repository", entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 @MapperScan(basePackages = "com.hcs.mapper", sqlSessionFactoryRef = "SqlSessionFactory")
-public class MyBatisConfig {
+public class DataSourceConfig {
 
     @Value("${mybatis.mapper-locations}")
     private String mapperLocation;
@@ -36,6 +40,34 @@ public class MyBatisConfig {
     @ConfigurationProperties(prefix = "spring.datasource.hikari")
     public DataSource DataSource() {
         return DataSourceBuilder.create().build();
+    }
+
+    @Primary
+    @Bean(name = "jpaProperties")
+    @ConfigurationProperties(prefix = "spring.jpa")
+    public JpaProperties jpaProperties() {
+        return new JpaProperties();
+    }
+
+    @Primary
+    @Bean(name = "entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+                                                                       @Qualifier("dataSource") DataSource primaryDataSource,
+                                                                       @Qualifier("jpaProperties") JpaProperties jpaProperties) {
+
+        return builder
+                .dataSource(primaryDataSource)
+                .properties(jpaProperties.getProperties())
+                .packages("com.hcs.domain")
+                .persistenceUnit("default")
+                .build();
+    }
+
+    @Bean(name = "transactionManager")
+    public JpaTransactionManager transactionManager(@Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager(entityManagerFactory.getObject());
+        transactionManager.setNestedTransactionAllowed(true);
+        return transactionManager;
     }
 
     @Bean(name = "SqlSessionFactory")
@@ -50,12 +82,4 @@ public class MyBatisConfig {
     public SqlSessionTemplate SqlSessionTemplate(@Qualifier("SqlSessionFactory") SqlSessionFactory firstSqlSessionFactory) {
         return new SqlSessionTemplate(firstSqlSessionFactory);
     }
-
-    @Bean(name = "txManager")
-    public PlatformTransactionManager txManager(@Qualifier("dataSource") DataSource dataSource) {
-        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource);
-        dataSourceTransactionManager.setNestedTransactionAllowed(true); // nested return dataSourceTransactionManager;
-        return dataSourceTransactionManager;
-    }
-
 }
