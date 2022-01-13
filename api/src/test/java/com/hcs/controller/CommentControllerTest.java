@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.dto.request.CommentDto;
+import com.hcs.mapper.CommentMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,6 +38,9 @@ public class CommentControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    CommentMapper commentMapper;
 
     @DisplayName("댓글 달기 - commentDto 정상")
     @Test
@@ -58,11 +64,15 @@ public class CommentControllerTest {
 
         String response = mvcResult.getResponse().getContentAsString();
 
-        Long commentId = ((Number) JsonPath.parse(response).read("$.commentId")).longValue();
-        boolean success = JsonPath.parse(response).read("$.success");
+        List<Long> commentIds = commentMapper.findByTradePostId(Long.parseLong(tradePostId)).stream().map(comment -> comment.getId()).collect(toList());
 
-        assertThat(commentId).isGreaterThan(0);
-        assertThat(success).isTrue();
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("postId")).isEqualTo(Integer.parseInt(tradePostId));
+        assertThat(item.get("commentId")).isIn(commentIds.stream().map(c -> c.intValue()).collect(toList()));
+        assertThat(item.get("isSuccess")).isEqualTo(true);
     }
 
     @DisplayName("댓글 달기 - commentDto 오류 - 허용된 댓글 길이 초과")
