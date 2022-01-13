@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClubControllerTest {
 
     private static ClubDto clubDto = new ClubDto();
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -92,7 +93,7 @@ class ClubControllerTest {
         String responseJsonClubUrl = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.HCS.item.club.clubUrl");
         assertEquals(requestUrl, responseJsonClubUrl);
 
-        //TODO : managers , members 객체 추가 후 테스트 수정
+        //TODO : managers , members 기능 추가 후 테스트 수정
 
     }
 

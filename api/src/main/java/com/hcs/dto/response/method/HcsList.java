@@ -46,13 +46,13 @@ public class HcsList {
         return hcs;
     }
 
-    public ObjectNode club(List<ClubInListDto> clubInListDtos, String category, int page, int count, long totalCount) {
+    public ObjectNode club(List<ClubInListDto> clubInListDtos, int page, int count, long totalCount) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
         item.put("page", page);
         item.put("count", count);
         item.put("totalCount", totalCount);
-        item.put("category", category);
+        item.put("category", clubInListDtos.get(0).getCategory());
 
         ArrayNode clubs = clubs(clubInListDtos);
         item.set("clubs", clubs);
@@ -69,7 +69,7 @@ public class HcsList {
             ObjectNode clubNode = objectMapper.createObjectNode();
             ObjectNode club = objectMapper.valueToTree(c);
             clubNode.setAll(club);
-            clubNode.remove("category");
+            clubNode.remove("category"); //상위 json 에서 사용
             clubNode.put("createdAt", c.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             clubs.add(clubNode);
         }

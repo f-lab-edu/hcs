@@ -7,6 +7,7 @@ import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.user.UserInfoDto;
+import com.hcs.dto.response.club.ClubInfoDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTokenizers;
@@ -30,6 +31,10 @@ public class AppConfig {
 
         modelMapper.typeMap(Club.class, ClubInListDto.class).addMappings(mapping -> {
             mapping.map(Club::getId, ClubInListDto::setClubId);
+        });
+
+        modelMapper.typeMap(Club.class, ClubInfoDto.class).addMappings(mapping -> {
+            mapping.map(Club::getId, ClubInfoDto::setClubId);
         });
 
         return modelMapper;
