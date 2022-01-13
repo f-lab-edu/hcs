@@ -1,4 +1,4 @@
-package com.hcs.config.advisor.result;
+package com.hcs.exception.result;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,14 +12,12 @@ import java.util.Locale;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FieldErrorDetail {
 
-    private String objectName;
     private String field;
     private String code;
     private String message;
 
     public static FieldErrorDetail create(FieldError fieldError, MessageSource messageSource, Locale locale) {
         return new FieldErrorDetail(
-                fieldError.getObjectName(),
                 fieldError.getField(),
                 fieldError.getCode(),
                 messageSource.getMessage(fieldError, locale));

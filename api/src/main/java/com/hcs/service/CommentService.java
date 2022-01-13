@@ -20,7 +20,8 @@ public class CommentService {
         Comment comment = modelMapper.map(commentDto, Comment.class);
         comment.setAuthor(user);
         comment.setTradePost(tradePost);
-        return commentMapper.insertComment(comment);
+        commentMapper.insertComment(comment);
+        return comment.getId();
     }
 
     // TODO 대댓글 comment를 DB에 반영하는 함수 작성하기

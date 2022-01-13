@@ -1,6 +1,10 @@
 package com.hcs.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,7 +20,7 @@ import java.util.Set;
 public class Comment {
 
     @EqualsAndHashCode.Include
-    private Long id;
+    private long id;
 
     private User author;
     private String contents;
@@ -25,5 +29,4 @@ public class Comment {
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime registerationTime;
-
 }

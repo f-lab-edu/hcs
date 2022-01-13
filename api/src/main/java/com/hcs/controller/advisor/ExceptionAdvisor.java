@@ -1,11 +1,11 @@
 package com.hcs.controller.advisor;
 
-import com.hcs.config.advisor.result.ExceptionResult;
-import com.hcs.config.advisor.result.ValidationResult;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
+import com.hcs.exception.result.ExceptionResult;
+import com.hcs.exception.result.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -38,15 +38,16 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ValidationResult handleBindException(BindException bindException, Locale locale) {
-        return ValidationResult.create(bindException, messageSource, locale);
+    public HcsResponse handleBindException(BindException bindException, Locale locale) {
+        ErrorCode error = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
+        ValidationResult errorResults = ValidationResult.create(bindException, messageSource, locale);
+        return hcsResponseManager.makeHcsResponse(hcsException.validation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), errorResults));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NumberFormatException.class)
     public HcsResponse NumberFormatExceptionHandler() {
         ErrorCode error = ErrorCode.NUMBER_FORMAT;
-//        return hcsResponseManager.Exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()));
         return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 

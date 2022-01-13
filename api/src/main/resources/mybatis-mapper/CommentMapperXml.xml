@@ -19,6 +19,9 @@
     <insert id="insertComment" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Comment">
         insert into Comment (authorId, contents, tradePostId, registerationTime)
         values (#{author.id}, #{contents}, #{tradePost.id}, #{registerationTime})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <delete id="deleteComment" parameterType="long">
