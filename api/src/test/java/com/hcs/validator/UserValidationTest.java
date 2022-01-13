@@ -54,11 +54,10 @@ public class UserValidationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserController.class))
-                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError());
 
     }
 
@@ -74,7 +73,6 @@ public class UserValidationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
-                //.with(csrf())) // security 설정 이후 코드 사용 예정
 
                 .andDo(print())
                 .andExpect(handler().handlerType(TestUserControllerWithoutValid.class))

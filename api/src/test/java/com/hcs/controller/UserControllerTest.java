@@ -92,10 +92,10 @@ public class UserControllerTest {
 
         String response = mvcResult.getResponse().getContentAsString();
 
-        int length = JsonPath.parse(response).read("$.errors.length()");
+        int length = JsonPath.parse(response).read("$.HCS.item.errors.length()");
 
         for (int i = 0; i < length; i++) {
-            String field = JsonPath.parse(response).read("$.errors[" + i + "].field");
+            String field = JsonPath.parse(response).read("$.HCS.item.errors[" + i + "].field");
             assertThat(invalidFields).contains(field);
         }
     }
