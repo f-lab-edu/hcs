@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +42,8 @@ class ClubControllerTest {
     private ClubMapper clubMapper;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Value("${domain.url}")
     private String domainUrl;
@@ -103,7 +105,7 @@ class ClubControllerTest {
         int page = 1, generatedClubSize = 20;
         long givenCategoryId = 1;
         String givenCategory = "sports";
-        List<Club> generatedClubList = generateClubWithCategory(generatedClubSize, givenCategoryId);
+        List<Club> generatedClubList = generateClubBySizeAndCategoryId(generatedClubSize, givenCategoryId);
 
         //when
         mockMvc.perform(get("/club/list")
@@ -119,18 +121,47 @@ class ClubControllerTest {
 
     }
 
-    private List<Club> generateClubWithCategory(int clubSize, long categoryId) {
-        List<Club> clubList = new ArrayList<>();
+    @DisplayName("Club modify - 클럽 정보 업데이트")
+    @Test
+    void modifyClub() throws Exception {
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
+        long clubId = clubList.get(0).getId();
+        String changedCategory = "study";
+        ClubSubmitDto clubSubmitDto = new ClubSubmitDto();
+        String changedDescription = "changed description at " + LocalDateTime.now().getSecond() + "sec";
+        String changedLocation = "changed at " + LocalDateTime.now().getSecond() + "sec";
+        String changedTitle = "changed title at " + LocalDateTime.now().getSecond() + "sec";
+        clubSubmitDto.setCategory(changedCategory);
+        clubSubmitDto.setDescription(changedDescription);
+        clubSubmitDto.setLocation(changedLocation);
+        clubSubmitDto.setTitle(changedTitle);
+
+        mockMvc.perform(post("/club/modify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("clubId", String.valueOf(clubId))
+                        .content(objectMapper.writeValueAsString(clubSubmitDto))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.item.clubId").value(clubId));
+
+    }
+
+    private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
+        String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
+                "values(?,?,?,?)";
         for (int i = 0; i < clubSize; i++) {
-            Club club = Club.builder().title("testClub_" + i)
-                    .createdAt(LocalDateTime.now())
-                    .description("this is club for test")
-                    .location("Mars")
-                    .categoryId(categoryId)
-                    .build();
-            clubMapper.insertClub(club);
-            clubList.add(club);
+            jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i, LocalDateTime.now(), categoryId, "test location"});
+
         }
+        String selectAllClubs = "select * from Club";
+        List<Club> clubList = jdbcTemplate.query(selectAllClubs,
+                (rs, rowNum) -> Club.builder()
+                        .id(rs.getLong("id"))
+                        .title(rs.getString("title"))
+                        .categoryId(rs.getLong("categoryId"))
+                        .location(rs.getString("location"))
+                        .createdAt(LocalDateTime.now())
+                        .build()); // id 값을 가져오기위해 재검색
         return clubList;
     }
 

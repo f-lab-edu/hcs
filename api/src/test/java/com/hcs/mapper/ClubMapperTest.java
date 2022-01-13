@@ -14,14 +14,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @EnableEncryptableProperties
@@ -35,6 +36,8 @@ class ClubMapperTest {
     UserMapper userMapper;
     @Autowired
     SqlSession session;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @DisplayName("ClubMapper - club db에 저장 및 찾기 테스트")
     @Test
@@ -76,7 +79,7 @@ class ClubMapperTest {
         clubMapper.insertClub(club);
         Club aClub = clubMapper.findByTitle("testDeleteClub");
         assertEquals(club.getId(), aClub.getId());
-        clubMapper.deleteClubById(aClub.getId());
+        clubMapper.deleteClub(aClub.getId());
 
         Club newClub = clubMapper.findById(aClub.getId());
         assertNull(newClub);
@@ -126,7 +129,7 @@ class ClubMapperTest {
     @DisplayName("mybatis mapper pagination test")
     @Test
     void findAllClubWithPageTest() {
-        List<Club> clubList = generateClubWithCategory(30, 1);
+        List<Club> clubList = generateClubBySizeAndCategoryId(30, 1);
         int limit = 5, start = 0;
         RowBounds rowBounds = new RowBounds(start, limit);
         List<Club> pagingClubList = session.selectList("com.hcs.mapper.ClubMapper.findAllClubs", null, rowBounds);
@@ -152,7 +155,7 @@ class ClubMapperTest {
         int givenClubSize = 10;
         RowBounds rowBounds = new RowBounds(start - 1, count);
         long givenCategoryId = 2;
-        generateClubWithCategory(givenClubSize, givenCategoryId);
+        generateClubBySizeAndCategoryId(givenClubSize, givenCategoryId);
 
         //when
         List<Club> clubList = session.selectList("com.hcs.mapper.ClubMapper.findByPageAndCategory", givenCategoryId, rowBounds);
@@ -169,7 +172,7 @@ class ClubMapperTest {
     @ValueSource(ints = {1, 5, 10})
     void countByAllClubs(int givenClubSize) {
         //given
-        List<Club> givenClubList = generateClubWithCategory(givenClubSize, 1);
+        List<Club> givenClubList = generateClubBySizeAndCategoryId(givenClubSize, 1);
 
         //when
         long totalClubCount = clubMapper.countByAllClubs();
@@ -178,7 +181,44 @@ class ClubMapperTest {
         assertEquals(givenClubSize, totalClubCount);
     }
 
-    private Set<User> generateAndJoinClub(Club club, UserType userType, int userSize) {
+    @DisplayName("club update")
+    @Test
+    void updateClub() {
+        //given
+        long initCategoryId = 1L;
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, initCategoryId);
+        Club givenClub = clubList.get(0);
+        long changedCategoryId = 2L;
+        String changedDescription = "changed description at " + LocalDateTime.now().getSecond() + "sec";
+        String changedLocation = "changed at " + LocalDateTime.now().getSecond() + "sec";
+        String changedTitle = "changed title at " + LocalDateTime.now().getSecond() + "sec";
+        givenClub.setCategoryId(changedCategoryId);
+        givenClub.setDescription(changedDescription);
+        givenClub.setLocation(changedLocation);
+        givenClub.setTitle(changedTitle);
+
+        //when
+        clubMapper.updateClub(givenClub);
+
+        //then
+        List<Club> list = jdbcTemplate.query("select * from Club where id=" + givenClub.getId()
+                , (rs, rowNum) -> Club.builder()
+                        .id(rs.getLong("id"))
+                        .title(rs.getString("title"))
+                        .description(rs.getString("description"))
+                        .categoryId(rs.getLong("categoryId"))
+                        .location(rs.getString("location"))
+                        .build());
+        Club modifiedClub = list.get(0);
+        assertEquals(givenClub.getId(), modifiedClub.getId());
+        assertEquals(changedTitle, modifiedClub.getTitle());
+        assertEquals(changedDescription, modifiedClub.getDescription());
+        assertEquals(changedCategoryId, modifiedClub.getCategoryId());
+        assertEquals(changedLocation, modifiedClub.getLocation());
+        assertNotEquals(changedCategoryId, initCategoryId);
+    }
+
+        private Set<User> generateAndJoinClub(Club club, UserType userType, int userSize) {
         Set<User> userSet = new HashSet<>();
         for (int i = 0; i < userSize; i++) {
             String username = "testuser" + i;
@@ -199,20 +239,24 @@ class ClubMapperTest {
         return userSet;
     }
 
-    private List<Club> generateClubWithCategory(int clubSize, long categoryId) {
-        List<Club> clubList = new ArrayList<>();
-        for (int i = 0; i < clubSize; i++) {
-            Club club = Club.builder().title("testClub_" + i)
-                    .createdAt(LocalDateTime.now())
-                    .description("this is club for test")
-                    .location("Mars")
-                    .categoryId(categoryId)
-                    .build();
-            clubMapper.insertClub(club);
-            clubList.add(club);
+        private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
+            String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
+                    "values(?,?,?,?)";
+            for (int i = 0; i < clubSize; i++) {
+                jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i, LocalDateTime.now(), categoryId, "test location"});
+
+            }
+            String selectAllClubs = "select * from Club";
+            List<Club> clubList = jdbcTemplate.query(selectAllClubs,
+                    (rs, rowNum) -> Club.builder()
+                            .id(rs.getLong("id"))
+                            .title(rs.getString("title"))
+                            .categoryId(rs.getLong("categoryId"))
+                            .location(rs.getString("location"))
+                            .createdAt(LocalDateTime.now())
+                            .build()); // id 값을 가져오기위해 재검색
+            return clubList;
         }
-        return clubList;
-    }
 
     enum UserType {
         MANAGER,

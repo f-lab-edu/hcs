@@ -60,7 +60,7 @@ public class ClubService {
         List<ClubInListDto> clubInListDtos = new ArrayList<>();
         for (Club c : clubList) {
             ClubInListDto dto = modelMapper.map(c, ClubInListDto.class);
-            dto.setClubUrl(domainUrl + "club/" + dto.getClubId());
+            dto.setClubUrl(makeClubUrl(dto.getClubId()));
             dto.setCategory(categoryService.getCategoryName(c.getCategoryId()));
             clubInListDtos.add(dto);
         }
@@ -75,7 +75,20 @@ public class ClubService {
         Club club = getClub(id);
         ClubInfoDto dto = modelMapper.map(club, ClubInfoDto.class);
         dto.setCategory(categoryService.getCategoryName(club.getCategoryId()));
-        dto.setClubUrl(domainUrl + "club/" + club.getId());
+        dto.setClubUrl(makeClubUrl(club.getId()));
         return dto;
+    }
+
+    public long modifyClub(long clubId, ClubSubmitDto clubDto) {
+        Club club = getClub(clubId);
+        club = modelMapper.map(clubDto, Club.class);
+        club.setCategoryId(categoryService.getCategoryId(clubDto.getCategory()));
+        club.setId(clubId);
+        clubMapper.updateClub(club);
+        return club.getId();
+    }
+
+    public String makeClubUrl(long clubId) {
+        return domainUrl + "club/" + clubId;
     }
 }
