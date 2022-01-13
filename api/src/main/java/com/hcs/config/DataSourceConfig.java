@@ -28,7 +28,7 @@ import javax.sql.DataSource;
  */
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.hcs.repository", entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 @MapperScan(basePackages = "com.hcs.mapper", sqlSessionFactoryRef = "SqlSessionFactory")
 public class DataSourceConfig {
 

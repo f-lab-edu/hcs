@@ -6,9 +6,9 @@ import com.hcs.domain.User;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@MybatisTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[MyBatisConfig]")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")})
 class CommentMapperTest {
 
     User testUser = new User(); // Dummy 데이터
@@ -93,7 +93,7 @@ class CommentMapperTest {
 
         String insertSql = "insert into Comment (authorId, tradePostId, contents)\n" +
                 "values (?, ?, ?)";
-        
+
         // 댓글 4개를 
         jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 0});
         jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 1});
