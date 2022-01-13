@@ -3,7 +3,7 @@ package com.hcs.dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.domain.Club;
-import com.hcs.dto.request.ClubDto;
+import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.mapper.ClubMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class ClubDtoValidationTest {
 
-    ClubDto clubDto = new ClubDto();
+    ClubSubmitDto clubDto = new ClubSubmitDto();
     @Autowired
     MockMvc mockMvc;
     @Autowired

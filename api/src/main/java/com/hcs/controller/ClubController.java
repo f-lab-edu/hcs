@@ -1,7 +1,7 @@
 package com.hcs.controller;
 
 import com.hcs.domain.Club;
-import com.hcs.dto.request.ClubDto;
+import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.club.ClubInListDto;
@@ -39,7 +39,7 @@ public class ClubController {
     private final CategoryService categoryService;
 
     @PostMapping("/submit")
-    public HcsResponse createClub(@Valid @RequestBody ClubDto clubDto) {
+    public HcsResponse createClub(@Valid @RequestBody ClubSubmitDto clubDto) {
         //TODO : 로그인한 유저인지 검증 추가
 
         Club newClub = clubService.saveNewClub(clubDto);

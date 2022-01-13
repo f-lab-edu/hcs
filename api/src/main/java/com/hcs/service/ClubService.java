@@ -1,7 +1,7 @@
 package com.hcs.service;
 
 import com.hcs.domain.Club;
-import com.hcs.dto.request.ClubDto;
+import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.mapper.ClubMapper;
@@ -28,7 +28,7 @@ public class ClubService {
     @Value("${domain.url}")
     private String domainUrl;
 
-    public Club saveNewClub(@Valid ClubDto clubDto) {
+    public Club saveNewClub(@Valid ClubSubmitDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
         club.setCategoryId(categoryService.getCategoryId(clubDto.getCategory()));
         try {

@@ -3,7 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.domain.Club;
-import com.hcs.dto.request.ClubDto;
+import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.mapper.ClubMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class ClubControllerTest {
 
-    private static ClubDto clubDto = new ClubDto();
+    private static ClubSubmitDto clubDto = new ClubSubmitDto();
 
     @Autowired
     private MockMvc mockMvc;

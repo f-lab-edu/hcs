@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClubDto {
+public class ClubSubmitDto {
 
     @NotBlank
     @Length(min = 3, max = 50)

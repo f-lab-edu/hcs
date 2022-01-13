@@ -1,7 +1,7 @@
 package com.hcs.service;
 
 import com.hcs.domain.Club;
-import com.hcs.dto.request.ClubDto;
+import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.mapper.ClubMapper;
@@ -64,7 +64,7 @@ class ClubServiceTest {
     @Test
     void saveNewClub() {
         //given
-        ClubDto correctClubDto = new ClubDto(
+        ClubSubmitDto correctClubDto = new ClubSubmitDto(
                 "club title",
                 "club description",
                 LocalDateTime.now(),
