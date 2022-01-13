@@ -1,20 +1,17 @@
 package com.hcs.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.club.ClubInListDto;
+import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -52,9 +48,8 @@ public class ClubController {
 
     @GetMapping("/info")
     public HcsResponse clubInfo(@RequestParam("clubId") long id) {
-        Club club = clubService.getClub(id);
-        String category = categoryService.getCategoryName(club.getCategoryId());
-        return responseManager.makeHcsResponse(info.club(club, category));
+        ClubInfoDto clubInfoDto = clubService.getClubInfo(id);
+        return responseManager.makeHcsResponse(info.club(clubInfoDto));
 
     }
 
@@ -64,7 +59,7 @@ public class ClubController {
         long categoryId = categoryService.getCategoryId(category);
         List<ClubInListDto> clubInListDtos = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
         long allClubCounts = clubService.getAllClubCounts();
-        return responseManager.makeHcsResponse(hcsList.club(clubInListDtos, category, page, count, allClubCounts));
+        return responseManager.makeHcsResponse(hcsList.club(clubInListDtos, page, count, allClubCounts));
     }
 
     //TODO : delete club

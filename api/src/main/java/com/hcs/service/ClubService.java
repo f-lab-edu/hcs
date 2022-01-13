@@ -3,6 +3,7 @@ package com.hcs.service;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.dto.response.club.ClubInListDto;
+import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
@@ -23,6 +24,7 @@ public class ClubService {
     private final ClubMapper clubMapper;
     private final SqlSession sqlSession;
     private final CategoryService categoryService;
+
     @Value("${domain.url}")
     private String domainUrl;
 
@@ -57,6 +59,7 @@ public class ClubService {
         for (Club c : clubList) {
             ClubInListDto dto = modelMapper.map(c, ClubInListDto.class);
             dto.setClubUrl(domainUrl + "club/" + dto.getClubId());
+            dto.setCategory(categoryService.getCategoryName(c.getCategoryId()));
             clubInListDtos.add(dto);
         }
         return clubInListDtos;
@@ -64,5 +67,13 @@ public class ClubService {
 
     public long getAllClubCounts() {
         return clubMapper.countByAllClubs();
+    }
+
+    public ClubInfoDto getClubInfo(long id) {
+        Club club = getClub(id);
+        ClubInfoDto dto = modelMapper.map(club, ClubInfoDto.class);
+        dto.setCategory(categoryService.getCategoryName(club.getCategoryId()));
+        dto.setClubUrl(domainUrl + "club/" + club.getId());
+        return dto;
     }
 }

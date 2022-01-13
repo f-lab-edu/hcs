@@ -3,6 +3,7 @@ package com.hcs.service;
 import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubDto;
 import com.hcs.dto.response.club.ClubInListDto;
+import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.mapper.ClubMapper;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -49,10 +50,17 @@ class ClubServiceTest {
 
     @BeforeAll
     static void init() { //TODO : 추후 test 용 fixer 만들기
-        fixtureClub = Club.builder().id(1L).title("test club").build();
+        fixtureClub = Club.builder()
+                .id(1L)
+                .title("test club")
+                .categoryId(1L)
+                .createdAt(LocalDateTime.now())
+                .description("description")
+                .location("test location")
+                .build();
     }
 
-    @DisplayName("club dto를 db에 저장한다.")
+    @DisplayName("club dto를 db에 저장하기")
     @Test
     void saveNewClub() {
         //given
@@ -74,7 +82,7 @@ class ClubServiceTest {
 
     }
 
-    @DisplayName("club id로 club 데이터를 가져온다.")
+    @DisplayName("club id로 club 데이터를 가져오기")
     @Test
     void getClub() {
         //given
@@ -100,7 +108,7 @@ class ClubServiceTest {
         List<Club> givnClubList = new ArrayList<>();
         ClubInListDto dto;
         for (int i = 0; i < count; i++) {
-            givnClubList.add(new Club());
+            givnClubList.add(fixtureClub);
             dto = new ClubInListDto();
             dto.setClubId(1L);
             givenClubInListDtos.add(dto);
@@ -108,10 +116,10 @@ class ClubServiceTest {
         doReturn(givnClubList).when(sqlSession).selectList(eq("com.hcs.mapper.ClubMapper.findByPageAndCategory"), anyLong(), any(RowBounds.class));
         ClubInListDto clubInListDto = new ClubInListDto();
         clubInListDto.setClubId(1L);
-        Club c = new Club();
-        given(modelMapper.map(c, ClubInListDto.class)).willReturn(clubInListDto);
+        given(modelMapper.map(fixtureClub, ClubInListDto.class)).willReturn(clubInListDto);
         String domainUrl = "https://localhost:8443/";
         ReflectionTestUtils.setField(clubService, "domainUrl", domainUrl); //private field 에 값 주입
+        given(categoryService.getCategoryName(anyLong())).willReturn("sports");
 
         //when
         List<ClubInListDto> clubInListDtos = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
@@ -133,5 +141,26 @@ class ClubServiceTest {
 
         //then
         assertEquals(totalClubCount, givenTotalClubCount);
+    }
+
+    @DisplayName("id 값이 주어지면 클럽 정보 반환하기")
+    @Test
+    void getClubInfo() {
+        //given
+        long givenClubId = fixtureClub.getId();
+        ClubInfoDto givenDto = new ClubInfoDto();
+        given(clubMapper.findById(fixtureClub.getId())).willReturn(fixtureClub);
+        given(modelMapper.map(fixtureClub, ClubInfoDto.class)).willReturn(givenDto);
+        given(categoryService.getCategoryName(anyLong())).willReturn(eq("sports"));
+        String domainUrl = "https://localhost:8443/";
+        ReflectionTestUtils.setField(clubService, "domainUrl", domainUrl); //private field 에 값 주입
+
+        //when
+        ClubInfoDto clubInfoDto = clubService.getClubInfo(givenClubId);
+
+        //then
+        assertEquals(clubInfoDto, givenDto);
+        assertEquals(clubInfoDto.getClubUrl(), domainUrl + "club/" + fixtureClub.getId());
+
     }
 }
