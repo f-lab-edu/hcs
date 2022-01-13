@@ -67,7 +67,6 @@ class ClubServiceTest {
         ClubSubmitDto correctClubDto = new ClubSubmitDto(
                 "club title",
                 "club description",
-                LocalDateTime.now(),
                 "test location",
                 "sports");
 

@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,8 +17,6 @@ public class ClubSubmitDto {
     private String title;
     @Length(max = 50)
     private String description;
-    @NotNull
-    private LocalDateTime createdAt;
     @NotBlank
     private String location;
     @NotBlank

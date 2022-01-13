@@ -53,7 +53,6 @@ class ClubControllerTest {
         clubDto.setDescription("농구하고싶은사람 모여라");
         clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
-        clubDto.setCreatedAt(LocalDateTime.now());
 
         mockMvc.perform(post("/club/submit")
                         .contentType(MediaType.APPLICATION_JSON)

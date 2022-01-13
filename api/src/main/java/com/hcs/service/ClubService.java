@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class ClubService {
     public Club saveNewClub(@Valid ClubSubmitDto clubDto) {
         Club club = modelMapper.map(clubDto, Club.class);
         club.setCategoryId(categoryService.getCategoryId(clubDto.getCategory()));
+        club.setCreatedAt(LocalDateTime.now());
         try {
             clubMapper.insertClub(club);
         } catch (Exception e) {
