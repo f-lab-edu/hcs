@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.dto.request.CommentDto;
+import com.hcs.exception.ErrorCode;
 import com.hcs.mapper.CommentMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
@@ -92,18 +93,26 @@ public class CommentControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().is4xxClientError())
                 .andReturn();
 
         String response = mvcResult.getResponse().getContentAsString();
 
-        List<String> errorCodes = JsonPath.parse(response).read("$.errors..code");
-        String errorCode = errorCodes.get(0);
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
 
-        List<String> messages = JsonPath.parse(response).read("$.errors..message");
-        String message = messages.get(0);
+        ErrorCode error = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
 
-        assertThat(errorCode).isEqualTo("Length");
+        assertThat(status).isEqualTo(error.getStatus());
+        assertThat(item.get("errorCode")).isEqualTo(error.getErrorCode());
+        assertThat(item.get("message")).isEqualTo(error.getMessage());
+
+        String field = JsonPath.parse(response).read("$.HCS.item.errors[0].field");
+        String code = JsonPath.parse(response).read("$.HCS.item.errors[0].code");
+        String message = JsonPath.parse(response).read("$.HCS.item.errors[0].message");
+
+        assertThat(field).isEqualTo("contents");
+        assertThat(code).isEqualTo("Length");
         assertThat(message).isEqualTo("길이가 5에서 200 사이여야 합니다");
     }
 
