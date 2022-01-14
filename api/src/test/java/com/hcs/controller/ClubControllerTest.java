@@ -157,6 +157,7 @@ class ClubControllerTest {
 
     }
 
+    @DisplayName("Club delete - manager 가 아닌 user 요청, manager 인 user 요청")
     @Test
     void deleteClub() throws Exception {
         List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
