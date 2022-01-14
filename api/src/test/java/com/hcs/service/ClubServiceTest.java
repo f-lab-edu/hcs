@@ -192,4 +192,18 @@ class ClubServiceTest {
         //then
         assertEquals(modifyClubId, fixtureClub.getId());
     }
+
+    @DisplayName("삭제할 clubId 와 managerId 가 주어지면, 삭제한 clubId 반환하기")
+    @Test
+    void deleteClub() {
+        //given
+        long givenClubId = 1L;
+        long givenManagerId = 2L;
+        given(clubMapper.deleteClub(givenClubId, givenManagerId)).willReturn(1);
+
+        //when
+        long deletedClubId = clubService.deleteClub(givenClubId, givenManagerId);
+        //then
+        assertEquals(deletedClubId, givenClubId);
+    }
 }

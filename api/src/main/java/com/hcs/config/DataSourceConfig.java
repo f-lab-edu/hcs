@@ -1,5 +1,6 @@
 package com.hcs.config;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -28,6 +29,7 @@ import javax.sql.DataSource;
  */
 
 @Configuration
+@EnableEncryptableProperties
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 @MapperScan(basePackages = "com.hcs.mapper", sqlSessionFactoryRef = "SqlSessionFactory")
 public class DataSourceConfig {

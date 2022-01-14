@@ -1,18 +1,22 @@
 package com.hcs.controller;
 
 import com.hcs.domain.Club;
+import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.dto.response.method.HcsDelete;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsModify;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
+import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,8 +41,10 @@ public class ClubController {
     private final HcsInfo info;
     private final HcsSubmit submit;
     private final HcsList hcsList;
+    private final HcsDelete hcsDelete;
     private final HcsModify hcsUpdate;
     private final CategoryService categoryService;
+    private final UserService userService;
 
     @PostMapping("/submit")
     public HcsResponse createClub(@Valid @RequestBody ClubSubmitDto clubDto) {
@@ -71,6 +77,11 @@ public class ClubController {
         return responseManager.makeHcsResponse(hcsUpdate.club(clubId, clubUrl));
     }
 
-    //TODO : update club
+    @DeleteMapping("/delete")
+    public HcsResponse deleteClub(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
+        User manager = userService.findByEmail(userEmail);
+        clubService.deleteClub(clubId, manager.getId());
+        return responseManager.makeHcsResponse(hcsDelete.club(clubId));
+    }
 
 }

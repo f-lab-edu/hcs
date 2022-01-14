@@ -1,5 +1,6 @@
 package com.hcs.mapper;
 
+import com.hcs.common.UserType;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
@@ -18,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -27,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]") ,
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[Hcs].*")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")
+        , @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[Hcs].*")})
 class ClubMapperTest {
 
     @Autowired
@@ -67,23 +69,23 @@ class ClubMapperTest {
         assertNull(bClub);
     }
 
-    @DisplayName("ClubMapper - club db에 저장 및 삭제 ")
+    @DisplayName("ClubMapper - 삭제 ")
     @Test
     void deleteTest() {
-        Club club = Club.builder()
-                .title("testDeleteClub")
-                .location("Bucheon")
-                .categoryId(1L)
-                .createdAt(LocalDateTime.now())
-                .build();
+        //given
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
+        Club club = clubList.get(0);
+        Set<User> userSet = generateUserAndJoinClub(club, UserType.MANAGER, 1);
+        Iterator<User> iter = userSet.iterator();
+        User manager = iter.next();
 
-        clubMapper.insertClub(club);
-        Club aClub = clubMapper.findByTitle("testDeleteClub");
-        assertEquals(club.getId(), aClub.getId());
-        clubMapper.deleteClub(aClub.getId());
+        //when
+        int result = clubMapper.deleteClub(club.getId(), manager.getId());
 
-        Club newClub = clubMapper.findById(aClub.getId());
+        //then
+        Club newClub = clubMapper.findById(club.getId());
         assertNull(newClub);
+        assertEquals(result, 1);
     }
 
     @DisplayName("ClubMapper - club member 저장 및 가져오기")
@@ -101,7 +103,7 @@ class ClubMapperTest {
 
         int memberSize = 3;
 
-        Set<User> userSet = generateAndJoinClub(testClub, UserType.MEMBER, memberSize);
+        Set<User> userSet = generateUserAndJoinClub(testClub, UserType.MEMBER, memberSize);
         Club aClubWithMembers = clubMapper.findClubWithMembers(testClub.getId());
         Set<User> memberSet = aClubWithMembers.getMembers();
         assertEquals(userSet, memberSet);
@@ -122,7 +124,7 @@ class ClubMapperTest {
 
         int managerSize = 5;
 
-        Set<User> userSet = generateAndJoinClub(testClub, UserType.MANAGER, managerSize);
+        Set<User> userSet = generateUserAndJoinClub(testClub, UserType.MANAGER, managerSize);
         Club clubWithManagers = clubMapper.findClubWithManagers(testClub.getId());
         assertEquals(userSet, clubWithManagers.getManagers());
     }
@@ -219,7 +221,7 @@ class ClubMapperTest {
         assertNotEquals(changedCategoryId, initCategoryId);
     }
 
-        private Set<User> generateAndJoinClub(Club club, UserType userType, int userSize) {
+    private Set<User> generateUserAndJoinClub(Club club, UserType userType, int userSize) {
         Set<User> userSet = new HashSet<>();
         for (int i = 0; i < userSize; i++) {
             String username = "testuser" + i;
@@ -240,27 +242,22 @@ class ClubMapperTest {
         return userSet;
     }
 
-        private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
-            String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
-                    "values(?,?,?,?)";
-            for (int i = 0; i < clubSize; i++) {
-                jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i, LocalDateTime.now(), categoryId, "test location"});
+    private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
+        String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
+                "values(?,?,?,?)";
+        for (int i = 0; i < clubSize; i++) {
+            jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i, LocalDateTime.now(), categoryId, "test location"});
 
-            }
-            String selectAllClubs = "select * from Club";
-            List<Club> clubList = jdbcTemplate.query(selectAllClubs,
-                    (rs, rowNum) -> Club.builder()
-                            .id(rs.getLong("id"))
-                            .title(rs.getString("title"))
-                            .categoryId(rs.getLong("categoryId"))
-                            .location(rs.getString("location"))
-                            .createdAt(LocalDateTime.now())
-                            .build()); // id 값을 가져오기위해 재검색
-            return clubList;
         }
-
-    enum UserType {
-        MANAGER,
-        MEMBER
+        String selectAllClubs = "select * from Club";
+        List<Club> clubList = jdbcTemplate.query(selectAllClubs,
+                (rs, rowNum) -> Club.builder()
+                        .id(rs.getLong("id"))
+                        .title(rs.getString("title"))
+                        .categoryId(rs.getLong("categoryId"))
+                        .location(rs.getString("location"))
+                        .createdAt(LocalDateTime.now())
+                        .build()); // id 값을 가져오기위해 재검색
+        return clubList;
     }
 }

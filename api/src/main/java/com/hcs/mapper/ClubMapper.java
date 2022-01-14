@@ -29,7 +29,7 @@ public interface ClubMapper {
 
     void joinManagerById(@Param("clubId") long clubId, @Param("managerId") long userId);
 
-    void deleteClub(long id);
+    int deleteClub(@Param("clubId") long clubId, @Param("managerId") long userId);
 
     List<Club> findAllClubs();
 
