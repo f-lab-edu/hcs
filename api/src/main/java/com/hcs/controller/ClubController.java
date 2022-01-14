@@ -8,6 +8,7 @@ import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
+import com.hcs.dto.response.method.HcsModify;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
@@ -36,6 +37,7 @@ public class ClubController {
     private final HcsInfo info;
     private final HcsSubmit submit;
     private final HcsList hcsList;
+    private final HcsModify hcsUpdate;
     private final CategoryService categoryService;
 
     @PostMapping("/submit")
@@ -62,7 +64,12 @@ public class ClubController {
         return responseManager.makeHcsResponse(hcsList.club(clubInListDtos, page, count, allClubCounts));
     }
 
-    //TODO : delete club
+    @PostMapping("/modify")
+    public HcsResponse modifyClub(@RequestBody ClubSubmitDto clubDto, @RequestParam("clubId") long clubId) {
+        clubId = clubService.modifyClub(clubId, clubDto);
+        String clubUrl = clubService.makeClubUrl(clubId);
+        return responseManager.makeHcsResponse(hcsUpdate.club(clubId, clubUrl));
+    }
 
     //TODO : update club
 

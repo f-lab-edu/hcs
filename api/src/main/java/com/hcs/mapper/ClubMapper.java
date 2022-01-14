@@ -21,8 +21,6 @@ public interface ClubMapper {
 
     void insertClub(Club club);
 
-    void deleteClubById(long id);
-
     Club findClubWithMembers(long id);
 
     Club findClubWithManagers(long id);
@@ -38,6 +36,8 @@ public interface ClubMapper {
     List<Club> findByPageAndCategory(long categoryId);
 
     long countByAllClubs();
+
+    void updateClub(Club club);
 
     //TODO: sort
 

@@ -21,12 +21,6 @@
         values (#{title}, #{description}, #{createdAt}, #{location}, #{categoryId})
     </insert>
 
-    <delete id="deleteClubById" parameterType="long">
-        delete
-        from Club
-        where HCS.Club.id = #{id}
-    </delete>
-
     <insert id="joinMemberById" parameterType="map">
         insert into club_members (clubId, memberId)
         values (#{clubId}, #{memberId})
@@ -101,5 +95,14 @@
         select COUNT(*)
         from Club
     </select>
+
+    <update id="updateClub" parameterType="com.hcs.domain.Club">
+        update Club
+        set title = #{title},
+            description = #{description},
+            location = #{location},
+            categoryId = #{categoryId}
+        where id = #{id}
+    </update>
 
 </mapper>

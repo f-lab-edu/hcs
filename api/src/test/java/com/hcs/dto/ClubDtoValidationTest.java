@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,13 +39,11 @@ class ClubDtoValidationTest {
         clubDto.setTitle("");
         clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
-        clubDto.setCreatedAt(LocalDateTime.now());
 
         mockMvc.perform(post("/club/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clubDto))
                         .accept(MediaType.APPLICATION_JSON))
-                //.with(csrf())) // security 설정 이후 코드 사용 예정
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(

@@ -67,7 +67,6 @@ class ClubServiceTest {
         ClubSubmitDto correctClubDto = new ClubSubmitDto(
                 "club title",
                 "club description",
-                LocalDateTime.now(),
                 "test location",
                 "sports");
 
@@ -162,5 +161,35 @@ class ClubServiceTest {
         assertEquals(clubInfoDto, givenDto);
         assertEquals(clubInfoDto.getClubUrl(), domainUrl + "club/" + fixtureClub.getId());
 
+    }
+
+    @DisplayName("저장되있는 club id 와 바꿀 정보 가 담긴 Dto 객체가 주어지면, update 한 club id 반환하기")
+    @Test
+    void modifyClub() {
+        //given
+        ClubSubmitDto clubDto = new ClubSubmitDto(
+                "modify title",
+                "description",
+                "location",
+                "sports"
+        );
+
+        Club modifiedClub = Club.builder()
+                .id(fixtureClub.getId())
+                .title(clubDto.getTitle())
+                .description(clubDto.getDescription())
+                .categoryId(1L)
+                .location(clubDto.getLocation())
+                .build();
+
+        given(categoryService.getCategoryId("sports")).willReturn(1L);
+        given(modelMapper.map(clubDto, Club.class)).willReturn(modifiedClub);
+        given(clubMapper.findById(anyLong())).willReturn(fixtureClub);
+
+        //when
+        long modifyClubId = clubService.modifyClub(fixtureClub.getId(), clubDto);
+
+        //then
+        assertEquals(modifyClubId, fixtureClub.getId());
     }
 }
