@@ -6,6 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +21,8 @@ import java.util.Set;
  */
 
 @Data
+@Entity
+@Table(name = "User")
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
@@ -23,16 +30,40 @@ import java.util.Set;
 public class User {
 
     @EqualsAndHashCode.Include
+    @Id
+    @Column(name = "id")
     private long id;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "nickname")
     private String nickname;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "emailVerified")
     private boolean emailVerified;
+
+    @Column(name = "emailCheckToken")
     private String emailCheckToken;
+
+    @Column(name = "emailCheckTokenGeneratedAt")
     private LocalDateTime emailCheckTokenGeneratedAt;
+
+    @Column(name = "joinedAt")
     private LocalDateTime joinedAt;
+
+    @Column(name = "age")
     private Integer age;
+
+    @Column(name = "position")
     private String position;
+
+    @Column(name = "location")
     private String location;
+
+    @OneToMany(mappedBy = "author")
     private Set<TradePost> tradePostList = new HashSet<>();
 }
