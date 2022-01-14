@@ -79,6 +79,7 @@ public class ClubController {
 
     @DeleteMapping("/delete")
     public HcsResponse deleteClub(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
+        //TODO : 보안 설정 후 userEmail 변경
         User manager = userService.findByEmail(userEmail);
         clubService.deleteClub(clubId, manager.getId());
         return responseManager.makeHcsResponse(hcsDelete.club(clubId));
