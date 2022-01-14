@@ -9,7 +9,7 @@ import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
-import com.hcs.dto.response.method.HcsUpdate;
+import com.hcs.dto.response.method.HcsModify;
 import com.hcs.service.CategoryService;
 import com.hcs.service.ClubService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class ClubController {
     private final HcsInfo info;
     private final HcsSubmit submit;
     private final HcsList hcsList;
-    private final HcsUpdate hcsUpdate;
+    private final HcsModify hcsUpdate;
     private final CategoryService categoryService;
 
     @PostMapping("/submit")
