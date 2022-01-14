@@ -16,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")
+        , @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[Hcs].*")})
 public class CategoryMapperTest {
 
     @Autowired

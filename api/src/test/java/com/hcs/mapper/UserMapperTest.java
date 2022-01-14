@@ -17,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")
+        , @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[Hcs].*")})
 class UserMapperTest {
 
     @Autowired
