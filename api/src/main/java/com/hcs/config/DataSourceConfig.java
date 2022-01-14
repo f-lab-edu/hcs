@@ -29,7 +29,6 @@ import javax.sql.DataSource;
  */
 
 @Configuration
-@EnableEncryptableProperties
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 @MapperScan(basePackages = "com.hcs.mapper", sqlSessionFactoryRef = "SqlSessionFactory")
 public class DataSourceConfig {
