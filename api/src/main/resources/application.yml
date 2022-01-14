@@ -27,7 +27,7 @@ spring:
         format_sql: true
         implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
         physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-        hbm2ddl.auto: update
+        hbm2ddl.auto: none
     open-in-view: false
     show-sql: true
   redis:
