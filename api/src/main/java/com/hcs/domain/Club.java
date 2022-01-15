@@ -34,8 +34,7 @@ public class Club {
     private Long categoryId;
 
     private String location;
-
-    @DateTimeFormat(fallbackPatterns = "yyyy-MM-ddThh:mm:ss")
+    
     private LocalDateTime createdAt;
 
     private Set<User> members = new HashSet<>();
