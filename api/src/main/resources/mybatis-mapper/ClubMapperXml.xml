@@ -75,9 +75,10 @@
     </resultMap>
 
     <delete id="deleteClub" parameterType="long">
-        delete
+        delete c
         from Club c
-        where c.id = #{id}
+            inner join club_managers cm on c.id = cm.clubId
+        where c.id = #{clubId} AND cm.managerId = #{managerId}
     </delete>
 
     <select id="findAllClubs" resultType="com.hcs.domain.Club">
@@ -104,5 +105,11 @@
             categoryId = #{categoryId}
         where id = #{id}
     </update>
+
+    <select id="checkClubManager" parameterType="long" resultType="int">
+        select COUNT(*)
+        from club_managers
+        where clubId = #{clubId} AND managerId = #{managerId}
+    </select>
 
 </mapper>

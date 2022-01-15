@@ -2,9 +2,13 @@ package com.hcs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
+import com.hcs.common.UserType;
 import com.hcs.domain.Club;
+import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
+import com.hcs.exception.ErrorCode;
 import com.hcs.mapper.ClubMapper;
+import com.hcs.mapper.UserMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +23,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,6 +51,8 @@ class ClubControllerTest {
     private ClubMapper clubMapper;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private UserMapper userMapper;
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -146,6 +157,46 @@ class ClubControllerTest {
 
     }
 
+    @DisplayName("Club delete - manager 가 아닌 user 요청, manager 인 user 요청")
+    @Test
+    void deleteClub() throws Exception {
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
+        Club club = clubList.get(0);
+        Set<User> userSet = generateUserAndJoinClub(club, UserType.MANAGER, 1);
+        Iterator<User> iter = userSet.iterator();
+        User manager = iter.next();
+
+        //잘못된 접근 : manager 아닌 user 가 delete 요청
+        User newUser = User.builder().email("newUserTest0@gmail.com")
+                .nickname("newUser")
+                .location("location")
+                .password("qwer1234")
+                .age(12)
+                .joinedAt(LocalDateTime.now()).build();
+        userMapper.insertUser(newUser);
+
+        mockMvc.perform(delete("/club/delete")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", newUser.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.CLUB_ACCESS_DENIED.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()))
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.CLUB_ACCESS_DENIED.getStatus()));
+
+        //올바른 접근
+        mockMvc.perform(delete("/club/delete")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", manager.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.item.clubId").value(club.getId()));
+
+        Club deletedClub = clubMapper.findById(club.getId());
+        assertNull(deletedClub);
+
+    }
+
     private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
         String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
                 "values(?,?,?,?)";
@@ -163,6 +214,27 @@ class ClubControllerTest {
                         .createdAt(LocalDateTime.now())
                         .build()); // id 값을 가져오기위해 재검색
         return clubList;
+    }
+
+    private Set<User> generateUserAndJoinClub(Club club, UserType userType, int userSize) {
+        Set<User> userSet = new HashSet<>();
+        for (int i = 0; i < userSize; i++) {
+            String username = "testuser" + i;
+            User user = User.builder()
+                    .email(username + "@gmail.com")
+                    .nickname(username)
+                    .password(username + "pass").build();
+
+            userMapper.insertUser(user);
+            User newUser = userMapper.findByEmail(username + "@gmail.com");
+            if (userType == UserType.MANAGER) {
+                clubMapper.joinManagerById(club.getId(), newUser.getId());
+            } else if (userType == UserType.MEMBER) {
+                clubMapper.joinMemberById(club.getId(), newUser.getId());
+            }
+            userSet.add(user);
+        }
+        return userSet;
     }
 
 }

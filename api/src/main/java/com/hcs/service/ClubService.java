@@ -4,6 +4,7 @@ import com.hcs.domain.Club;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
@@ -90,5 +91,13 @@ public class ClubService {
 
     public String makeClubUrl(long clubId) {
         return domainUrl + "club/" + clubId;
+    }
+
+    public long deleteClub(long clubId, long managerId) {
+        int result = clubMapper.deleteClub(clubId, managerId);
+        if (result != 1) {
+            throw new ClubAccessDeniedException();
+        }
+        return clubId;
     }
 }
