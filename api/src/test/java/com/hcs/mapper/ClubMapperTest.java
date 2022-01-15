@@ -53,7 +53,7 @@ class ClubMapperTest {
                 .build();
         club.setCreatedAt(LocalDateTime.now());
 
-        clubMapper.insertClub(club);
+        int result = clubMapper.insertClub(club);
 
         Club aClub = clubMapper.findByTitle("testClub");
         Club bClub = clubMapper.findByTitle("BClub");
@@ -65,8 +65,10 @@ class ClubMapperTest {
         //assertEquals(club.getCreatedAt(), aClub.getCreatedAt()); // TODO : 필드에 값 할당시 나노 초 단위 절삭 구현 또는 해당기능을 하는 annotation 추가하기
 
         assertEquals(club.getCategoryId(), aClub.getCategoryId());
-
         assertNull(bClub);
+
+        int successReturnNum = 1; //insert 구문 성공시 1이 반환됨
+        assertEquals(result, successReturnNum);
     }
 
     @DisplayName("ClubMapper - 삭제 ")

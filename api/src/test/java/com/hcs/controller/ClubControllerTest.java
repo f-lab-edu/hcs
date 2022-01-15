@@ -11,8 +11,12 @@ import com.hcs.mapper.ClubMapper;
 import com.hcs.mapper.UserMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,13 +27,17 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -59,26 +67,86 @@ class ClubControllerTest {
     @Value("${domain.url}")
     private String domainUrl;
 
-    @DisplayName("Club Submit - 입력값 정상")
+    User user1;
+    User user2;
+
+    static Stream<Arguments> stringListProvider() {
+        return Stream.of(
+                arguments("1", "123456789012345678901234567890123456789012345678901", " ", "", Arrays.asList("title", "description", "location", "category")),
+                arguments("12345678901234567890123456789012345678901", "", "123456789012345678901", "sports", Arrays.asList("title", "location"))
+        );
+    }
+
+    @BeforeEach
+    void initFixture() {
+        user1 = User.builder()
+                .nickname("user1")
+                .password("user1")
+                .email("user1@test.com")
+                .age(1)
+                .location("1 loc")
+                .build();
+    }
+
+    @DisplayName("Club Submit - 새로운 club 생성과 manager join")
     @Test
-    void createClub_with_correct_input() throws Exception {
+    void createClub() throws Exception {
         clubDto.setTitle("새마을농구동호회");
         clubDto.setDescription("농구하고싶은사람 모여라");
         clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
+        userMapper.insertUser(user1);
 
-        mockMvc.perform(post("/club/submit")
+        MvcResult mvcResult = mockMvc.perform(post("/club/submit")
+                        .param("userEmail", user1.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clubDto))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.HCS.item.clubId").exists());
+                .andExpect(jsonPath("$.HCS.status").value("200"))
+                .andExpect(jsonPath("$.HCS.item.clubId").exists())
+                .andReturn();
+
+        long clubId = Long.parseLong(JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.HCS.item.clubId").toString());
+        Club newClub = clubMapper.findClubWithManagers(clubId);
+        Iterator<User> iterator = newClub.getManagers().iterator();
+        User manager = iterator.next();
+        assertEquals(user1.getId(), manager.getId());
+
+    }
+
+    @DisplayName("Club Submit - ClobSubmitDto valid 요류 응답")
+    @ParameterizedTest(name = "#{index} - {displayName} = Test with Argument={0}, {1}, {2}, {3}")
+    @MethodSource("stringListProvider")
+    void createClub_valid_error_response(String title, String description, String location, String category, List<String> invalidFields) throws Exception {
+        clubDto.setTitle(title);
+        clubDto.setDescription(description);
+        clubDto.setLocation(location);
+        clubDto.setCategory(category);
+
+        MvcResult mvcResult = mockMvc.perform(post("/club/submit")
+                        .param("userEmail", user1.getEmail())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clubDto))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int length = JsonPath.parse(response).read("$.HCS.item.errors.length()");
+
+        for (int i = 0; i < length; i++) {
+            String field = JsonPath.parse(response).read("$.HCS.item.errors[" + i + "].field");
+            assertThat(invalidFields).contains(field);
+        }
     }
 
     @DisplayName("ClubInfo - 클럽 정보 요청")
     @Test
-    void clubInfo() throws Exception { //TODO :
+    void clubInfo() throws Exception {
         Club club = Club.builder()
                 .title("testClub")
                 .location("Bucheon")

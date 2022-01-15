@@ -5,6 +5,7 @@ import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.exception.club.ClubAccessDeniedException;
+import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
@@ -30,15 +31,18 @@ public class ClubService {
     @Value("${domain.url}")
     private String domainUrl;
 
-    public Club saveNewClub(@Valid ClubSubmitDto clubDto) {
+    public Club saveNewClub(@Valid ClubSubmitDto clubDto, long userId) {
         Club club = modelMapper.map(clubDto, Club.class);
         club.setCategoryId(categoryService.getCategoryId(clubDto.getCategory()));
         club.setCreatedAt(LocalDateTime.now());
-        try {
-            clubMapper.insertClub(club);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+
+        int insertClubResult = clubMapper.insertClub(club);
+        if (insertClubResult != 1) {
+            throw new DatabaseException("DB club insert");
+        }
+        int insertManagerResult = clubMapper.joinManagerById(club.getId(), userId);
+        if (insertManagerResult != 1) {
+            throw new DatabaseException("DB club manager insert");
         }
         return club;
     }

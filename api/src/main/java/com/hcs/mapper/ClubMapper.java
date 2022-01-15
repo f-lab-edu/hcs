@@ -3,7 +3,6 @@ package com.hcs.mapper;
 import com.hcs.domain.Club;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public interface ClubMapper {
     //TODO: return type 을 List 로 변경하기
     Club findByTitle(String title);
 
-    void insertClub(Club club);
+    int insertClub(Club club);
 
     Club findClubWithMembers(long id);
 
@@ -27,7 +26,7 @@ public interface ClubMapper {
 
     void joinMemberById(@Param("clubId") long clubId, @Param("memberId") long userId);
 
-    void joinManagerById(@Param("clubId") long clubId, @Param("managerId") long userId);
+    int joinManagerById(@Param("clubId") long clubId, @Param("managerId") long userId);
 
     int deleteClub(@Param("clubId") long clubId, @Param("managerId") long userId);
 

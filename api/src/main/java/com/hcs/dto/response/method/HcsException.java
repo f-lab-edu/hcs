@@ -41,4 +41,17 @@ public class HcsException {
 
         return hcs;
     }
+
+    public ObjectNode exceptionAndLocation(int status, ExceptionResult exceptionResult, String location) {
+
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.valueToTree(exceptionResult);
+
+        item.put("location", location);
+
+        hcs.put("status", status);
+        hcs.set("item", item);
+
+        return hcs;
+    }
 }
