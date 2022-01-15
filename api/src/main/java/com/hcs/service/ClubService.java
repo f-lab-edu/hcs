@@ -35,6 +35,7 @@ public class ClubService {
         Club club = modelMapper.map(clubDto, Club.class);
         club.setCategoryId(categoryService.getCategoryId(clubDto.getCategory()));
         club.setCreatedAt(LocalDateTime.now());
+        club.setManagerCount(1);
 
         int insertClubResult = clubMapper.insertClub(club);
         if (insertClubResult != 1) {

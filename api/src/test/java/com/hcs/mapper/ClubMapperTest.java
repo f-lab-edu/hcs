@@ -50,6 +50,7 @@ class ClubMapperTest {
                 .location("Bucheon")
                 .categoryId(1L)
                 .createdAt(LocalDateTime.now().withNano(0)) // 밀리초 단위 절삭
+                .managerCount(1)
                 .build();
         club.setCreatedAt(LocalDateTime.now());
 
@@ -62,7 +63,7 @@ class ClubMapperTest {
         assertEquals(club.getTitle(), aClub.getTitle());
         assertEquals(club.getLocation(), aClub.getLocation());
         assertEquals(club.getDescription(), aClub.getDescription());
-        //assertEquals(club.getCreatedAt(), aClub.getCreatedAt()); // TODO : 필드에 값 할당시 나노 초 단위 절삭 구현 또는 해당기능을 하는 annotation 추가하기
+        assertEquals(club.getManagerCount(), aClub.getManagerCount());
 
         assertEquals(club.getCategoryId(), aClub.getCategoryId());
         assertNull(bClub);

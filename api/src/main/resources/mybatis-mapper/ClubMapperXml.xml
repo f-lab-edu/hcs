@@ -17,8 +17,8 @@
     </select>
 
     <insert id="insertClub" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Club">
-        insert into Club (title, description, createdAt, location, categoryId)
-        values (#{title}, #{description}, #{createdAt}, #{location}, #{categoryId})
+        insert into Club (title, description, createdAt, location, categoryId, managerCount)
+        values (#{title}, #{description}, #{createdAt}, #{location}, #{categoryId}, #{managerCount})
     </insert>
 
     <insert id="joinMemberById" parameterType="map">

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +35,7 @@ public class Club {
 
     private String location;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(fallbackPatterns = "yyyy-MM-ddThh:mm:ss")
     private LocalDateTime createdAt;
 
     private Set<User> members = new HashSet<>();

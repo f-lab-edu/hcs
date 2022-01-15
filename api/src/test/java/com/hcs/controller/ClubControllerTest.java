@@ -113,6 +113,7 @@ class ClubControllerTest {
         Iterator<User> iterator = newClub.getManagers().iterator();
         User manager = iterator.next();
         assertEquals(user1.getId(), manager.getId());
+        assertEquals(newClub.getManagerCount(),newClub.getManagers().size());
 
     }
 
