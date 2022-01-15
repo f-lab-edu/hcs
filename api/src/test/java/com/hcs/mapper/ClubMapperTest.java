@@ -224,6 +224,25 @@ class ClubMapperTest {
         assertNotEquals(changedCategoryId, initCategoryId);
     }
 
+    @DisplayName(" club id 와 user id 가 주어지면 manager 등록하기")
+    @Test
+    void joinManagerById() {
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
+        Club club = clubList.get(0);
+        User user = generateUser("test");
+
+        int result = clubMapper.joinManagerById(club.getId(), user.getId());
+
+        assertEquals(result, 1);
+
+        String selectUserByEmail = "select count(*) from club_managers " +
+                "where clubId = '" + club.getId() + "'" +
+                "and managerId  ='" + user.getId() + "'";
+        int managerCount = jdbcTemplate.queryForObject(selectUserByEmail, int.class);
+
+        assertEquals(managerCount, 1);
+    }
+
     private Set<User> generateUserAndJoinClub(Club club, UserType userType, int userSize) {
         Set<User> userSet = new HashSet<>();
         for (int i = 0; i < userSize; i++) {
@@ -262,5 +281,23 @@ class ClubMapperTest {
                         .createdAt(LocalDateTime.now())
                         .build()); // id 값을 가져오기위해 재검색
         return clubList;
+    }
+
+    private User generateUser(String name) {
+        String email = name + "@test.com";
+
+        String insertSql = "insert into User (email, nickname, password)\n" +
+                "values (?, ?, ?)";
+
+        jdbcTemplate.update(insertSql, new Object[]{email, name, name + "pass"});
+
+        String selectUserByEmail = "select * from User where email ='" + email + "'";
+        List<User> userList = jdbcTemplate.query(selectUserByEmail,
+                (rs, rowNum) -> User.builder()
+                        .id(rs.getLong("id"))
+                        .nickname(rs.getString("nickname"))
+                        .email(rs.getString("email"))
+                        .build());
+        return userList.get(0);
     }
 }
