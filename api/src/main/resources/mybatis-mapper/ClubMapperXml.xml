@@ -46,6 +46,8 @@
         <result property="createdAt" column="createdAt"/>
         <result property="location" column="location"/>
         <result property="categoryId" column="categoryId"/>
+        <result property="managerCount" column="managerCount"/>
+        <result property="memberCount" column="memberCount"/>
         <collection property="members" javaType="java.util.HashSet" ofType="com.hcs.domain.User">
             <id property="id" column="userId"/>
             <result property="nickname" column="userNickname"/>
@@ -68,6 +70,8 @@
         <result property="createdAt" column="createdAt"/>
         <result property="location" column="location"/>
         <result property="categoryId" column="categoryId"/>
+        <result property="managerCount" column="managerCount"/>
+        <result property="memberCount" column="memberCount"/>
         <collection property="managers" javaType="java.util.HashSet" ofType="com.hcs.domain.User">
             <id property="id" column="userId"/>
             <result property="nickname" column="userNickname"/>
