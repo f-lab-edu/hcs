@@ -4,7 +4,7 @@ import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
-import com.hcs.exception.club.AlreadyJoinedException;
+import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.exception.result.ExceptionResult;
@@ -69,9 +69,9 @@ public class ExceptionAdvisor {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(AlreadyJoinedException.class)
+    @ExceptionHandler(AlreadyJoinedClubException.class)
     public HcsResponse alreadyJoinedExceptionHandler() {
-        ErrorCode error = ErrorCode.ALREADY_JOINED;
+        ErrorCode error = ErrorCode.ALREADY_JOINED_CLUB;
         return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 

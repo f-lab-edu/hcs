@@ -6,7 +6,7 @@ import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
-import com.hcs.exception.club.AlreadyJoinedException;
+import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.ClubMapper;
@@ -124,7 +124,7 @@ public class ClubService {
     public void checkAlreadyJoinedClub(Club club, User user) {
         if (clubMapper.checkClubManager(club.getId(), user.getId()) ||
                 clubMapper.checkClubMember(club.getId(), user.getId())) {
-            throw new AlreadyJoinedException();
+            throw new AlreadyJoinedClubException();
         }
     }
 

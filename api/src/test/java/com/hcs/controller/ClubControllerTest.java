@@ -288,9 +288,9 @@ class ClubControllerTest {
                         .param("userEmail", user.getEmail())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED.getErrorCode()))
-                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED.getMessage()))
-                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED.getStatus()));
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED_CLUB.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED_CLUB.getMessage()))
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED_CLUB.getStatus()));
 
         //잘못된 요청 : 이미 가입한 manager
         mockMvc.perform(post("/club/members")
@@ -298,9 +298,9 @@ class ClubControllerTest {
                         .param("userEmail", manager.getEmail())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED.getErrorCode()))
-                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED.getMessage()))
-                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED.getStatus()));
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED_CLUB.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED_CLUB.getMessage()))
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED_CLUB.getStatus()));
     }
 
     private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {

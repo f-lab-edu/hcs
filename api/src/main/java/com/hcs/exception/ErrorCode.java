@@ -12,7 +12,7 @@ public enum ErrorCode {
     DATABASE_ERROR(500, -3, "db access error"),
 
     CLUB_ACCESS_DENIED(400, -100, "해당 club 의 manager 만 접근이 가능합니다."),
-    ALREADY_JOINED(400, -101, "이미 club 에 등록한 user 입니다");
+    ALREADY_JOINED_CLUB(400, -101, "이미 club 에 등록한 user 입니다");
 
     private int status;
     private int errorCode;
