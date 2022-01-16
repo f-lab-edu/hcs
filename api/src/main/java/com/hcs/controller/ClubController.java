@@ -47,10 +47,10 @@ public class ClubController {
     private final UserService userService;
 
     @PostMapping("/submit")
-    public HcsResponse createClub(@Valid @RequestBody ClubSubmitDto clubDto) {
+    public HcsResponse createClub(@Valid @RequestBody ClubSubmitDto clubDto, @RequestParam("userEmail") String userEmail) {
         //TODO : 로그인한 유저인지 검증 추가
-
-        Club newClub = clubService.saveNewClub(clubDto);
+        User manager = userService.findByEmail(userEmail);
+        Club newClub = clubService.saveNewClub(clubDto, manager.getId());
         return responseManager.makeHcsResponse(submit.club(newClub.getId()));
     }
 

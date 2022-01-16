@@ -1,6 +1,7 @@
 package com.hcs.service;
 
 import com.hcs.domain.Club;
+import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
@@ -49,7 +50,7 @@ class ClubServiceTest {
     static Club fixtureClub;
 
     @BeforeAll
-    static void init() { //TODO : 추후 test 용 fixer 만들기
+    static void init() {
         fixtureClub = Club.builder()
                 .id(1L)
                 .title("test club")
@@ -69,12 +70,20 @@ class ClubServiceTest {
                 "club description",
                 "test location",
                 "sports");
+        User manager = User.builder().id(1L)
+                .email("testUser@gmail.com")
+                .location("testloca")
+                .age(1)
+                .nickname("testuser")
+                .password("1234qwer").build();
 
         given(modelMapper.map(correctClubDto, Club.class)).willReturn(fixtureClub);
         given(categoryService.getCategoryId(eq("sports"))).willReturn(1L);
+        given(clubMapper.insertClub(any(Club.class))).willReturn(1);
+        given(clubMapper.joinManagerById(anyLong(), anyLong())).willReturn(1);
 
         //when
-        Club savedClub = clubService.saveNewClub(correctClubDto);
+        Club savedClub = clubService.saveNewClub(correctClubDto, manager.getId());
 
         //then
         assertEquals(savedClub, fixtureClub);
