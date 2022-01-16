@@ -60,7 +60,7 @@ public class ExceptionAdvisor {
         return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DatabaseException.class)
     public HcsResponse databaseExceptionHandler(DatabaseException e) {
         ErrorCode error = ErrorCode.DATABASE_ERROR;
