@@ -1,9 +1,12 @@
 package com.hcs.service;
 
 import com.hcs.domain.Club;
+import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.dto.response.club.ClubJoinDto;
+import com.hcs.exception.club.AlreadyJoinedException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.ClubMapper;
@@ -105,4 +108,32 @@ public class ClubService {
         }
         return clubId;
     }
+
+    public ClubJoinDto joinClub(long clubId, User user) {
+        Club club = getClub(clubId);
+        checkAlreadyJoinedClub(club, user);
+        int result = clubMapper.joinMemberById(club.getId(), user.getId());
+        if (result != 1) {
+            throw new DatabaseException("DB club_members insert error");
+        }
+        plusMemberCount(club);
+        ClubJoinDto dto = new ClubJoinDto(user.getId(), club.getMemberCount());
+        return dto;
+    }
+
+    public void checkAlreadyJoinedClub(Club club, User user) {
+        if (clubMapper.checkClubManager(club.getId(), user.getId()) ||
+                clubMapper.checkClubMember(club.getId(), user.getId())) {
+            throw new AlreadyJoinedException();
+        }
+    }
+
+    public void plusMemberCount(Club club) {
+        club.setMemberCount(club.getMemberCount() + 1);
+        int result = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
+        if (result != 1) {
+            throw new DatabaseException("DB club memberCount update");
+        }
+    }
+
 }

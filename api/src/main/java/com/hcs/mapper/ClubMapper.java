@@ -24,7 +24,9 @@ public interface ClubMapper {
 
     Club findClubWithManagers(long id);
 
-    void joinMemberById(@Param("clubId") long clubId, @Param("memberId") long userId);
+    Club findClubWithManagersAndMembers(long id);
+
+    int joinMemberById(@Param("clubId") long clubId, @Param("memberId") long userId);
 
     int joinManagerById(@Param("clubId") long clubId, @Param("managerId") long userId);
 
@@ -37,6 +39,12 @@ public interface ClubMapper {
     long countByAllClubs();
 
     void updateClub(Club club);
+
+    boolean checkClubManager(@Param("clubId") long clubId, @Param("managerId") long userId);
+
+    boolean checkClubMember(@Param("clubId") long clubId, @Param("memberId") long userId);
+
+    int updateMemberCount(@Param("id") long id, @Param("memberCount") int memberCount);
 
     //TODO: sort
 

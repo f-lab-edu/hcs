@@ -67,8 +67,7 @@ class ClubControllerTest {
     @Value("${domain.url}")
     private String domainUrl;
 
-    User user1;
-    User user2;
+    User fixtureUser1;
 
     static Stream<Arguments> stringListProvider() {
         return Stream.of(
@@ -79,7 +78,7 @@ class ClubControllerTest {
 
     @BeforeEach
     void initFixture() {
-        user1 = User.builder()
+        fixtureUser1 = User.builder()
                 .nickname("user1")
                 .password("user1")
                 .email("user1@test.com")
@@ -95,10 +94,10 @@ class ClubControllerTest {
         clubDto.setDescription("농구하고싶은사람 모여라");
         clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
-        userMapper.insertUser(user1);
+        userMapper.insertUser(fixtureUser1);
 
         MvcResult mvcResult = mockMvc.perform(post("/club/submit")
-                        .param("userEmail", user1.getEmail())
+                        .param("userEmail", fixtureUser1.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clubDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -112,8 +111,8 @@ class ClubControllerTest {
         Club newClub = clubMapper.findClubWithManagers(clubId);
         Iterator<User> iterator = newClub.getManagers().iterator();
         User manager = iterator.next();
-        assertEquals(user1.getId(), manager.getId());
-        assertEquals(newClub.getManagerCount(),newClub.getManagers().size());
+        assertEquals(fixtureUser1.getId(), manager.getId());
+        assertEquals(newClub.getManagerCount(), newClub.getManagers().size());
 
     }
 
@@ -127,7 +126,7 @@ class ClubControllerTest {
         clubDto.setCategory(category);
 
         MvcResult mvcResult = mockMvc.perform(post("/club/submit")
-                        .param("userEmail", user1.getEmail())
+                        .param("userEmail", fixtureUser1.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clubDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -266,6 +265,44 @@ class ClubControllerTest {
 
     }
 
+    @DisplayName("Club members - member 등록 요청")
+    @Test
+    void joinClubAsMember() throws Exception {
+        User user = generateUser("testUser");
+        Club club = generateClubBySizeAndCategoryId(1, 1).get(0);
+        User manager = generateUserAndJoinClub(club, UserType.MANAGER, 1).iterator().next();
+
+        //올바른 요청
+        mockMvc.perform(post("/club/members")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", user.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.status").value(200))
+                .andExpect(jsonPath("$.HCS.item.member.applicantId").value(user.getId()))
+                .andExpect(jsonPath("$.HCS.item.member.currentMembersCount").value(1));
+
+        //잘못된 요청 : 이미 가입한 member
+        mockMvc.perform(post("/club/members")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", user.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED.getMessage()))
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED.getStatus()));
+
+        //잘못된 요청 : 이미 가입한 manager
+        mockMvc.perform(post("/club/members")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", manager.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED.getMessage()))
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED.getStatus()));
+    }
+
     private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
         String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
                 "values(?,?,?,?)";
@@ -304,6 +341,24 @@ class ClubControllerTest {
             userSet.add(user);
         }
         return userSet;
+    }
+
+    private User generateUser(String name) {
+        String email = name + "@test.com";
+
+        String insertSql = "insert into User (email, nickname, password)\n" +
+                "values (?, ?, ?)";
+
+        jdbcTemplate.update(insertSql, new Object[]{email, name, name + "pass"});
+
+        String selectUserByEmail = "select * from User where email ='" + email + "'";
+        List<User> userList = jdbcTemplate.query(selectUserByEmail,
+                (rs, rowNum) -> User.builder()
+                        .id(rs.getLong("id"))
+                        .nickname(rs.getString("nickname"))
+                        .email(rs.getString("email"))
+                        .build());
+        return userList.get(0);
     }
 
 }
