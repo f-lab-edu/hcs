@@ -10,7 +10,6 @@ import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
 import com.hcs.dto.response.method.HcsDelete;
 import com.hcs.dto.response.method.HcsInfo;
-import com.hcs.dto.response.method.HcsJoin;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsModify;
 import com.hcs.dto.response.method.HcsSubmit;
@@ -45,7 +44,6 @@ public class ClubController {
     private final HcsList hcsList;
     private final HcsDelete hcsDelete;
     private final HcsModify hcsUpdate;
-    private final HcsJoin join;
     private final CategoryService categoryService;
     private final UserService userService;
 
@@ -93,7 +91,7 @@ public class ClubController {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
         ClubJoinDto clubJoinDto = clubService.joinClub(clubId, user);
-        return responseManager.makeHcsResponse(join.club(clubJoinDto));
+        return responseManager.makeHcsResponse(submit.joinClub(clubJoinDto));
     }
 
 }
