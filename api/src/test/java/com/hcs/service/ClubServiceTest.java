@@ -5,10 +5,11 @@ import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.dto.response.club.ClubJoinDto;
 import com.hcs.mapper.ClubMapper;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +25,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class ClubServiceTest {
@@ -47,10 +51,12 @@ class ClubServiceTest {
     @Mock
     CategoryService categoryService;
 
-    static Club fixtureClub;
+    Club fixtureClub;
 
-    @BeforeAll
-    static void init() {
+    User fixtureUser;
+
+    @BeforeEach
+    void init() {
         fixtureClub = Club.builder()
                 .id(1L)
                 .title("test club")
@@ -58,6 +64,12 @@ class ClubServiceTest {
                 .createdAt(LocalDateTime.now())
                 .description("description")
                 .location("test location")
+                .build();
+        fixtureUser = User.builder()
+                .id(10L)
+                .email("testuser@test.com")
+                .nickname("testuser")
+                .password("testPass")
                 .build();
     }
 
@@ -214,5 +226,50 @@ class ClubServiceTest {
         long deletedClubId = clubService.deleteClub(givenClubId, givenManagerId);
         //then
         assertEquals(deletedClubId, givenClubId);
+    }
+
+    @DisplayName("club 이 주어지면, memberCount 를 1 올리기")
+    @Test
+    void plusMemberCount() {
+        //given
+        Club club = fixtureClub;
+        given(clubMapper.updateMemberCount(anyLong(), anyInt())).willReturn(1);
+        //when
+        clubService.plusMemberCount(club);
+        //then
+        then(clubMapper).should(times(1)).updateMemberCount(club.getId(), club.getMemberCount());
+    }
+
+    @DisplayName("club 과 user 가 주어지면, 해당 user 가 member 이거나  manager 인지 확인")
+    @Test
+    void checkAlreadyJoinedClub() {
+        //given
+        Club club = fixtureClub;
+        User user = fixtureUser;
+        //when
+        clubService.checkAlreadyJoinedClub(club, user);
+        //then
+        then(clubMapper).should(times(1)).checkClubManager(club.getId(), user.getId());
+        then(clubMapper).should(times(1)).checkClubMember(club.getId(), user.getId());
+
+    }
+
+    @DisplayName("clubId 와 user 가 주어지면 user 를 member 로 등록")
+    @Test
+    void joinClub() {
+        //given
+        Club club = fixtureClub;
+        int plusMemberCount = 1;
+        User user = fixtureUser;
+        given(clubMapper.findById(club.getId())).willReturn(club);
+        given(clubMapper.checkClubManager(club.getId(), user.getId())).willReturn(false);
+        given(clubMapper.checkClubMember(club.getId(), user.getId())).willReturn(false);
+        given(clubMapper.updateMemberCount(club.getId(), plusMemberCount)).willReturn(1);
+        given(clubMapper.joinMemberById(club.getId(), user.getId())).willReturn(1);
+        //when
+        ClubJoinDto dto = clubService.joinClub(club.getId(), user);
+        //then
+        assertEquals(dto.getApplicantId(), user.getId());
+        assertEquals(dto.getCurrentMembersCount(), plusMemberCount);
     }
 }

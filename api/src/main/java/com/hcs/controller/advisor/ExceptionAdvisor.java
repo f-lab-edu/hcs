@@ -4,6 +4,7 @@ import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
+import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.exception.result.ExceptionResult;
@@ -65,6 +66,13 @@ public class ExceptionAdvisor {
     public HcsResponse databaseExceptionHandler(DatabaseException e) {
         ErrorCode error = ErrorCode.DATABASE_ERROR;
         return hcsResponseManager.makeHcsResponse(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), e.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AlreadyJoinedClubException.class)
+    public HcsResponse alreadyJoinedExceptionHandler() {
+        ErrorCode error = ErrorCode.ALREADY_JOINED_CLUB;
+        return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
     // TODO 추후 Response가 만들어지면 공통으로 처리될 error에 대한 전역적인 @ExceptionHandler 추가 작성될 것임.

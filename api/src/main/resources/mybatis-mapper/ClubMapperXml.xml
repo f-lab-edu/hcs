@@ -110,10 +110,22 @@
         where id = #{id}
     </update>
 
-    <select id="checkClubManager" parameterType="long" resultType="int">
-        select COUNT(*)
+    <select id="checkClubManager" parameterType="long" resultType="boolean">
+        select IF(COUNT(*) = 1, 1, 0)
         from club_managers
         where clubId = #{clubId} AND managerId = #{managerId}
     </select>
+
+    <select id="checkClubMember" parameterType="long" resultType="boolean">
+        select IF(COUNT(*) = 1, 1, 0)
+        from club_members
+        where clubId = #{clubId} AND memberId = #{memberId}
+    </select>
+
+    <update id="updateMemberCount">
+        update club
+        set memberCount = #{memberCount}
+        where id = #{id}
+    </update>
 
 </mapper>

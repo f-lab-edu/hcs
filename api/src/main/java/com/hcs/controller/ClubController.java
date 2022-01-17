@@ -7,6 +7,7 @@ import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.dto.response.club.ClubJoinDto;
 import com.hcs.dto.response.method.HcsDelete;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
@@ -80,9 +81,17 @@ public class ClubController {
     @DeleteMapping("/delete")
     public HcsResponse deleteClub(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
         //TODO : 보안 설정 후 userEmail 변경
-        User manager = userService.findByEmail(userEmail);
-        clubService.deleteClub(clubId, manager.getId());
+        User user = userService.findByEmail(userEmail);
+        clubService.deleteClub(clubId, user.getId());
         return responseManager.makeHcsResponse(hcsDelete.club(clubId));
+    }
+
+    @PostMapping("/members")
+    public HcsResponse joinClubAsMember(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
+        //TODO : 보안 설정 후 userEmail 변경
+        User user = userService.findByEmail(userEmail);
+        ClubJoinDto clubJoinDto = clubService.joinClub(clubId, user);
+        return responseManager.makeHcsResponse(submit.joinClub(clubJoinDto));
     }
 
 }

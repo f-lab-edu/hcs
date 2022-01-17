@@ -24,13 +24,14 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")
-        , @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[Hcs].*")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig"})})
 class ClubMapperTest {
 
     @Autowired
@@ -241,6 +242,83 @@ class ClubMapperTest {
         int managerCount = jdbcTemplate.queryForObject(selectUserByEmail, int.class);
 
         assertEquals(managerCount, 1);
+    }
+
+    @DisplayName("club id 와 user id 가 주어지면 해당 user 가 manager 인지 확인하기 ")
+    @Test
+    void checkClubManager() {
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
+        Club club = clubList.get(0);
+        Set<User> userSet = generateUserAndJoinClub(club, UserType.MANAGER, 1);
+        User manager = userSet.stream().iterator().next();
+
+        //club 에 등록된 user 체크
+        boolean result = clubMapper.checkClubManager(club.getId(), manager.getId());
+
+        assertTrue(result);
+
+        //club 에 등록되지 않은 user 체크
+        User testUser = User.builder().id(-1).build();
+        boolean wrongResult = clubMapper.checkClubManager(club.getId(), testUser.getId());
+        assertFalse(wrongResult);
+
+    }
+
+    @DisplayName("club id 와 user id 가 주어지면 해당 user 가 mamber 인지 확인하기 ")
+    @Test
+    void checkClubMember() {
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
+        Club club = clubList.get(0);
+        Set<User> userSet = generateUserAndJoinClub(club, UserType.MEMBER, 1);
+        User member = userSet.stream().iterator().next();
+
+        //club 에 등록된 user 체크
+        boolean result = clubMapper.checkClubMember(club.getId(), member.getId());
+
+        assertTrue(result);
+
+        //club 에 등록되지 않은 user 체크
+        User testUser = User.builder().id(-1).build();
+        boolean wrongResult = clubMapper.checkClubMember(club.getId(), testUser.getId());
+        assertFalse(wrongResult);
+
+    }
+
+    @DisplayName("club id 와 user id 가 주어지면 member 등록하기")
+    @Test
+    void joinMember() {
+        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
+        Club club = clubList.get(0);
+        User user = generateUser("member");
+
+        int result = clubMapper.joinMemberById(club.getId(), user.getId());
+
+        assertEquals(result, 1);
+
+        String selectMemberIdByEmail = "select count(*) from club_members " +
+                "where clubId = '" + club.getId() + "'" +
+                "and memberId  ='" + user.getId() + "'";
+        int memberCount = jdbcTemplate.queryForObject(selectMemberIdByEmail, int.class);
+
+        assertEquals(memberCount, 1);
+
+    }
+
+    @DisplayName(" club id 와 숫자가 주어지면, memberCount update 하기")
+    @Test
+    void updateMemberCount() {
+        Club club = generateClubBySizeAndCategoryId(1, 1).get(0);
+        int memberCount = club.getMemberCount();
+        int updatedMemberCount = memberCount + 1;
+
+        int result = clubMapper.updateMemberCount(club.getId(), updatedMemberCount);
+
+        assertEquals(result, 1);
+
+        String selectMemberCount = "select memberCount from Club where id ='" + club.getId() + "'";
+        List<Integer> countList = jdbcTemplate.query(selectMemberCount,
+                (rs, rowNum) -> rs.getInt("memberCount"));
+        assertEquals(updatedMemberCount, countList.get(0));
     }
 
     private Set<User> generateUserAndJoinClub(Club club, UserType userType, int userSize) {
