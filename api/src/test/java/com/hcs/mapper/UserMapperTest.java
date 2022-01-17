@@ -17,8 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[DataSourceConfig]")
-        , @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*[Hcs].*")})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig"})})
 class UserMapperTest {
 
     @Autowired
@@ -72,7 +71,6 @@ class UserMapperTest {
         assertThat(returnedBy.get().getNickname()).isEqualTo(newNickname);
         assertThat(returnedBy.get().getPassword()).isEqualTo(newPassword);
     }
-
 
     @DisplayName("UserMapper - insert 테스트")
     @Test
