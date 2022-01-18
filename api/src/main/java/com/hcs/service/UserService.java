@@ -46,8 +46,7 @@ public class UserService {
         return userMapper.insertUser(user);
     }
 
-    public long deleteUserByEmail(String email) {
-        return userMapper.deleteUserByEmail(email);
+    public long deleteUserById(long userId) {
+        return userMapper.deleteUserById(userId);
     }
-
 }

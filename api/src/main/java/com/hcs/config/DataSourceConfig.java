@@ -35,6 +35,9 @@ public class DataSourceConfig {
     @Value("${mybatis.mapper-locations}")
     private String mapperLocation;
 
+    @Value("${mybatis.config-location}")
+    private String configLocation;
+
     @Primary
     @Bean(name = "dataSource")
     @ConfigurationProperties(prefix = "spring.datasource.hikari")
@@ -75,6 +78,7 @@ public class DataSourceConfig {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapperLocation));
+        sqlSessionFactoryBean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource(configLocation));
         return sqlSessionFactoryBean.getObject();
     }
 
