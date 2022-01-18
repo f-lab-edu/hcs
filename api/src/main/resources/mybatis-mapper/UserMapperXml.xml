@@ -22,8 +22,6 @@
     </select>
 
     <select id="findUserForJpaByEmail" parameterType="String" resultType="com.hcs.domain.UserForJPA">
-
-
         select *
         from user_forjpa
         where email = #{email}
