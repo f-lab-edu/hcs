@@ -3,25 +3,25 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.UserMapper">
-    <select id="findById" parameterType="long" resultType="com.hcs.domain.User">
+    <select id="findById" parameterType="long" resultType="User">
         select *
         from User
         where id = #{userId}
     </select>
 
-    <select id="findByEmail" parameterType="String" resultType="com.hcs.domain.User">
+    <select id="findByEmail" parameterType="String" resultType="User">
         select *
         from User
         where email = #{email}
     </select>
 
-    <select id="findByNickname" parameterType="String" resultType="com.hcs.domain.User">
+    <select id="findByNickname" parameterType="String" resultType="User">
         select *
         from User
         where nickname = #{nickname}
     </select>
 
-    <select id="findUserForJpaByEmail" parameterType="String" resultType="com.hcs.domain.UserForJPA">
+    <select id="findUserForJpaByEmail" parameterType="String" resultType="UserForJPA">
         select *
         from user_forjpa
         where email = #{email}
@@ -39,7 +39,7 @@
         where nickname = #{nickname}
     </select>
 
-    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.User">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="User">
         insert into User (email, nickname, password, emailVerified, emailCheckToken, emailCheckTokenGeneratedAt,
         joinedAt, age, position, location)
         values (#{email}, #{nickname}, #{password}, #{emailVerified}, #{emailCheckToken}, #{emailCheckTokenGeneratedAt},
@@ -49,7 +49,7 @@
         </selectKey>
     </insert>
 
-    <update id="updateUser" parameterType="com.hcs.domain.User">
+    <update id="updateUser" parameterType="User">
         update User
         set email    = #{email},
             nickname = #{nickname},
