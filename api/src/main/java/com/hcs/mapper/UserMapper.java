@@ -1,7 +1,6 @@
 package com.hcs.mapper;
 
 import com.hcs.domain.User;
-import com.hcs.domain.UserForJPA;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -15,9 +14,15 @@ public interface UserMapper {
 
     User findByEmail(String email);
 
+    User findByNickname(String nickname);
+
+    int countByEmail(String email);
+
+    int countByNickname(String nickname);
+
     long insertUser(User user);
 
-    long deleteUserByEmail(String email);
+    int updateUser(User user);
 
-    UserForJPA findUserForJpaByEmail(String email);
+    long deleteUserById(long userId);
 }
