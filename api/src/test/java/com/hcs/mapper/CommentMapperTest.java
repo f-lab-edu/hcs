@@ -1,5 +1,6 @@
 package com.hcs.mapper;
 
+import com.hcs.common.JdbcTemplateHelper;
 import com.hcs.domain.Comment;
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
@@ -11,27 +12,23 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @AutoConfigureTestDatabase : 테스트시에 사용될 DB를 별도로 할지 선택할 수 있음
  * @MybatisTest : mybatis의 unit test를 할 경우 사용됨. unit test에 사용될 Bean들만 filtering할 수 있음
+ * * @DataJpaTest : JPA 관련 테스트 설정만 로드하며 슬라이싱 테스트 시에 사용되는 어노테이션
  */
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig"})})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig", ".*Helper"})})
 class CommentMapperTest {
-
-    User testUser = new User(); // Dummy 데이터
-    TradePost testTradePost = new TradePost();
 
     @Autowired
     UserMapper userMapper;
@@ -43,96 +40,116 @@ class CommentMapperTest {
     CommentMapper commentMapper;
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
-
-    void insertTestUserSQL(String newEmail, String newNickname, String newPassword) {
-
-        String insertSql = "insert into User (email, nickname, password)\n" +
-                "values (?, ?, ?)";
-
-        jdbcTemplate.update(insertSql, new Object[]{newEmail, newNickname, newPassword});
-    }
-
-    void insertTestTradePostSQL(long authorId, String title, String productStatus, String category, String description, int price, LocalDateTime registerationTime) {
-
-        String insertSql = "insert into TradePost (authorId, title, productStatus, category, description, price, registerationTime)\n" +
-                "values (?, ?, ?, ?, ?, ?, ?)";
-
-        jdbcTemplate.update(insertSql, new Object[]{authorId, title, productStatus, category, description, price, registerationTime});
-    }
-
-    void insertTestUserAndTradePost(String userEmail, String tradePostTitle) {
-
-        String newNickname = "test";
-        String newPassword = "password";
-
-        insertTestUserSQL(userEmail, newNickname, newPassword);
-
-        long authorId = 43;
-        String productStatus = "중";
-        String category = "중";
-        String description = "중";
-        int price = 10000;
-        LocalDateTime registrationTime = LocalDateTime.now();
-
-        insertTestTradePostSQL(authorId, tradePostTitle, productStatus, category, description, price, registrationTime);
-    }
-
-    long insertTestComment(String contents) {
-
-        String userEmail = "test@naver.com";
-        String tradePostTitle = "test";
-
-        insertTestUserAndTradePost(userEmail, tradePostTitle);
-
-        Optional<User> insertedUser = Optional.ofNullable(userMapper.findByEmail(userEmail));
-        Optional<TradePost> insertedTradePost = Optional.ofNullable(tradePostMapper.findByTitle(tradePostTitle));
-
-        long authorId = insertedUser.get().getId();
-        long tradePostId = insertedTradePost.get().getId();
-
-        String insertSql = "insert into Comment (authorId, tradePostId, contents)\n" +
-                "values (?, ?, ?)";
-
-        // 댓글 4개를 
-        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 0});
-        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 1});
-        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 2});
-        jdbcTemplate.update(insertSql, new Object[]{authorId, tradePostId, contents + 3});
-
-        return insertedTradePost.get().getId(); // 생성된 comment의 tradePostId를 리턴함
-    }
-
-
-    @DisplayName("CommentMapper - findByTradePostId 테스트")
-    @Test
-    void findByTradePostIdTest() {
-
-        int i = 0;
-        String contents = "test 댓글내용";
-
-        List<Comment> selectdComments = commentMapper.findByTradePostId(insertTestComment(contents));
-
-        for (Comment selectedComment : selectdComments) {
-            Comment comment = commentMapper.findById(selectedComment.getId());
-            assertThat(comment.getContents()).isEqualTo(contents + i);
-            i++;
-        }
-    }
+    JdbcTemplateHelper jdbcTemplateHelper;
 
     @DisplayName("CommentMapper - findById 테스트")
     @Test
     void findByIdTest() {
 
-        int i = 0;
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
         String contents = "test 댓글내용";
 
-        List<Comment> selectdComments = commentMapper.findByTradePostId(insertTestComment(contents));
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
 
-        for (Comment selectedComment : selectdComments) {
-            Comment comment = commentMapper.findById(selectedComment.getId());
-            assertThat(comment.getContents()).isEqualTo(contents + i);
-            i++;
+        Comment comment = commentMapper.findById(commentId);
+
+        assertThat(comment.getContents()).isEqualTo(contents);
+    }
+
+    @DisplayName("CommentMapper - findByTradePostId 테스트")
+    @Test
+    void findByTradePostIdTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        int lng = 5;
+
+        String contents = "test 댓글내용";
+
+        for (int i = 0; i < lng; i++) {
+            jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents + i);
+        }
+
+        ArrayList<Comment> comments = (ArrayList<Comment>) commentMapper.findByTradePostId(tradePostId);
+        assertThat(comments.size()).isEqualTo(lng);
+
+        Iterator<Comment> it = comments.iterator();
+
+        while (it.hasNext()) {
+            Comment comment = commentMapper.findById(it.next().getId());
+            assertThat(comment.getContents()).contains(contents);
+        }
+    }
+
+    @DisplayName("CommentMapper - findReplysByParentCommentId 테스트")
+    @Test
+    void findReplysByParentCommentIdTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String parentContents = "test 댓글내용";
+
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, parentContents);
+
+        int lng = 5;
+
+        String contents = "test 댓글내용";
+
+        for (int i = 0; i < lng; i++) {
+            jdbcTemplateHelper.insertTestComment(commentId, authorId, tradePostId, contents + i);
+        }
+
+        ArrayList<Comment> comments = (ArrayList<Comment>) commentMapper.findReplysByParentCommentId(commentId);
+        assertThat(comments.size()).isEqualTo(lng);
+
+        Iterator<Comment> it = comments.iterator();
+
+        while (it.hasNext()) {
+            Comment comment = commentMapper.findById(it.next().getId());
+            assertThat(comment.getContents()).contains(contents);
         }
     }
 
@@ -140,17 +157,106 @@ class CommentMapperTest {
     @Test
     void insertCommentTest() {
 
-        long authorId = 31L;
-        long tradePostId = 8L;
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
 
-        Comment testComment = makeTestComment(authorId, tradePostId);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "테스트 댓글입니다.";
+        Comment testComment = makeTestComment(authorId, tradePostId, contents);
 
         commentMapper.insertComment(testComment);
 
-        List<Comment> insertedComments = commentMapper.findByTradePostId(tradePostId);
-        for (Comment insertedComment : insertedComments) {
-            assertThat(insertedComment).isEqualTo(testComment);
-        }
+        long commentId = testComment.getId();
+
+        Comment comment = commentMapper.findById(commentId);
+
+        assertThat(comment.getContents()).isEqualTo(contents);
+    }
+
+    @DisplayName("CommentMapper - insertReply 테스트")
+    @Test
+    void insertReplyTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "test 댓글내용";
+
+        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+
+        String replyContents = "test 댓글내용_reply";
+
+        Comment testReply = makeTestReply(parentCommentId, authorId, tradePostId, replyContents);
+
+        commentMapper.insertReply(testReply);
+
+        long commentId = testReply.getId();
+
+        Comment reply = commentMapper.findById(commentId);
+
+        assertThat(reply.getContents()).isEqualTo(replyContents);
+    }
+
+    @DisplayName("CommentMapper - updateComment 테스트")
+    @Test
+    void updateCommentTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "test 댓글내용";
+
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+
+        Comment comment = commentMapper.findById(commentId);
+
+        String modifiedContents = "modified_" + contents;
+        comment.setContents(modifiedContents);
+
+        int isSuccess = commentMapper.updateComment(comment);
+
+        Comment modifiedComment = commentMapper.findById(commentId);
+
+        assertThat(isSuccess).isGreaterThan(0);
+        assertThat(modifiedComment.getContents()).isEqualTo(modifiedContents);
     }
 
     @DisplayName("CommentMapper - deleteComment 테스트")
@@ -160,22 +266,46 @@ class CommentMapperTest {
         long authorId = 31L;
         long tradePostId = 8L;
 
-        Comment testComment = makeTestComment(authorId, tradePostId);
+        String contents = "test 댓글내용";
 
-        commentMapper.insertComment(testComment);
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
 
-        int result = commentMapper.deleteComment(testComment.getId());
+        int result = commentMapper.deleteComment(commentId);
 
-        assertTrue(result > 0);
+        assertThat(result).isGreaterThan(0);
     }
 
-    public Comment makeTestComment(long authorId, long tradePostId) {
+    private Comment makeTestComment(long authorId, long tradePostId, String contents) {
+
+        User testUser = new User(); // Dummy 데이터
+        TradePost testTradePost = new TradePost();
+
         testUser.setId(authorId);
         testTradePost.setId(tradePostId);
 
         Comment testComment = Comment.builder()
                 .author(testUser)
-                .contents("테스트 댓글입니다.")
+                .contents(contents)
+                .tradePost(testTradePost)
+                .replys(null)
+                .registerationTime(LocalDateTime.now())
+                .build();
+
+        return testComment;
+    }
+
+    private Comment makeTestReply(long parentCommentId, long authorId, long tradePostId, String contents) {
+
+        User testUser = new User(); // Dummy 데이터
+        TradePost testTradePost = new TradePost();
+
+        testUser.setId(authorId);
+        testTradePost.setId(tradePostId);
+
+        Comment testComment = Comment.builder()
+                .parentCommentId(parentCommentId)
+                .author(testUser)
+                .contents(contents)
                 .tradePost(testTradePost)
                 .replys(null)
                 .registerationTime(LocalDateTime.now())

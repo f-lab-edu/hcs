@@ -12,9 +12,13 @@ public interface CommentMapper {
 
     List<Comment> findByTradePostId(long tradePostId);
 
+    List<Comment> findReplysByParentCommentId(long parentCommentId);
+
     long insertComment(Comment comment);
 
-    int deleteComment(long id);
+    long insertReply(Comment comment);
 
-    // TODO 댓글 수정 추가
+    int updateComment(Comment comment);
+
+    int deleteComment(long id);
 }
