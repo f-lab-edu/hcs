@@ -15,22 +15,56 @@
         where email = #{email}
     </select>
 
-    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.User">
-        insert into User (email, nickname, password, emailVerified, emailCheckToken, emailCheckTokenGeneratedAt,
-                          joinedAt, age, position, location)
-        values (#{email}, #{nickname}, #{password}, #{emailVerified}, #{emailCheckToken}, #{emailCheckTokenGeneratedAt},
-                #{joinedAt}, #{age}, #{position}, #{location})
-    </insert>
-
-    <delete id="deleteUserByEmail" parameterType="String">
-        delete
+    <select id="findByNickname" parameterType="String" resultType="com.hcs.domain.User">
+        select *
         from User
-        where HCS.User.email = #{email}
-    </delete>
+        where nickname = #{nickname}
+    </select>
 
     <select id="findUserForJpaByEmail" parameterType="String" resultType="com.hcs.domain.UserForJPA">
+
+
         select *
         from user_forjpa
         where email = #{email}
     </select>
+
+    <select id="countByEmail" parameterType="String" resultType="int">
+        select COUNT(*)
+        from User
+        where email = #{email}
+    </select>
+
+    <select id="countByNickname" parameterType="String" resultType="int">
+        select COUNT(*)
+        from User
+        where nickname = #{nickname}
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.User">
+        insert into User (email, nickname, password, emailVerified, emailCheckToken, emailCheckTokenGeneratedAt,
+        joinedAt, age, position, location)
+        values (#{email}, #{nickname}, #{password}, #{emailVerified}, #{emailCheckToken}, #{emailCheckTokenGeneratedAt},
+        #{joinedAt}, #{age}, #{position}, #{location})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updateUser" parameterType="com.hcs.domain.User">
+        update User
+        set email    = #{email},
+            nickname = #{nickname},
+            password = #{password},
+            age      = #{age},
+            position = #{position},
+            location = #{location}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="long">
+        delete
+        from User
+        where HCS.User.id = #{id}
+    </delete>
 </mapper>

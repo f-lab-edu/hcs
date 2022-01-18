@@ -34,11 +34,11 @@ spring:
     host: localhost
     port: 6379
 
-
 mybatis:
   mapper-locations: classpath:mybatis-mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   type-aliases-package: com.hcs.domain
 
