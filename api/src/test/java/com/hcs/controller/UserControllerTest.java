@@ -153,7 +153,7 @@ public class UserControllerTest {
         assertThat(profile.get("userId")).isEqualTo((int) user.getId());
         assertThat(profile.get("email")).isEqualTo(user.getEmail());
         assertThat(profile.get("nickname")).isEqualTo(user.getNickname());
-        assertThat(profile.get("emailVerified")).isEqualTo(user.isEmailVerified());
+        assertThat(profile.get("emailVerified")).isEqualTo(user.getEmailVerified());
         assertThat(profile.get("joinedAt")).isEqualTo(user.getJoinedAt().toString());
         assertThat(profile.get("age")).isEqualTo(user.getAge());
         assertThat(profile.get("position")).isEqualTo(user.getPosition());

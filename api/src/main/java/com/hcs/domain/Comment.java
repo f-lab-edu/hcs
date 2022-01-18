@@ -33,6 +33,9 @@ public class Comment {
     @Column(name = "id")
     private long id;
 
+    @Column(name = "parentCommentId", insertable = false, updatable = false)
+    private long parentCommentId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorId")
     private User author;
