@@ -1,5 +1,6 @@
 package com.hcs.mapper;
 
+import com.hcs.common.JdbcTemplateHelper;
 import com.hcs.domain.User;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
@@ -9,44 +10,21 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig"})})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig", ".*Helper"})})
 class UserMapperTest {
 
     @Autowired
     UserMapper userMapper;
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
-
-    long insertTestUser(String newEmail, String newNickname, String newPassword) {
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        String insertSql = "insert into User (email, nickname, password)\n" +
-                "values (?, ?, ?)";
-
-        jdbcTemplate.update(con -> {
-            PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, newEmail);
-            ps.setString(2, newNickname);
-            ps.setString(3, newPassword);
-            return ps;
-        }, keyHolder);
-
-        return keyHolder.getKey().longValue();
-    }
+    JdbcTemplateHelper jdbcTemplateHelper;
 
     @DisplayName("UserMapper - 사용자 Id(DB의 Prmiary Key)로 User 찾기")
     @Test
@@ -56,7 +34,7 @@ class UserMapperTest {
         String newNickname = "test";
         String newPassword = "password";
 
-        long userId = insertTestUser(newEmail, newNickname, newPassword);
+        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
 
         Optional<User> returnedBy = Optional.ofNullable(userMapper.findById(userId));
 
@@ -74,7 +52,7 @@ class UserMapperTest {
         String newNickname = "test";
         String newPassword = "password";
 
-        insertTestUser(newEmail, newNickname, newPassword);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
 
         Optional<User> returnedBy = Optional.ofNullable(userMapper.findByEmail(newEmail));
 
@@ -92,7 +70,7 @@ class UserMapperTest {
         String newNickname = "test";
         String newPassword = "password";
 
-        insertTestUser(newEmail, newNickname, newPassword);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
 
         Optional<User> returnedBy = Optional.ofNullable(userMapper.findByNickname(newNickname));
 
@@ -110,9 +88,9 @@ class UserMapperTest {
         String newNickname = "test";
         String newPassword = "password";
 
-        insertTestUser(newEmail, newNickname, newPassword);
-        insertTestUser(newEmail, newNickname + 1, newPassword + 1);
-        insertTestUser(newEmail, newNickname + 2, newPassword + 2);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname + 1, newPassword + 1);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname + 2, newPassword + 2);
 
         int count = userMapper.countByEmail(newEmail);
 
@@ -127,9 +105,9 @@ class UserMapperTest {
         String newNickname = "test";
         String newPassword = "password";
 
-        insertTestUser(newEmail, newNickname, newPassword);
-        insertTestUser(newEmail + 1, newNickname, newPassword + 1);
-        insertTestUser(newEmail + 2, newNickname, newPassword + 2);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        jdbcTemplateHelper.insertTestUser(newEmail + 1, newNickname, newPassword + 1);
+        jdbcTemplateHelper.insertTestUser(newEmail + 2, newNickname, newPassword + 2);
 
         int count = userMapper.countByNickname(newNickname);
 
@@ -163,7 +141,7 @@ class UserMapperTest {
         String newNickname = "test2";
         String newPassword = "password";
 
-        long userId = insertTestUser(newEmail, newNickname, newPassword);
+        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
 
         int age = 20;
         String position = "backend";
@@ -192,7 +170,7 @@ class UserMapperTest {
         String newNickname = "test";
         String newPassword = "password";
 
-        long userId = insertTestUser(newEmail, newNickname, newPassword);
+        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
         long isSuccess = userMapper.deleteUserById(userId);
 
         assertThat(isSuccess).isGreaterThan(0);
