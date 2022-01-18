@@ -30,7 +30,7 @@ public class TradePost {
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "title")
     private String title;
@@ -62,16 +62,16 @@ public class TradePost {
     private double lat;
 
     @Column(name = "price")
-    private int price;
+    private Integer price;
 
     @Column(name = "views")
-    private int views;
+    private Integer views;
 
     @OneToMany(mappedBy = "tradePost")
     private Set<Comment> comments = new HashSet<>();
 
     @Column(name = "salesStatus")
-    private boolean salesStatus;
+    private Boolean salesStatus;
 
     @Column(name = "registerationTime")
     private LocalDateTime registerationTime;

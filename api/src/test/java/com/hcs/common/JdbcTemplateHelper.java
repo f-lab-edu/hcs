@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 @Component
 public class JdbcTemplateHelper {
@@ -27,6 +28,29 @@ public class JdbcTemplateHelper {
             ps.setString(1, newEmail);
             ps.setString(2, newNickname);
             ps.setString(3, newPassword);
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().longValue();
+    }
+
+    public long insertTestTradePost(long authorId, String title, String productStatus, String category, String description, int price, int salesStatus, LocalDateTime registerationTime) {
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        String insertSql = "insert into TradePost (authorId, title, productStatus, category, description, price, salesStatus, registerationTime)\n" +
+                "values (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, String.valueOf(authorId));
+            ps.setString(2, title);
+            ps.setString(3, productStatus);
+            ps.setString(4, category);
+            ps.setString(5, description);
+            ps.setString(6, String.valueOf(price));
+            ps.setString(7, String.valueOf(salesStatus));
+            ps.setString(8, String.valueOf(registerationTime));
             return ps;
         }, keyHolder);
 

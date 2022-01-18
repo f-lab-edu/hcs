@@ -3,31 +3,37 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.TradePostMapper">
-    <cache/>
-
-    <select id="findByTitle" parameterType="String" resultType="com.hcs.domain.TradePost">
+    <select id="findById" parameterType="long" resultType="TradePost">
         select *
         from TradePost
-        where title = #{title}
+        where id = #{id}
     </select>
 
-    <select id="findById" parameterType="long" resultType="com.hcs.domain.TradePost">
+    <select id="findByTitle" parameterType="String" resultType="TradePost">
         select *
         from TradePost
-        where id = #{Id}
+        where title = #{id}
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.TradePost">
+    <select id="findAuthorIdById" parameterType="long" resultType="Long">
+        select authorId
+        from TradePost
+        where id = #{id}
+    </select>
+
+    <insert id="insertTradePost" useGeneratedKeys="true" keyProperty="id" parameterType="TradePost">
         insert into TradePost (authorId, title, productStatus, category, description,
-                               pictures, locationName, lat, lng, price, salesStatus, registerationTime)
-        values (#{authorId}, #{title}, #{productStatus}, #{category}, #{description},
-                #{pictures}, #{locationName}, #{lat}, #{lng}, #{price}, #{salesStatus}, #{registerationTime})
+        pictures, locationName, lat, lng, price, salesStatus, registerationTime)
+        values (#{author.id}, #{title}, #{productStatus}, #{category}, #{description},
+        #{pictures}, #{locationName}, #{lat}, #{lng}, #{price}, #{salesStatus}, #{registerationTime})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
-    <delete id="delete" parameterType="String">
+    <delete id="deleteTradePostById" parameterType="long">
         delete
         from TradePost
-        where title = #{title}
+        where id = #{id}
     </delete>
-
 </mapper>

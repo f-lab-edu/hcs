@@ -25,4 +25,7 @@ public class TradePostService {
         return tradePostMapper.findById(Id);
     }
 
+    public Long findAuthorIdById(long Id) {
+        return tradePostMapper.findAuthorIdById(Id);
+    }
 }

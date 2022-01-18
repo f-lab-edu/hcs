@@ -6,5 +6,6 @@
     <typeAliases>
         <typeAlias alias="User" type="com.hcs.domain.User"/>
         <typeAlias alias="UserForJPA" type="com.hcs.domain.UserForJPA"/>
+        <typeAlias alias="TradePost" type="com.hcs.domain.TradePost"/>
     </typeAliases>
 </configuration>

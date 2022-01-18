@@ -12,7 +12,7 @@ create table TradePost
     lat               DECIMAL(16, 14),
     price             int          NOT NULL,
     views             int          NOT NULL DEFAULT 0,
-    salesStatus       boolean      NOT NULL DEFAULT 0,
+    salesStatus       boolean      NOT NULL,
     registerationTime datetime     NOT NULL,
 
     FOREIGN KEY (authorId) REFERENCES User (id) ON DELETE CASCADE
