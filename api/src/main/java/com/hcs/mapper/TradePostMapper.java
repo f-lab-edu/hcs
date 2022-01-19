@@ -10,9 +10,11 @@ public interface TradePostMapper {
 
     TradePost findByTitle(String title);
 
-    void insert(TradePost tradePost);
+    Long findAuthorIdById(long tradePostId);
 
-    void deleteById(long Id);
+    long insertTradePost(TradePost tradePost);
+
+    int deleteTradePostById(long tradePostId);
 
     // TODO 글쓴이의 이름 가져오기
 }
