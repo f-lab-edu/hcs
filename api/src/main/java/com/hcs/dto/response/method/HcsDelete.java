@@ -34,4 +34,16 @@ public class HcsDelete {
 
         return hcs;
     }
+
+    public ObjectNode tradePost(long tradePostId) {
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.createObjectNode();
+
+        item.put("tradePostId", tradePostId);
+
+        hcs.put("status", 200);
+        hcs.set("item", item);
+
+        return hcs;
+    }
 }
