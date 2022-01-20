@@ -21,6 +21,12 @@
         where id = #{id}
     </select>
 
+    <select id="countByTitle" parameterType="String" resultType="int">
+        select COUNT(*)
+        from TradePost
+        where title = #{title}
+    </select>
+
     <insert id="insertTradePost" useGeneratedKeys="true" keyProperty="id" parameterType="TradePost">
         insert into TradePost (authorId, title, productStatus, category, description,
         pictures, locationName, lat, lng, price, salesStatus, registerationTime)
@@ -30,6 +36,26 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
+
+    <update id="updateTradePost" parameterType="TradePost">
+        update TradePost
+        set title         = #{title},
+            category      = #{category},
+            productStatus = #{productStatus},
+            description   = #{description},
+            pictures      = #{pictures},
+            locationName  = #{locationName},
+            lng           = #{lng},
+            lat           = #{lat},
+            price         = #{price}
+        where id = #{id}
+    </update>
+
+    <update id="updateTradePostForView" parameterType="TradePost">
+        update TradePost
+        set views = views + 1
+        where id = #{id}
+    </update>
 
     <delete id="deleteTradePostById" parameterType="long">
         delete

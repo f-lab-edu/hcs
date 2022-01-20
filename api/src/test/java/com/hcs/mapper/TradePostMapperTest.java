@@ -125,6 +125,33 @@ class TradePostMapperTest {
         assertThat(returnedBy2).isEmpty();
     }
 
+    @DisplayName("TradePostMapper - 제목으로 TradePost 수 찾기")
+    @Test
+    void countByTitleTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+        jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+        jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        int count = tradePostMapper.countByTitle(title);
+
+        assertThat(count).isEqualTo(3);
+    }
+
     @DisplayName("TradePostMapper - TradePost 삽입하기")
     @Test
     void insertTradePostTest() {
@@ -170,6 +197,82 @@ class TradePostMapperTest {
         assertThat(returnedBy.get().getCategory()).isEqualTo(category);
         assertThat(returnedBy.get().getDescription()).isEqualTo(description);
         assertThat(returnedBy.get().getPrice()).isEqualTo(price);
+    }
+
+    @DisplayName("TradePostMapper - TradePost 수정하기")
+    @Test
+    void updateTradePostTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        User author = userMapper.findById(authorId);
+        author.setId(authorId);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        TradePost modified = TradePost.builder()
+                .id(tradePostId)
+                .title(title)
+                .productStatus(productStatus)
+                .category(category)
+                .description(description + 1)
+                .price(price + 1)
+                .salesStatus(Boolean.parseBoolean(String.valueOf(salesStatus)))
+                .registerationTime(LocalDateTime.now())
+                .author(author)
+                .build();
+
+        int isSuccess = tradePostMapper.updateTradePost(modified);
+
+        assertThat(isSuccess).isGreaterThan(0);
+        assertThat(modified.getId()).isEqualTo(tradePostId);
+        assertThat(modified.getDescription()).isEqualTo(description + 1);
+        assertThat(modified.getPrice()).isEqualTo(price + 1);
+    }
+
+    @DisplayName("TradePostMapper - TradePost 클릭시 조회수 올리기")
+    @Test
+    void updateTradePostForViewTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+
+        User author = userMapper.findById(authorId);
+        author.setId(authorId);
+
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        TradePost tradePost = tradePostMapper.findById(tradePostId);
+
+        int isSuccess = tradePostMapper.updateTradePostForView(tradePostId);
+
+        TradePost clickedTradePost = tradePostMapper.findById(tradePostId);
+
+        assertThat(isSuccess).isGreaterThan(0);
+        assertThat(clickedTradePost.getViews()).isEqualTo(tradePost.getViews() + 1);
     }
 
     @DisplayName("TradePostMapper - Id로 TradePost 삭제하기")
