@@ -1,7 +1,6 @@
 package com.hcs.controller.advisor;
 
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
 import com.hcs.exception.club.AlreadyJoinedClubException;
@@ -34,45 +33,52 @@ public class ExceptionAdvisor {
     private MessageSource messageSource;
 
     @Autowired
-    private HcsResponseManager hcsResponseManager;
-
-    @Autowired
     private HcsException hcsException;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public HcsResponse handleBindException(BindException bindException, Locale locale) {
+
         ErrorCode error = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
         ValidationResult errorResults = ValidationResult.create(bindException, messageSource, locale);
-        return hcsResponseManager.makeHcsResponse(hcsException.validation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), errorResults));
+
+        return HcsResponse.of(hcsException.validation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), errorResults));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NumberFormatException.class)
     public HcsResponse NumberFormatExceptionHandler() {
+
         ErrorCode error = ErrorCode.NUMBER_FORMAT;
-        return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
+
+        return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ClubAccessDeniedException.class)
     public HcsResponse clubAccessDeniedHandler() {
+
         ErrorCode error = ErrorCode.CLUB_ACCESS_DENIED;
-        return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
+
+        return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DatabaseException.class)
     public HcsResponse databaseExceptionHandler(DatabaseException e) {
+
         ErrorCode error = ErrorCode.DATABASE_ERROR;
-        return hcsResponseManager.makeHcsResponse(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), e.getMessage()));
+
+        return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyJoinedClubException.class)
     public HcsResponse alreadyJoinedExceptionHandler() {
+
         ErrorCode error = ErrorCode.ALREADY_JOINED_CLUB;
-        return hcsResponseManager.makeHcsResponse(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
+
+        return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
     // TODO 추후 Response가 만들어지면 공통으로 처리될 error에 대한 전역적인 @ExceptionHandler 추가 작성될 것임.

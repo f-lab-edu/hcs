@@ -3,7 +3,6 @@ package com.hcs.controller;
 import com.hcs.domain.User;
 import com.hcs.dto.request.SignUpDto;
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.dto.response.user.UserInfoDto;
@@ -32,7 +31,6 @@ public class UserController {
 
     private final ModelMapper modelMapper;
     private final UserService userService;
-    private final HcsResponseManager hcsResponseManager;
     private final HcsInfo info;
     private final HcsSubmit submit;
 
@@ -47,7 +45,7 @@ public class UserController {
 
         User newUser = userService.saveNewUser(signUpDto);
 
-        return hcsResponseManager.makeHcsResponse(submit.user(newUser.getId()));
+        return HcsResponse.of(submit.user(newUser.getId()));
     }
 
     @GetMapping("/user/info")
@@ -56,6 +54,6 @@ public class UserController {
         User user = userService.findById(userId);
         UserInfoDto userInfoDto = modelMapper.map(user, UserInfoDto.class);
 
-        return hcsResponseManager.makeHcsResponse(info.user(userInfoDto));
+        return HcsResponse.of(info.user(userInfoDto));
     }
 }

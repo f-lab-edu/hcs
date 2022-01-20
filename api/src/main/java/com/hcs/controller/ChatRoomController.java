@@ -3,7 +3,6 @@ package com.hcs.controller;
 import com.hcs.domain.ChatRoom;
 import com.hcs.domain.User;
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.ChatRoomService;
 import com.hcs.service.TradePostService;
@@ -24,7 +23,6 @@ public class ChatRoomController {
     private final TradePostService tradePostService;
     private final ChatRoomService chatRoomService;
     private final SimpMessagingTemplate template;
-    private final HcsResponseManager hcsResponseManager;
     private final HcsSubmit submit;
 
     @PostMapping("/room/submit")
@@ -45,6 +43,6 @@ public class ChatRoomController {
 
         // TODO 구매자에게 알람 날리기 : 구매자는 알람을 통해 자신의 기본 DM창으로 이동할 수 있음
 
-        return hcsResponseManager.makeHcsResponse(submit.chatRoom(newRoom.getId()));
+        return HcsResponse.of(submit.chatRoom(newRoom.getId()));
     }
 }

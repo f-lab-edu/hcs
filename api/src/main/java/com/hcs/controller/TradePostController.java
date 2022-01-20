@@ -1,7 +1,6 @@
 package com.hcs.controller;
 
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.service.TradePostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,6 @@ import java.util.Map;
 public class TradePostController {
 
     private final TradePostService tradePostService;
-    private final HcsResponseManager hcsResponseManager;
 
     @GetMapping("/list")
     public HcsResponse tradePosts(@RequestParam("page") int page, @RequestParam("category") String category, @RequestParam("salesStatus") boolean salesStatus) {

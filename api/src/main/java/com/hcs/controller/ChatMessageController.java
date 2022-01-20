@@ -4,7 +4,6 @@ import com.hcs.domain.ChatMessage;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ChatMessageDto;
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +19,8 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class ChatMessageController {
 
-    private final SimpMessagingTemplate template;
-    private final HcsResponseManager hcsResponseManager;
     private final ChatMessageService chatMessageService;
+    private final SimpMessagingTemplate template;
     private final HcsSubmit submit;
 
     @MessageMapping("/chat/message") // pub
@@ -37,6 +35,6 @@ public class ChatMessageController {
 
         ChatMessage newChat = chatMessageService.createChatMessage(message);
 
-        return hcsResponseManager.makeHcsResponse(submit.chatMessage(newChat.getId()));
+        return HcsResponse.of(submit.chatMessage(newChat.getId()));
     }
 }
