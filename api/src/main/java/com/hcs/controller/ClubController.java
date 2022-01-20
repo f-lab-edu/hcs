@@ -4,7 +4,6 @@ import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
@@ -38,7 +37,6 @@ import java.util.List;
 public class ClubController {
 
     private final ClubService clubService;
-    private final HcsResponseManager responseManager;
     private final HcsInfo info;
     private final HcsSubmit submit;
     private final HcsList hcsList;
@@ -52,14 +50,13 @@ public class ClubController {
         //TODO : 로그인한 유저인지 검증 추가
         User manager = userService.findByEmail(userEmail);
         Club newClub = clubService.saveNewClub(clubDto, manager.getId());
-        return responseManager.makeHcsResponse(submit.club(newClub.getId()));
+        return HcsResponse.of(submit.club(newClub.getId()));
     }
 
     @GetMapping("/info")
     public HcsResponse clubInfo(@RequestParam("clubId") long id) {
         ClubInfoDto clubInfoDto = clubService.getClubInfo(id);
-        return responseManager.makeHcsResponse(info.club(clubInfoDto));
-
+        return HcsResponse.of(info.club(clubInfoDto));
     }
 
     @GetMapping("/list")
@@ -68,14 +65,14 @@ public class ClubController {
         long categoryId = categoryService.getCategoryId(category);
         List<ClubInListDto> clubInListDtos = clubService.getClubListWithPagingAndCategory(page, count, categoryId);
         long allClubCounts = clubService.getAllClubCounts();
-        return responseManager.makeHcsResponse(hcsList.club(clubInListDtos, page, count, allClubCounts));
+        return HcsResponse.of(hcsList.club(clubInListDtos, page, count, allClubCounts));
     }
 
     @PostMapping("/modify")
     public HcsResponse modifyClub(@RequestBody ClubSubmitDto clubDto, @RequestParam("clubId") long clubId) {
         clubId = clubService.modifyClub(clubId, clubDto);
         String clubUrl = clubService.makeClubUrl(clubId);
-        return responseManager.makeHcsResponse(hcsUpdate.club(clubId, clubUrl));
+        return HcsResponse.of(hcsUpdate.club(clubId, clubUrl));
     }
 
     @DeleteMapping("/delete")
@@ -83,7 +80,7 @@ public class ClubController {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
         clubService.deleteClub(clubId, user.getId());
-        return responseManager.makeHcsResponse(hcsDelete.club(clubId));
+        return HcsResponse.of(hcsDelete.club(clubId));
     }
 
     @PostMapping("/members")
@@ -91,7 +88,7 @@ public class ClubController {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
         ClubJoinDto clubJoinDto = clubService.joinClub(clubId, user);
-        return responseManager.makeHcsResponse(submit.joinClub(clubJoinDto));
+        return HcsResponse.of(submit.joinClub(clubJoinDto));
     }
 
 }

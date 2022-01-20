@@ -4,7 +4,6 @@ import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.request.CommentDto;
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.HcsResponseManager;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.io.IOException;
 public class CommentController {
 
     private final CommentService commentService;
-    private final HcsResponseManager hcsResponseManager;
     private final HcsSubmit submit;
 //    private final UserService userService; // 충분히 구현된 후 사용될 것임
 
@@ -47,9 +45,9 @@ public class CommentController {
         }
 
         if (parentCommentId == null) {
-            return hcsResponseManager.makeHcsResponse(submit.comment(tradePostId, commentId, isSuccess));
+            return HcsResponse.of(submit.comment(tradePostId, commentId, isSuccess));
         }
 
-        return hcsResponseManager.makeHcsResponse(submit.reply(tradePostId, parentCommentId, commentId, isSuccess));
+        return HcsResponse.of(submit.reply(tradePostId, parentCommentId, commentId, isSuccess));
     }
 }
