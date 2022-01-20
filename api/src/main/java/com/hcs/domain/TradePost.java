@@ -8,15 +8,19 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+
+@NamedEntityGraph(name = "TradePost.withAuthor", attributeNodes = {
+        @NamedAttributeNode(value = "author")}
+)
 
 @Data
 @Entity
@@ -35,7 +39,7 @@ public class TradePost {
     @Column(name = "title")
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorId")
     private User author;
 
@@ -56,19 +60,16 @@ public class TradePost {
     private String locationName;
 
     @Column(name = "lng")
-    private double lng;
+    private Double lng;
 
     @Column(name = "lat")
-    private double lat;
+    private Double lat;
 
     @Column(name = "price")
     private Integer price;
 
     @Column(name = "views")
     private Integer views;
-
-    @OneToMany(mappedBy = "tradePost")
-    private Set<Comment> comments = new HashSet<>();
 
     @Column(name = "salesStatus")
     private Boolean salesStatus;

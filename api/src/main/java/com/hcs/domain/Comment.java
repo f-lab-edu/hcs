@@ -1,5 +1,6 @@
 package com.hcs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,10 +33,7 @@ public class Comment {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "parentCommentId")
-    private long parentCommentId;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorId")
     private User author;
 
@@ -43,10 +42,15 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "tradePostId")
+    @JsonIgnore
     private TradePost tradePost;
 
-    @OneToMany
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentCommentId")
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Comment> replys = new HashSet<>();
 
     @Column(name = "registerationTime")
