@@ -41,6 +41,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -215,7 +216,7 @@ class ClubControllerTest {
         clubSubmitDto.setLocation(changedLocation);
         clubSubmitDto.setTitle(changedTitle);
 
-        mockMvc.perform(post("/club/modify")
+        mockMvc.perform(put("/club/modify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("clubId", String.valueOf(clubId))
                         .content(objectMapper.writeValueAsString(clubSubmitDto))
