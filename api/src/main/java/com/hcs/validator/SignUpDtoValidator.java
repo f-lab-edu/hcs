@@ -2,7 +2,7 @@ package com.hcs.validator;
 
 import com.hcs.domain.User;
 import com.hcs.dto.request.SignUpDto;
-import com.hcs.service.UserService;
+import com.hcs.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SignUpDtoValidator implements Validator {
 
-    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -25,14 +25,17 @@ public class SignUpDtoValidator implements Validator {
     public void validate(Object object, Errors errors) {
         SignUpDto signUpDto = (SignUpDto) object;
 
-        User user = userService.findByEmail(signUpDto.getEmail());
+        User user = userMapper.findByEmail(signUpDto.getEmail());
         Optional<User> userOptional = Optional.ofNullable(user);
+
+        User user2 = userMapper.findByNickname(signUpDto.getNickname());
+        Optional<User> userOptional2 = Optional.ofNullable(user2);
 
         if (userOptional.isPresent()) {
             errors.rejectValue("email", "invalid.email", new Object[]{signUpDto.getEmail()}, "이미 사용중인 이메일입니다.");
         }
 
-        if (user.getNickname() == signUpDto.getNickname()) {
+        if (userOptional2.isPresent()) {
             errors.rejectValue("nickname", "invalid.nickname", new Object[]{signUpDto.getNickname()}, "이미 사용중인 닉네임입니다.");
         }
     }

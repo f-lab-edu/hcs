@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.domain.User;
 import com.hcs.dto.request.SignUpDto;
+import com.hcs.dto.request.UserModifyDto;
 import com.hcs.mapper.UserMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
@@ -26,8 +27,10 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,26 +51,43 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     private static SignUpDto testSignUpDto = new SignUpDto();
+    private static UserModifyDto testModifyDto = new UserModifyDto();
+
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
+
     @Autowired
-    private UserMapper userMapper;
+    UserMapper userMapper;
+
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     static Stream<Arguments> stringListProvider() {
         return Stream.of(
-                arguments("nononono", "no", "123123", Arrays.asList("nickname", "email", "password")),
-                arguments("nononono", "noah", "123123", Arrays.asList("email", "password")),
-                arguments("noah0504@naver.com", "no", "123123", Arrays.asList("nickname", "password")),
-                arguments("nononono", "no", "12345678", Arrays.asList("nickname", "email"))
+                arguments("nononono", "testtesttest", "12345678", Arrays.asList("email", "nickname", "password")),
+                arguments("nononono", "test", "123123", Arrays.asList("email", "password")),
+                arguments("test@naver.com", "te", "123123", Arrays.asList("nickname", "password")),
+                arguments("nononono", "te", "12345678", Arrays.asList("email", "nickname"))
+        );
+    }
+
+    static Stream<Arguments> stringListProvider2() {
+        return Stream.of(
+                arguments("noah0969@gmail.com", "nono2", "12345678", 99, "backend", "seoul", Arrays.asList("email")),
+                arguments("noah09692@gmail.com", "nono", "12345678", 99, "backend", "seoul", Arrays.asList("nickname")),
+                arguments("noah09692@gmail.com", "nono2", "12345678", 101, "backend", "seoul", Arrays.asList("age")),
+                arguments("noah09692@gmail.com", "nono2", "12345678", 99, "backendbackend", "seoul", Arrays.asList("position")),
+                arguments("noah09692@gmail.com", "nono2", "12345678", 99, "backend", "seoulseoulseoulseo", Arrays.asList("location")),
+                arguments("noah0969@gmail.com", "nono", "12345678", 99, "backend", "seoul", Arrays.asList("email", "nickname")),
+                arguments("noah09692@gmail.com", "nono", "12345678", 101, "backend", "seoul", Arrays.asList("nickname", "age")),
+                arguments("noah0969@gmail.com", "nono", "12345678", 101, "backendbackend", "seoulseoulseoulseo", Arrays.asList("email", "nickname", "age", "position", "location"))
         );
     }
 
     @DisplayName("회원가입 화면 테스트")
     @Test
     void signUpForm() throws Exception {
-        mockMvc.perform(get("/sign-up"))
+        mockMvc.perform(get("/user/sign-up"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -104,7 +124,7 @@ public class UserControllerTest {
     @Test
     void signUpSubmit_with_correct_input() throws Exception {
 
-        testSignUpDto.setNickname("noah");
+        testSignUpDto.setNickname("noah1");
         testSignUpDto.setEmail("noah0969@gmail.com");
         testSignUpDto.setPassword("12345678");
 
@@ -126,7 +146,6 @@ public class UserControllerTest {
 
         assertThat(status).isEqualTo(200);
         assertThat(item.get("userId")).isEqualTo((int) user.getId());
-
     }
 
     @DisplayName("사용자 정보 요청시 리턴되는 body를 확인")
@@ -153,10 +172,145 @@ public class UserControllerTest {
         assertThat(profile.get("userId")).isEqualTo((int) user.getId());
         assertThat(profile.get("email")).isEqualTo(user.getEmail());
         assertThat(profile.get("nickname")).isEqualTo(user.getNickname());
-        assertThat(profile.get("emailVerified")).isEqualTo(user.isEmailVerified());
+        assertThat(profile.get("emailVerified")).isEqualTo(user.getEmailVerified());
         assertThat(profile.get("joinedAt")).isEqualTo(user.getJoinedAt().toString());
         assertThat(profile.get("age")).isEqualTo(user.getAge());
         assertThat(profile.get("position")).isEqualTo(user.getPosition());
         assertThat(profile.get("location")).isEqualTo(user.getLocation());
+    }
+
+    @DisplayName("회원 정보 수정 - 입력값 정상")
+    @Test
+    void modifyUser_with_correct_input() throws Exception {
+
+        User newUser = User.builder()
+                .email("noah0969@gmail.com")
+                .nickname("nono")
+                .password("123456789")
+                .build();
+
+        userMapper.insertUser(newUser);
+        long userId = newUser.getId();
+
+        testModifyDto.setEmail("noah09691@gmail.com");
+        testModifyDto.setNickname("test123");
+        testModifyDto.setPassword("12345678");
+        testModifyDto.setAge(25);
+        testModifyDto.setPosition("backend");
+        testModifyDto.setLocation("Seoul");
+
+        MvcResult mvcResult = mockMvc.perform(put("/user/modify")
+                        .param("userId", String.valueOf(userId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testModifyDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        int modifiedUserId = JsonPath.parse(response).read("$.HCS.item.userId");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(modifiedUserId).isEqualTo(userId);
+
+        User modifiedUser = userMapper.findById(userId);
+
+        assertThat(modifiedUser.getEmail()).isEqualTo("noah09691@gmail.com");
+        assertThat(modifiedUser.getNickname()).isEqualTo("test123");
+        assertThat(modifiedUser.getPassword()).isEqualTo("12345678");
+        assertThat(modifiedUser.getAge()).isEqualTo(25);
+        assertThat(modifiedUser.getPosition()).isEqualTo("backend");
+        assertThat(modifiedUser.getLocation()).isEqualTo("Seoul");
+    }
+
+    @DisplayName("회원 정보 수정 - 입력값 오류")
+    @ParameterizedTest(name = "#{index} - {displayName} = Test with Argument={0}, {1}, {2}, {3}, {4}, {5}")
+    @MethodSource("stringListProvider2")
+    void modifyUser_with_wrong_input(String email, String nickname, String password, int age, String position, String location, List<String> invalidFields) throws Exception {
+
+        User newUser1 = User.builder()
+                .email("noah0969@gmail.com")
+                .nickname("nono")
+                .password("12345678")
+                .build();
+
+        User newUser2 = User.builder()
+                .email("noah09691@gmail.com")
+                .nickname("nono1")
+                .password("12345678")
+                .build();
+
+        userMapper.insertUser(newUser1);
+        userMapper.insertUser(newUser2);
+        long userId = newUser2.getId();
+
+        testModifyDto.setEmail(email);
+        testModifyDto.setNickname(nickname);
+        testModifyDto.setPassword(password);
+        testModifyDto.setAge(age);
+        testModifyDto.setPosition(position);
+        testModifyDto.setLocation(location);
+
+        MvcResult mvcResult = mockMvc.perform(put("/user/modify")
+                        .param("userId", String.valueOf(userId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testModifyDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        int length = JsonPath.parse(response).read("$.HCS.item.errors.length()");
+
+        assertThat(status).isEqualTo(400);
+
+        for (int i = 0; i < length; i++) {
+            String field = JsonPath.parse(response).read("$.HCS.item.errors[" + i + "].field");
+            assertThat(invalidFields).contains(field);
+        }
+    }
+
+    @DisplayName("회원 탈퇴")
+    @Test
+    void deleteUserTest() throws Exception {
+
+        User newUser1 = User.builder()
+                .email("noah0969@gmail.com")
+                .nickname("nono")
+                .password("12345678")
+                .build();
+
+        userMapper.insertUser(newUser1);
+
+        long userId = newUser1.getId();
+
+        MvcResult mvcResult = mockMvc.perform(delete("/user/delete")
+                        .param("userId", String.valueOf(userId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testSignUpDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        int count = userMapper.countByEmail("noah0969@gmail.com");
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(count).isEqualTo(0);
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("userId")).isEqualTo((int) userId);
     }
 }
