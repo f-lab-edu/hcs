@@ -81,5 +81,14 @@ public class ExceptionAdvisor {
         return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public HcsResponse illegalArgumentExceptionHandler(IllegalArgumentException e) {
+
+        ErrorCode error = ErrorCode.ILLEGAL_ARGUMENT;
+
+        return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()),e.getMessage()));
+    }
+
     // TODO 추후 Response가 만들어지면 공통으로 처리될 error에 대한 전역적인 @ExceptionHandler 추가 작성될 것임.
 }

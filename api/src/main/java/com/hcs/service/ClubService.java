@@ -57,7 +57,7 @@ public class ClubService {
 
     private void checkExistingClub(Club club) {
         if (club == null) {
-            throw new IllegalArgumentException(); //TODO : exception 만들어서 교체하기
+            throw new IllegalArgumentException("club");
         }
     }
 
