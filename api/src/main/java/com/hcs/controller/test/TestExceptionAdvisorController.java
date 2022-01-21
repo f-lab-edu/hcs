@@ -15,5 +15,10 @@ public class TestExceptionAdvisorController {
     public int NumberFormatException(@PathVariable("id") String testStr) {
         return Integer.parseInt(testStr);
     }
+
+    @GetMapping("/illegalArgu/{id}")
+    public long IllegalArgumentException(@PathVariable("id") long testId) {
+        throw new IllegalArgumentException("test advisor");
+    }
 }
 

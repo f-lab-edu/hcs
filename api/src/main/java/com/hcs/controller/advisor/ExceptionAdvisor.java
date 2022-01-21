@@ -56,7 +56,7 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ClubAccessDeniedException.class)
-    public HcsResponse clubAccessDeniedHandler() {
+    public HcsResponse ClubAccessDeniedHandler() {
 
         ErrorCode error = ErrorCode.CLUB_ACCESS_DENIED;
 
@@ -65,7 +65,7 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DatabaseException.class)
-    public HcsResponse databaseExceptionHandler(DatabaseException e) {
+    public HcsResponse DatabaseExceptionHandler(DatabaseException e) {
 
         ErrorCode error = ErrorCode.DATABASE_ERROR;
 
@@ -74,11 +74,20 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyJoinedClubException.class)
-    public HcsResponse alreadyJoinedExceptionHandler() {
+    public HcsResponse AlreadyJoinedExceptionHandler() {
 
         ErrorCode error = ErrorCode.ALREADY_JOINED_CLUB;
 
         return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public HcsResponse IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+
+        ErrorCode error = ErrorCode.ILLEGAL_ARGUMENT;
+
+        return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()),e.getMessage()));
     }
 
     // TODO 추후 Response가 만들어지면 공통으로 처리될 error에 대한 전역적인 @ExceptionHandler 추가 작성될 것임.

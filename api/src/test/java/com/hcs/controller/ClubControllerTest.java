@@ -303,6 +303,20 @@ class ClubControllerTest {
                 .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED_CLUB.getStatus()));
     }
 
+    @DisplayName("없는 club 요청")
+    @Test
+    void IllegalArgumentException() throws Exception {
+        mockMvc.perform(get("/club/info")
+                        .param("clubId", "-1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ILLEGAL_ARGUMENT.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ILLEGAL_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("$.HCS.item.location").value("club"))
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ILLEGAL_ARGUMENT.getStatus()));
+
+    }
+
     private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
         String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
                 "values(?,?,?,?)";
