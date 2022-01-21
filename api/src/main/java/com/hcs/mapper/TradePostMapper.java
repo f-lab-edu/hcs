@@ -14,7 +14,7 @@ public interface TradePostMapper {
 
     int countByTitle(String title);
 
-    long insertTradePost(TradePost tradePost);
+    int insertTradePost(TradePost tradePost);
 
     int updateTradePost(TradePost tradePost);
 

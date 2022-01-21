@@ -11,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TradePostRepository extends JpaRepository<TradePost, Long> {
 
     @EntityGraph(value = "TradePost.withAuthor", type = EntityGraph.EntityGraphType.LOAD)
-    Page<TradePost> findListByCategoryAndSalesStatus(String category, boolean salesStatus, Pageable pageable);
+    Page<TradePost> findListsByCategoryAndSalesStatus(String category, boolean salesStatus, Pageable pageable);
 }

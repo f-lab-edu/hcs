@@ -4,7 +4,7 @@ create table User
     email                      VARCHAR(30)  NOT NULL,
     nickname                   VARCHAR(10)  NOT NULL,
     password                   VARCHAR(200) NOT NULL,
-    emailVerified              BOOLEAN,
+    emailVerified              BOOLEAN DEFAULT FALSE,
     emailCheckToken            VARCHAR(50),
     emailCheckTokenGeneratedAt datetime,
     joinedAt                   datetime,
