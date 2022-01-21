@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
 
 /**
  * @Data : @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequireArgsConstructor 등의 기능을 제공
@@ -44,7 +40,7 @@ public class User {
     private String password;
 
     @Column(name = "emailVerified")
-    private boolean emailVerified;
+    private Boolean emailVerified;
 
     @Column(name = "emailCheckToken")
     private String emailCheckToken;
@@ -63,7 +59,4 @@ public class User {
 
     @Column(name = "location")
     private String location;
-
-    @OneToMany(mappedBy = "author")
-    private Set<TradePost> tradePostList = new HashSet<>();
 }
