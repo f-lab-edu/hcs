@@ -17,6 +17,7 @@ import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -47,5 +48,21 @@ public class ExceptionAdvisorTest {
         assertThat(status).isEqualTo(error.getStatus());
         assertThat(item.get("errorCode")).isEqualTo(error.getErrorCode());
         assertThat(item.get("message")).isEqualTo(error.getMessage());
+    }
+
+    @DisplayName("Exception Handler - IllegalArgumentException - 존재하지 않는 객체를 가리키는 argument 값 사용시")
+    @Test
+    void BAD_REQUEST_IllegalArgumentException() throws Exception {
+        long testId = -1; //불가능한 id
+        ErrorCode code = ErrorCode.ILLEGAL_ARGUMENT;
+        mockMvc.perform(get("/test/illegalArgu/{id}", String.valueOf(testId)))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.HCS.status").value(code.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(code.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(code.getMessage()))
+                .andExpect(jsonPath("$.HCS.item.location").value("test advisor"))
+                .andReturn();
+
     }
 }
