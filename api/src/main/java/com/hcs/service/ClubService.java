@@ -1,5 +1,6 @@
 package com.hcs.service;
 
+import com.hcs.config.DomainUrlConfig;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -30,9 +30,7 @@ public class ClubService {
     private final ClubMapper clubMapper;
     private final SqlSession sqlSession;
     private final CategoryService categoryService;
-
-    @Value("${domain.url}")
-    private String domainUrl;
+    private final DomainUrlConfig domainUrlConfig;
 
     public Club saveNewClub(@Valid ClubSubmitDto clubDto, long userId) {
         Club club = modelMapper.map(clubDto, Club.class);
@@ -98,7 +96,7 @@ public class ClubService {
     }
 
     public String makeClubUrl(long clubId) {
-        return domainUrl + "club/" + clubId;
+        return domainUrlConfig.getUrl() + "club/" + clubId;
     }
 
     public long deleteClub(long clubId, long managerId) {

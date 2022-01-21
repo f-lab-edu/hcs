@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.common.UserType;
+import com.hcs.config.DomainUrlConfig;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
@@ -18,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,9 +63,8 @@ class ClubControllerTest {
     private UserMapper userMapper;
     @Autowired
     JdbcTemplate jdbcTemplate;
-
-    @Value("${domain.url}")
-    private String domainUrl;
+    @Autowired
+    private DomainUrlConfig domainUrlConfig;
 
     User fixtureUser1;
 
@@ -169,7 +168,7 @@ class ClubControllerTest {
                 .andReturn();
 
         //clubUrl 검증
-        String requestUrl = domainUrl + "club/" + club.getId();
+        String requestUrl = domainUrlConfig.getUrl() + "club/" + club.getId();
         String responseJsonClubUrl = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.HCS.item.club.clubUrl");
         assertEquals(requestUrl, responseJsonClubUrl);
 
