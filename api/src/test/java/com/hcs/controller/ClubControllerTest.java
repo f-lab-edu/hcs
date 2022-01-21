@@ -305,7 +305,7 @@ class ClubControllerTest {
 
     @DisplayName("없는 club 요청")
     @Test
-    void illegalArgumentException() throws Exception {
+    void IllegalArgumentException() throws Exception {
         mockMvc.perform(get("/club/info")
                         .param("clubId", "-1")
                         .accept(MediaType.APPLICATION_JSON))

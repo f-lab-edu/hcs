@@ -56,7 +56,7 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ClubAccessDeniedException.class)
-    public HcsResponse clubAccessDeniedHandler() {
+    public HcsResponse ClubAccessDeniedHandler() {
 
         ErrorCode error = ErrorCode.CLUB_ACCESS_DENIED;
 
@@ -65,7 +65,7 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DatabaseException.class)
-    public HcsResponse databaseExceptionHandler(DatabaseException e) {
+    public HcsResponse DatabaseExceptionHandler(DatabaseException e) {
 
         ErrorCode error = ErrorCode.DATABASE_ERROR;
 
@@ -74,7 +74,7 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyJoinedClubException.class)
-    public HcsResponse alreadyJoinedExceptionHandler() {
+    public HcsResponse AlreadyJoinedExceptionHandler() {
 
         ErrorCode error = ErrorCode.ALREADY_JOINED_CLUB;
 
@@ -83,7 +83,7 @@ public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public HcsResponse illegalArgumentExceptionHandler(IllegalArgumentException e) {
+    public HcsResponse IllegalArgumentExceptionHandler(IllegalArgumentException e) {
 
         ErrorCode error = ErrorCode.ILLEGAL_ARGUMENT;
 
