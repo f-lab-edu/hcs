@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,7 +69,7 @@ public class ClubController {
         return HcsResponse.of(hcsList.club(clubInListDtos, page, count, allClubCounts));
     }
 
-    @PostMapping("/modify")
+    @PutMapping("/modify")
     public HcsResponse modifyClub(@RequestBody ClubSubmitDto clubDto, @RequestParam("clubId") long clubId) {
         clubId = clubService.modifyClub(clubId, clubDto);
         String clubUrl = clubService.makeClubUrl(clubId);
