@@ -4,7 +4,9 @@ import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.method.HcsInfo;
+import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.tradePost.TradePostInfoDto;
+import com.hcs.dto.response.tradePost.TradePostListDto;
 import com.hcs.dto.response.user.UserInfoDto;
 import com.hcs.service.TradePostService;
 import com.hcs.service.UserService;
@@ -15,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/post/tradePost")
@@ -27,6 +29,7 @@ public class TradePostController {
     private final UserService userService;
     private final TradePostService tradePostService;
     private final HcsInfo info;
+    private final HcsList list;
 
     @GetMapping("/info")
     public HcsResponse tradePost(@RequestParam("tradePostId") long tradePostId) {
@@ -47,16 +50,22 @@ public class TradePostController {
     @GetMapping("/list")
     public HcsResponse tradePosts(@RequestParam("page") int page, @RequestParam("category") String category, @RequestParam("salesStatus") boolean salesStatus) {
 
-//        List<TradePost> tradePostList = tradePostService.getTradePostList(page, category, salesStatus);
+        List<TradePost> tradePosts = tradePostService.findTradePostsWithPaging(page, category, salesStatus);
+        List<TradePostInfoDto> tradePostInfoDtos = new ArrayList<>();
 
-        Map<String, Object> tradePostInfo = new HashMap<>();
-        tradePostInfo.put("page", page);
-//        tradePostInfo.put("count", tradePostList.size());
-        tradePostInfo.put("category", category);
-        tradePostInfo.put("salesStatus", salesStatus);
+        for (TradePost tradePost : tradePosts) {
+            TradePostInfoDto info = modelMapper.map(tradePost, TradePostInfoDto.class);
+            tradePostInfoDtos.add(info);
+        }
 
-//        return hcsResponseManager.list.tradePost(tradePostInfo, tradePostList);
-        return null;
+        TradePostListDto tradePostListDto = TradePostListDto.builder()
+                .page(page)
+                .count(tradePosts.size())
+                .salesStatus(salesStatus)
+                .category(category)
+                .tradePosts(tradePostInfoDtos)
+                .build();
+
+        return HcsResponse.of(list.tradePost(tradePostListDto));
     }
-
 }
