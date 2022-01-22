@@ -104,9 +104,10 @@ public class TradePostController {
     private void modifyTradePostValidation(long tradePostId, String title) throws MethodArgumentNotValidException {
 
         TradePost originTradePost = tradePostService.findById(tradePostId);
-        Errors errors = new MapBindingResult(new HashMap<>(), "a");
 
         if (originTradePost.getTitle() != title && tradePostService.countByTitle(title) > 0) {
+
+            Errors errors = new MapBindingResult(new HashMap<>(), "a");
 
             errors.rejectValue("title", "invalid.title", new Object[]{title}, "이미 사용중인 제목 입니다.");
             throw new MethodArgumentNotValidException(null, (BindingResult) errors);
