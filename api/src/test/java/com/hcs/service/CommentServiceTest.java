@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @EnableEncryptableProperties
+@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 class CommentServiceTest {
 
@@ -47,9 +49,9 @@ class CommentServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -83,9 +85,9 @@ class CommentServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -97,8 +99,9 @@ class CommentServiceTest {
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
         String replyContents = "test 댓글내용_reply";
 
@@ -123,9 +126,9 @@ class CommentServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -137,8 +140,9 @@ class CommentServiceTest {
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
         String modifiedContents = "modified_" + contents;
 

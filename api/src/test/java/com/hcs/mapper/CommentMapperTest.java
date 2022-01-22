@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @AutoConfigureTestDatabase : 테스트시에 사용될 DB를 별도로 할지 선택할 수 있음
  * @MybatisTest : mybatis의 unit test를 할 경우 사용됨. unit test에 사용될 Bean들만 filtering할 수 있음
- * * @DataJpaTest : JPA 관련 테스트 설정만 로드하며 슬라이싱 테스트 시에 사용되는 어노테이션
+ * @DataJpaTest : JPA 관련 테스트 설정만 로드하며 슬라이싱 테스트 시에 사용되는 어노테이션
  */
 
 @EnableEncryptableProperties
@@ -49,9 +49,9 @@ class CommentMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -63,8 +63,9 @@ class CommentMapperTest {
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
         Comment comment = commentMapper.findById(commentId);
 
@@ -78,9 +79,9 @@ class CommentMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -94,9 +95,10 @@ class CommentMapperTest {
         int lng = 5;
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
         for (int i = 0; i < lng; i++) {
-            jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents + i);
+            jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents + i, comment_registerationTime.plusSeconds(i));
         }
 
         ArrayList<Comment> comments = (ArrayList<Comment>) commentMapper.findByTradePostId(tradePostId);
@@ -117,9 +119,9 @@ class CommentMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -131,15 +133,16 @@ class CommentMapperTest {
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String parentContents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, parentContents);
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, parentContents, comment_registerationTime);
 
         int lng = 5;
 
         String contents = "test 댓글내용";
 
         for (int i = 0; i < lng; i++) {
-            jdbcTemplateHelper.insertTestComment(commentId, authorId, tradePostId, contents + i);
+            jdbcTemplateHelper.insertTestComment(commentId, authorId, tradePostId, contents + i, comment_registerationTime.plusSeconds(i + 1));
         }
 
         ArrayList<Comment> comments = (ArrayList<Comment>) commentMapper.findReplysByParentCommentId(commentId);
@@ -160,9 +163,9 @@ class CommentMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -192,9 +195,9 @@ class CommentMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -206,8 +209,9 @@ class CommentMapperTest {
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
         String replyContents = "test 댓글내용_reply";
 
@@ -229,9 +233,9 @@ class CommentMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -243,8 +247,9 @@ class CommentMapperTest {
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
         Comment comment = commentMapper.findById(commentId);
 
@@ -263,12 +268,26 @@ class CommentMapperTest {
     @Test
     void deleteCommentTest() {
 
-        long authorId = 31L;
-        long tradePostId = 8L;
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
         String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
 
-        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents);
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
         int result = commentMapper.deleteComment(commentId);
 

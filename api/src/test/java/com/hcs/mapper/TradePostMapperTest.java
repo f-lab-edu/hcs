@@ -38,8 +38,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -68,8 +69,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -98,8 +100,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -132,9 +135,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -159,8 +162,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         User author = userMapper.findById(authorId);
         author.setId(authorId);
@@ -206,8 +210,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         User author = userMapper.findById(authorId);
         author.setId(authorId);
@@ -249,8 +254,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         User author = userMapper.findById(authorId);
         author.setId(authorId);
@@ -282,8 +288,9 @@ class TradePostMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
