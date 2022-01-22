@@ -4,19 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hcs.mapper.ClubMapper">
 
-    <select id="findById" parameterType="long" resultType="com.hcs.domain.Club">
+    <select id="findById" parameterType="long" resultType="Club">
         select *
         from Club
         where id = #{id}
     </select>
 
-    <select id="findByTitle" parameterType="String" resultType="com.hcs.domain.Club">
+    <select id="findByTitle" parameterType="String" resultType="Club">
         select *
         from Club
         where title = #{title}
     </select>
 
-    <insert id="insertClub" useGeneratedKeys="true" keyProperty="id" parameterType="com.hcs.domain.Club">
+    <insert id="insertClub" useGeneratedKeys="true" keyProperty="id" parameterType="Club">
         insert into Club (title, description, createdAt, location, categoryId, managerCount)
         values (#{title}, #{description}, #{createdAt}, #{location}, #{categoryId}, #{managerCount})
     </insert>
@@ -39,7 +39,7 @@
         where c.id = #{id}
     </select>
 
-    <resultMap id="clubWithMemberResult" type="com.hcs.domain.Club">
+    <resultMap id="clubWithMemberResult" type="Club">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="description" column="description"/>
@@ -48,7 +48,7 @@
         <result property="categoryId" column="categoryId"/>
         <result property="managerCount" column="managerCount"/>
         <result property="memberCount" column="memberCount"/>
-        <collection property="members" javaType="java.util.HashSet" ofType="com.hcs.domain.User">
+        <collection property="members" javaType="java.util.HashSet" ofType="User">
             <id property="id" column="userId"/>
             <result property="nickname" column="userNickname"/>
         </collection>
@@ -63,7 +63,7 @@
         where c.id = #{id}
     </select>
 
-    <resultMap id="clubWithManagersResult" type="com.hcs.domain.Club">
+    <resultMap id="clubWithManagersResult" type="Club">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="description" column="description"/>
@@ -72,7 +72,7 @@
         <result property="categoryId" column="categoryId"/>
         <result property="managerCount" column="managerCount"/>
         <result property="memberCount" column="memberCount"/>
-        <collection property="managers" javaType="java.util.HashSet" ofType="com.hcs.domain.User">
+        <collection property="managers" javaType="java.util.HashSet" ofType="User">
             <id property="id" column="userId"/>
             <result property="nickname" column="userNickname"/>
         </collection>
@@ -81,16 +81,17 @@
     <delete id="deleteClub" parameterType="long">
         delete c
         from Club c
-            inner join club_managers cm on c.id = cm.clubId
-        where c.id = #{clubId} AND cm.managerId = #{managerId}
+                 inner join club_managers cm on c.id = cm.clubId
+        where c.id = #{clubId}
+          AND cm.managerId = #{managerId}
     </delete>
 
-    <select id="findAllClubs" resultType="com.hcs.domain.Club">
+    <select id="findAllClubs" resultType="Club">
         select *
         from Club
     </select>
 
-    <select id="findByPageAndCategory" parameterType="long" resultType="com.hcs.domain.Club">
+    <select id="findByPageAndCategory" parameterType="long" resultType="Club">
         select *
         from Club
         where categoryId = #{categoryId}
@@ -101,25 +102,27 @@
         from Club
     </select>
 
-    <update id="updateClub" parameterType="com.hcs.domain.Club">
+    <update id="updateClub" parameterType="Club">
         update Club
-        set title = #{title},
+        set title       = #{title},
             description = #{description},
-            location = #{location},
-            categoryId = #{categoryId}
+            location    = #{location},
+            categoryId  = #{categoryId}
         where id = #{id}
     </update>
 
     <select id="checkClubManager" parameterType="long" resultType="boolean">
         select IF(COUNT(*) = 1, 1, 0)
         from club_managers
-        where clubId = #{clubId} AND managerId = #{managerId}
+        where clubId = #{clubId}
+          AND managerId = #{managerId}
     </select>
 
     <select id="checkClubMember" parameterType="long" resultType="boolean">
         select IF(COUNT(*) = 1, 1, 0)
         from club_members
-        where clubId = #{clubId} AND memberId = #{memberId}
+        where clubId = #{clubId}
+          AND memberId = #{memberId}
     </select>
 
     <update id="updateMemberCount">
@@ -127,5 +130,12 @@
         set memberCount = #{memberCount}
         where id = #{id}
     </update>
+
+    <delete id="deleteMember">
+        delete cm
+        from club_members cm
+        where cm.clubId = #{clubId}
+          and cm.memberId = #{memberId}
+    </delete>
 
 </mapper>
