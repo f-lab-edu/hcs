@@ -6,6 +6,7 @@ import com.hcs.dto.request.TradePostDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
+import com.hcs.dto.response.method.HcsModify;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.dto.response.tradePost.TradePostInfoDto;
 import com.hcs.dto.response.tradePost.TradePostListDto;
@@ -14,8 +15,13 @@ import com.hcs.service.TradePostService;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.MapBindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -36,6 +43,7 @@ public class TradePostController {
     private final HcsInfo info;
     private final HcsList list;
     private final HcsSubmit submit;
+    private final HcsModify modify;
 
     @GetMapping("/info")
     public HcsResponse tradePost(@RequestParam("tradePostId") long tradePostId) {
@@ -82,5 +90,26 @@ public class TradePostController {
         long tradePostId = newTradePost.getId();
 
         return HcsResponse.of(submit.tradePost(authorId, tradePostId));
+    }
+
+    @PutMapping("/")
+    public HcsResponse modifyTradePost(@Valid @RequestBody TradePostDto tradePostDto, @RequestParam("tradePostId") long tradePostId) throws MethodArgumentNotValidException {
+
+        modifyTradePostValidation(tradePostId, tradePostDto.getTitle());
+        tradePostService.modifyTradePost(tradePostId, tradePostDto);
+
+        return HcsResponse.of(modify.tradePost(tradePostId));
+    }
+
+    private void modifyTradePostValidation(long tradePostId, String title) throws MethodArgumentNotValidException {
+
+        TradePost originTradePost = tradePostService.findById(tradePostId);
+        Errors errors = new MapBindingResult(new HashMap<>(), "a");
+
+        if (originTradePost.getTitle() != title && tradePostService.countByTitle(title) > 0) {
+
+            errors.rejectValue("title", "invalid.title", new Object[]{title}, "이미 사용중인 제목 입니다.");
+            throw new MethodArgumentNotValidException(null, (BindingResult) errors);
+        }
     }
 }
