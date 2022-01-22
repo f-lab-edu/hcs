@@ -290,7 +290,7 @@ class ClubServiceTest {
         User manager = fixtureUser;
         User user = fixtureUser_2;
         Club givenClub = fixtureClub;
-        int beforeMemberCount =1;
+        int beforeMemberCount = 1;
         givenClub.setMemberCount(beforeMemberCount);
         given(clubMapper.findById(givenClub.getId())).willReturn(givenClub);
         given(userService.findById(anyLong())).willReturn(new User());
@@ -305,7 +305,7 @@ class ClubServiceTest {
         then(clubMapper).should(times(1)).checkClubManager(anyLong(), anyLong());
         then(clubMapper).should(times(1)).deleteMember(anyLong(), anyLong());
         then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
-        assertEquals(beforeMemberCount-1,club.getManagerCount());
+        assertEquals(beforeMemberCount - 1, club.getManagerCount());
 
     }
 
