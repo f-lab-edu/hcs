@@ -2,9 +2,11 @@ package com.hcs.controller;
 
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
+import com.hcs.dto.request.TradePostDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
+import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.dto.response.tradePost.TradePostInfoDto;
 import com.hcs.dto.response.tradePost.TradePostListDto;
 import com.hcs.dto.response.user.UserInfoDto;
@@ -13,10 +15,13 @@ import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +35,7 @@ public class TradePostController {
     private final TradePostService tradePostService;
     private final HcsInfo info;
     private final HcsList list;
+    private final HcsSubmit submit;
 
     @GetMapping("/info")
     public HcsResponse tradePost(@RequestParam("tradePostId") long tradePostId) {
@@ -67,5 +73,14 @@ public class TradePostController {
                 .build();
 
         return HcsResponse.of(list.tradePost(tradePostListDto));
+    }
+
+    @PostMapping("/submit")
+    public HcsResponse saveTradePost(@Valid @RequestBody TradePostDto tradePostDto, @RequestParam("authorId") long authorId) {
+
+        TradePost newTradePost = tradePostService.saveTradePost(authorId, tradePostDto);
+        long tradePostId = newTradePost.getId();
+
+        return HcsResponse.of(submit.tradePost(authorId, tradePostId));
     }
 }
