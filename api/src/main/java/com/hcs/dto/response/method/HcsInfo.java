@@ -3,11 +3,10 @@ package com.hcs.dto.response.method;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hcs.domain.Club;
-import com.hcs.dto.response.user.UserInfoDto;
-import com.hcs.domain.User;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubUserDto;
+import com.hcs.dto.response.tradePost.TradePostInfoDto;
+import com.hcs.dto.response.user.UserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,6 +69,17 @@ public class HcsInfo {
     public ObjectNode club(ClubInfoDto clubInfoDto) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = clubInfo(clubInfoDto);
+
+        hcs.put("status", 200);
+        hcs.set("item", item);
+
+        return hcs;
+    }
+
+    public ObjectNode tradePost(TradePostInfoDto tradePostInfoDto) {
+
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.valueToTree(tradePostInfoDto);
 
         hcs.put("status", 200);
         hcs.set("item", item);
