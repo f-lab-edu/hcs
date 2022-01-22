@@ -22,7 +22,7 @@ public class JdbcTemplateHelper {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    static long idVariable=1;
+    static long idVariable = 1;
 
     public long insertTestUser(String newEmail, String newNickname, String newPassword) {
 
@@ -111,7 +111,7 @@ public class JdbcTemplateHelper {
         String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
                 "values(?,?,?,?)";
         for (int i = 0; i < clubSize; i++) {
-            jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i+idVariable++, LocalDateTime.now(), categoryId, "test location"});
+            jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i + idVariable++, LocalDateTime.now(), categoryId, "test location"});
 
         }
         String selectAllClubs = "select * from Club";
@@ -132,7 +132,7 @@ public class JdbcTemplateHelper {
                 "values (?, ?, ?)";
 
         for (int i = 0; i < userSize; i++) {
-            String username = "testuser" + i+idVariable++;
+            String username = "testuser" + i + idVariable++;
             User user = User.builder()
                     .email(username + "@gmail.com")
                     .nickname(username)
@@ -157,12 +157,11 @@ public class JdbcTemplateHelper {
             }
             userSet.add(newUser);
         }
-        if(userType == UserType.MANAGER){
+        if (userType == UserType.MANAGER) {
             int managerCount = getManagerCountAtClub(club);
             String updateManagerCount = "update Club set managerCount = ? where id = ?";
             jdbcTemplate.update(updateManagerCount, managerCount + userSize, club.getId());
-        }
-        else if(userType == UserType.MEMBER) {
+        } else if (userType == UserType.MEMBER) {
             int memberCount = getMemberCountAtClub(club);
             String updateMemberCount = "update Club set memberCount = ? where id = ?";
             jdbcTemplate.update(updateMemberCount, memberCount + userSize, club.getId());
@@ -176,6 +175,7 @@ public class JdbcTemplateHelper {
                 (rs, rowNum) -> rs.getInt("memberCount"));
         return countList.get(0);
     }
+
     public int getManagerCountAtClub(Club club) {
         String selectManagerCount = "select managerCount from Club where id ='" + club.getId() + "'";
         List<Integer> countList = jdbcTemplate.query(selectManagerCount,
