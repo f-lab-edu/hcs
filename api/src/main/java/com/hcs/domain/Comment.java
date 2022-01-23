@@ -1,6 +1,5 @@
 package com.hcs.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +12,14 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+
+@NamedEntityGraph(name = "Comment.withAuthor", attributeNodes = {
+        @NamedAttributeNode(value = "author")}
+)
 
 @Data
 @Entity
@@ -34,7 +36,10 @@ public class Comment {
     private long id;
 
     @Column(name = "parentCommentId", insertable = false, updatable = false)
-    private long parentCommentId;
+    private Long parentCommentId;
+
+    @Column(name = "tradePostId", insertable = false, updatable = false)
+    private Long tradePostId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorId")
@@ -42,19 +47,6 @@ public class Comment {
 
     @Column(name = "contents")
     private String contents;
-
-    @ManyToOne
-    @JoinColumn(name = "tradePostId")
-    @JsonIgnore
-    private TradePost tradePost;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parentCommentId")
-    private Comment parentComment;
-
-    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Comment> replys = new HashSet<>();
 
     @Column(name = "registerationTime")
     private LocalDateTime registerationTime;
