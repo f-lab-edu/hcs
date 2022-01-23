@@ -216,7 +216,7 @@ class ClubMapperTest {
     @ValueSource(ints = {1, 5, 10})
     void countByAllClubs(int givenClubSize) {
         //given
-        long beforeClubCount = jdbcTemplateHelper.selectAllTestClubSize();
+        long beforeClubCount = jdbcTemplateHelper.selectCountAllTestClub();
         for (int i = 0; i < givenClubSize; i++) {
             long clubId = jdbcTemplateHelper.insertTestClub("testClub_" + i, "test loc", 1);
         }

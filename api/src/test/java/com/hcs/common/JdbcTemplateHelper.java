@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Component
 public class JdbcTemplateHelper {
@@ -127,7 +126,7 @@ public class JdbcTemplateHelper {
 
     public Club selectTestClub(long clubId) {
         String selectClub = "select * from Club where id ='" + clubId + "'";
-        List<Club> clubList = jdbcTemplate.query(selectClub,
+        Club club = jdbcTemplate.queryForObject(selectClub,
                 (rs, rowNum) -> Club.builder()
                         .id(rs.getLong("id"))
                         .title(rs.getString("title"))
@@ -137,7 +136,7 @@ public class JdbcTemplateHelper {
                         .managerCount(rs.getInt("managerCount"))
                         .memberCount(rs.getInt("memberCount"))
                         .build());
-        return clubList.get(0);
+        return club;
     }
 
     public void updateTestClub_managerCount(long clubId, int managerCount) {
@@ -166,28 +165,19 @@ public class JdbcTemplateHelper {
 
     public User selectTestUser(long userId) {
         String selectUser = "select * from User where id ='" + userId + "'";
-        List<User> userList = jdbcTemplate.query(selectUser,
+        User user = jdbcTemplate.queryForObject(selectUser,
                 (rs, rowNum) -> User.builder()
                         .id(rs.getLong("id"))
                         .nickname(rs.getString("nickname"))
                         .email(rs.getString("email"))
                         .build());
-        return userList.get(0);
+        return user;
     }
 
-    public long selectAllTestClubSize() {
-        String selectClub = "select * from Club";
-        List<Club> clubList = jdbcTemplate.query(selectClub,
-                (rs, rowNum) -> Club.builder()
-                        .id(rs.getLong("id"))
-                        .title(rs.getString("title"))
-                        .description(rs.getString("description"))
-                        .categoryId(rs.getLong("categoryId"))
-                        .location(rs.getString("location"))
-                        .managerCount(rs.getInt("managerCount"))
-                        .memberCount(rs.getInt("memberCount"))
-                        .build());
-        return clubList.size();
+    public long selectCountAllTestClub() {
+        String selectClub = "select count(*) from Club";
+        long clubSize = jdbcTemplate.queryForObject(selectClub, long.class);
+        return clubSize;
     }
 
     public void deleteTestClub(long clubId) {
