@@ -2,7 +2,6 @@ package com.hcs.mapper;
 
 import com.hcs.common.JdbcTemplateHelper;
 import com.hcs.domain.Comment;
-import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.DisplayName;
@@ -297,16 +296,13 @@ class CommentMapperTest {
     private Comment makeTestComment(long authorId, long tradePostId, String contents) {
 
         User testUser = new User(); // Dummy 데이터
-        TradePost testTradePost = new TradePost();
 
         testUser.setId(authorId);
-        testTradePost.setId(tradePostId);
 
         Comment testComment = Comment.builder()
                 .author(testUser)
                 .contents(contents)
-                .tradePost(testTradePost)
-                .replys(null)
+                .tradePostId(tradePostId)
                 .registerationTime(LocalDateTime.now())
                 .build();
 
@@ -316,17 +312,14 @@ class CommentMapperTest {
     private Comment makeTestReply(long parentCommentId, long authorId, long tradePostId, String contents) {
 
         User testUser = new User(); // Dummy 데이터
-        TradePost testTradePost = new TradePost();
 
         testUser.setId(authorId);
-        testTradePost.setId(tradePostId);
 
         Comment testComment = Comment.builder()
                 .parentCommentId(parentCommentId)
                 .author(testUser)
                 .contents(contents)
-                .tradePost(testTradePost)
-                .replys(null)
+                .tradePostId(tradePostId)
                 .registerationTime(LocalDateTime.now())
                 .build();
 

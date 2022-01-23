@@ -6,22 +6,30 @@ import com.hcs.domain.User;
 import com.hcs.dto.request.CommentDto;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.CommentMapper;
+import com.hcs.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final CommentMapper commentMapper;
     private final ModelMapper modelMapper;
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
 
     public long saveNewComment(CommentDto commentDto, User user, TradePost tradePost) {
 
         Comment comment = modelMapper.map(commentDto, Comment.class);
         comment.setAuthor(user);
-        comment.setTradePost(tradePost);
+        comment.setTradePostId(tradePost.getId());
+        comment.setRegisterationTime(LocalDateTime.now());
 
         long isSuccess = commentMapper.insertComment(comment);
         if (isSuccess != 1) throw new DatabaseException("DB comment insert");
@@ -33,8 +41,9 @@ public class CommentService {
 
         Comment reply = modelMapper.map(commentDto, Comment.class);
         reply.setAuthor(user);
-        reply.setTradePost(tradePost);
+        reply.setTradePostId(tradePost.getId());
         reply.setParentCommentId(parentCommentId);
+        reply.setRegisterationTime(LocalDateTime.now());
 
         long isSuccess = commentMapper.insertReply(reply);
         if (isSuccess != 1) throw new DatabaseException("DB reply insert");
@@ -44,6 +53,17 @@ public class CommentService {
 
     public Comment findById(long commentId) {
         return commentMapper.findById(commentId);
+    }
+
+    public List<Comment> findCommentsWithPaging(int page, long tradePostId) {
+
+        int pagePerCount = 5;
+
+        PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, Sort.by("registerationTime").ascending());
+
+        List<Comment> result = commentRepository.findListsByTradePostId(tradePostId, pageRequest).getContent();
+
+        return result;
     }
 
     public long modifyComment(long commentId, CommentDto commentDto) {
