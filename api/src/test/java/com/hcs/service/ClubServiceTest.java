@@ -1,5 +1,6 @@
 package com.hcs.service;
 
+import com.hcs.config.DomainUrlConfig;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
@@ -17,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,6 +53,9 @@ class ClubServiceTest {
 
     @Mock
     UserService userService;
+
+    @Mock
+    DomainUrlConfig domainUrlConfig;
 
     Club fixtureClub;
 
@@ -148,7 +151,7 @@ class ClubServiceTest {
         clubInListDto.setClubId(1L);
         given(modelMapper.map(fixtureClub, ClubInListDto.class)).willReturn(clubInListDto);
         String domainUrl = "https://localhost:8443/";
-        ReflectionTestUtils.setField(clubService, "domainUrl", domainUrl); //private field 에 값 주입
+        given(domainUrlConfig.getUrl()).willReturn(domainUrl);
         given(categoryService.getCategoryName(anyLong())).willReturn("sports");
 
         //when
@@ -181,9 +184,9 @@ class ClubServiceTest {
         ClubInfoDto givenDto = new ClubInfoDto();
         given(clubMapper.findById(fixtureClub.getId())).willReturn(fixtureClub);
         given(modelMapper.map(fixtureClub, ClubInfoDto.class)).willReturn(givenDto);
-        given(categoryService.getCategoryName(anyLong())).willReturn(eq("sports"));
         String domainUrl = "https://localhost:8443/";
-        ReflectionTestUtils.setField(clubService, "domainUrl", domainUrl); //private field 에 값 주입
+        given(domainUrlConfig.getUrl()).willReturn(domainUrl);
+        given(categoryService.getCategoryName(anyLong())).willReturn(eq("sports"));
 
         //when
         ClubInfoDto clubInfoDto = clubService.getClubInfo(givenClubId);
@@ -302,7 +305,7 @@ class ClubServiceTest {
         //when
         Club club = clubService.expulsionMember(givenClub.getId(), manager.getEmail(), user.getId());
         //then
-        then(clubMapper).should(times(1)).checkClubManager(anyLong(), anyLong());
+        then(clubMapper).should(times(2)).checkClubManager(anyLong(), anyLong());
         then(clubMapper).should(times(1)).deleteMember(anyLong(), anyLong());
         then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
         assertEquals(beforeMemberCount - 1, club.getManagerCount());

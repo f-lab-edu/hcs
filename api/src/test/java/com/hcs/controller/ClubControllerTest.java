@@ -9,7 +9,6 @@ import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.exception.ErrorCode;
 import com.hcs.mapper.ClubMapper;
-import com.hcs.mapper.UserMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +19,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -47,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @EnableMockMvc
 @EnableEncryptableProperties
+@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 class ClubControllerTest {
 
@@ -58,8 +59,6 @@ class ClubControllerTest {
     private ClubMapper clubMapper;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private UserMapper userMapper;
     @Autowired
     JdbcTemplateHelper jdbcTemplateHelper;
     @Autowired
@@ -82,16 +81,16 @@ class ClubControllerTest {
 
     @BeforeEach
     void initFixture() {
-        long user1Id = jdbcTemplateHelper.insertTestUser("fixtureUser1@test.com", "fixUser1", "testpass");
+        long user1Id = jdbcTemplateHelper.insertTestUser("fixtureUser1@test.com", "fixUser1", "testpass", LocalDateTime.now());
         fixtureUser1 = jdbcTemplateHelper.selectTestUser(user1Id);
 
-        long user2Id = jdbcTemplateHelper.insertTestUser("fixUser2@test.com", "fixUser2", "testpass");
+        long user2Id = jdbcTemplateHelper.insertTestUser("fixUser2@test.com", "fixUser2", "testpass", LocalDateTime.now());
         fixtureUser2 = jdbcTemplateHelper.selectTestUser(user2Id);
 
         long clubId = jdbcTemplateHelper.insertTestClub("fixtureClub", "test loc", 1L);
         fixtureClub = jdbcTemplateHelper.selectTestClub(clubId);
 
-        long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass");
+        long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass", LocalDateTime.now());
         fixtureManager = jdbcTemplateHelper.selectTestUser(managerId);
         jdbcTemplateHelper.insertTestClubManagers(clubId, managerId);
         jdbcTemplateHelper.updateTestClub_managerCount(clubId, 1);
@@ -340,7 +339,7 @@ class ClubControllerTest {
                 .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()));
 
         //잘못된 입력 :  member 가 아닌 user 탈퇴를 요청할경우 - NOT_JOINED_CLUB
-        long justUserId = jdbcTemplateHelper.insertTestUser("justUser@test.com", "justUser", "justUserPass");
+        long justUserId = jdbcTemplateHelper.insertTestUser("justUser@test.com", "justUser", "justUserPass", LocalDateTime.now());
         mockMvc.perform(delete("/club/delete/members")
                         .param("clubId", club.getId().toString())
                         .param("managerEmail", manager.getEmail())
