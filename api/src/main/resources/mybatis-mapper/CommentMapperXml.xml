@@ -24,7 +24,7 @@
 
     <insert id="insertComment" useGeneratedKeys="true" keyProperty="id" parameterType="Comment">
         insert into Comment (authorId, contents, tradePostId, registerationTime)
-        values (#{author.id}, #{contents}, #{tradePost.id}, #{registerationTime})
+        values (#{author.id}, #{contents}, #{tradePostId}, #{registerationTime})
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -32,7 +32,7 @@
 
     <insert id="insertReply" useGeneratedKeys="true" keyProperty="id" parameterType="Comment">
         insert into Comment (parentCommentId, authorId, contents, tradePostId, registerationTime)
-        values (#{parentCommentId}, #{author.id}, #{contents}, #{tradePost.id}, #{registerationTime})
+        values (#{parentCommentId}, #{author.id}, #{contents}, #{tradePostId}, #{registerationTime})
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>

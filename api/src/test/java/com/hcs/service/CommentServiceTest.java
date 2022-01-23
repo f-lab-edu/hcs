@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,6 +42,41 @@ class CommentServiceTest {
 
     @Autowired
     JdbcTemplateHelper jdbcTemplateHelper;
+
+    @Test
+    @DisplayName("중고거래 게시글에 달린 댓글들을 페이지당 리스트로 리턴하는 테스트")
+    void findCommentsByTradePostIdTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        int lng = 5;
+
+        String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        for (int i = 0; i < lng; i++) {
+            jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents + i, comment_registerationTime.plusSeconds(i));
+        }
+
+        List<Comment> comments = commentService.findCommentsWithPaging(1, tradePostId);
+        System.out.println("comments " + comments);
+
+        assertThat(comments.size()).isEqualTo(lng);
+    }
 
     @Test
     @DisplayName("Comment 추가가 제대로 동작하는지 테스트")
