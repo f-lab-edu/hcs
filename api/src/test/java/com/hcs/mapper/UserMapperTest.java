@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,8 +34,9 @@ class UserMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         Optional<User> returnedBy = Optional.ofNullable(userMapper.findById(userId));
 
@@ -51,8 +53,9 @@ class UserMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         Optional<User> returnedBy = Optional.ofNullable(userMapper.findByEmail(newEmail));
 
@@ -69,8 +72,9 @@ class UserMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         Optional<User> returnedBy = Optional.ofNullable(userMapper.findByNickname(newNickname));
 
@@ -87,10 +91,11 @@ class UserMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-        jdbcTemplateHelper.insertTestUser(newEmail, newNickname + 1, newPassword + 1);
-        jdbcTemplateHelper.insertTestUser(newEmail, newNickname + 2, newPassword + 2);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword + 1, joinedAt.plusSeconds(1));
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword + 2, joinedAt.plusSeconds(2));
 
         int count = userMapper.countByEmail(newEmail);
 
@@ -104,10 +109,11 @@ class UserMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-        jdbcTemplateHelper.insertTestUser(newEmail + 1, newNickname, newPassword + 1);
-        jdbcTemplateHelper.insertTestUser(newEmail + 2, newNickname, newPassword + 2);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword + 1, joinedAt.plusSeconds(1));
+        jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword + 2, joinedAt.plusSeconds(2));
 
         int count = userMapper.countByNickname(newNickname);
 
@@ -140,8 +146,9 @@ class UserMapperTest {
         String newEmail = "test2@naver.com";
         String newNickname = "test2";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
 
         int age = 20;
         String position = "backend";
@@ -169,8 +176,9 @@ class UserMapperTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
+        long userId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         long isSuccess = userMapper.deleteUserById(userId);
 
         assertThat(isSuccess).isGreaterThan(0);

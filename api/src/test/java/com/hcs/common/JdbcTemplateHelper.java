@@ -17,18 +17,19 @@ public class JdbcTemplateHelper {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public long insertTestUser(String newEmail, String newNickname, String newPassword) {
+    public long insertTestUser(String newEmail, String newNickname, String newPassword, LocalDateTime joinedAt) {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        String insertSql = "insert into User (email, nickname, password)\n" +
-                "values (?, ?, ?)";
+        String insertSql = "insert into User (email, nickname, password, joinedAt)\n" +
+                "values (?, ?, ?, ?)";
 
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, newEmail);
             ps.setString(2, newNickname);
             ps.setString(3, newPassword);
+            ps.setString(4, String.valueOf(joinedAt));
             return ps;
         }, keyHolder);
 
@@ -59,12 +60,12 @@ public class JdbcTemplateHelper {
         return keyHolder.getKey().longValue();
     }
 
-    public long insertTestComment(long parentCommentId, long authorId, long tradePostId, String contents) {
+    public long insertTestComment(long parentCommentId, long authorId, long tradePostId, String contents, LocalDateTime registerationTime) {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        String insertSql = "insert into Comment (parentCommentId, authorId, tradePostId, contents)\n" +
-                "values (?, ?, ?, ?)";
+        String insertSql = "insert into Comment (parentCommentId, authorId, tradePostId, contents, registerationTime)\n" +
+                "values (?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
@@ -75,6 +76,7 @@ public class JdbcTemplateHelper {
             ps.setLong(2, authorId);
             ps.setLong(3, tradePostId);
             ps.setString(4, contents);
+            ps.setString(5, String.valueOf(registerationTime));
 
             return ps;
         }, keyHolder);

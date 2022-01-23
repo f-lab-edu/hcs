@@ -38,9 +38,9 @@ class TradePostServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -73,9 +73,9 @@ class TradePostServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -101,9 +101,9 @@ class TradePostServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "test";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
         String title = "test";
         String productStatus = "중";
         String category = "중";
@@ -154,6 +154,7 @@ class TradePostServiceTest {
         String newEmail = "test@naver.com";
         String newNickname = "tes";
         String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
         String title = "test";
         String productStatus = "중";
@@ -171,8 +172,8 @@ class TradePostServiceTest {
 
         for (int i = 0; i < lng; i++) {
 
-            authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword);
-            tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+            authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+            tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime.plusMinutes(i));
 
             authorIds[i] = authorId;
             tradePostIds[i] = tradePostId;
@@ -185,14 +186,16 @@ class TradePostServiceTest {
             productStatus += i;
             description += i;
             price += i;
-            registrationTime = LocalDateTime.now();
         }
 
         List<TradePost> result = tradePostService.findTradePostsWithPaging(1, category, false);
 
         for (int i = 0; i < lng; i++) {
-            assertThat(result.get(i)).isEqualTo(tradePostService.findById(tradePostIds[i]));
-            assertThat(result.get(i).getAuthor()).isEqualTo(userService.findById(authorIds[i]));
+
+            int latestIdx = lng - i - 1;
+
+            assertThat(result.get(i).getId()).isEqualTo((int) tradePostIds[latestIdx]);
+            assertThat(result.get(i).getAuthor().getId()).isEqualTo((int) authorIds[latestIdx]);
         }
     }
 }
