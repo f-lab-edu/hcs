@@ -169,4 +169,21 @@ public class ClubService {
         }
         return club;
     }
+
+    public Club resignMember(long clubId, long memberId) {
+        Club club = getClub(clubId);
+        if (!clubMapper.checkClubMember(club.getId(), memberId)) {
+            throw new NotJoinedClubException();
+        }
+        int deleteMemberResult = clubMapper.deleteMember(club.getId(), memberId);
+        if (deleteMemberResult != 1) {
+            throw new DatabaseException("DB member error");
+        }
+        club.setMemberCount(club.getMemberCount() - 1);
+        int updateMemberCountResult = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
+        if (updateMemberCountResult != 1) {
+            throw new DatabaseException("DB club error");
+        }
+        return club;
+    }
 }
