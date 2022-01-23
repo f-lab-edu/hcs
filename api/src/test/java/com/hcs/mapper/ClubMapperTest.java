@@ -53,16 +53,16 @@ class ClubMapperTest {
 
     @BeforeEach
     void initFixture() {
-        long user1Id = jdbcTemplateHelper.insertTestUser("fixtureUser1@test.com", "fixUser1", "testpass");
+        long user1Id = jdbcTemplateHelper.insertTestUser("fixtureUser1@test.com", "fixUser1", "testpass", LocalDateTime.now());
         fixtureUser1 = jdbcTemplateHelper.selectTestUser(user1Id);
 
-        long user2Id = jdbcTemplateHelper.insertTestUser("fixtureUser2@test.com", "fixUser2", "testpass");
+        long user2Id = jdbcTemplateHelper.insertTestUser("fixtureUser2@test.com", "fixUser2", "testpass", LocalDateTime.now());
         fixtureUser2 = jdbcTemplateHelper.selectTestUser(user2Id);
 
         long clubId = jdbcTemplateHelper.insertTestClub("fixtureClub", "test loc", 1L);
         fixtureClub = jdbcTemplateHelper.selectTestClub(clubId);
 
-        long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass");
+        long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass", LocalDateTime.now());
         fixtureManager = jdbcTemplateHelper.selectTestUser(managerId);
         jdbcTemplateHelper.insertTestClubManagers(clubId, managerId);
         jdbcTemplateHelper.updateTestClub_managerCount(clubId, 1);
@@ -123,7 +123,7 @@ class ClubMapperTest {
         int memberSize = 3;
         Set<User> userSet = new HashSet<>();
         for (int i = 0; i < memberSize; i++) {
-            long userId = jdbcTemplateHelper.insertTestUser("testUSer" + i + "@test.com", "testUSer" + i, "testpass");
+            long userId = jdbcTemplateHelper.insertTestUser("testUSer" + i + "@test.com", "testUSer" + i, "testpass", LocalDateTime.now());
             userSet.add(jdbcTemplateHelper.selectTestUser(userId));
             jdbcTemplateHelper.insertTestClubMembers(testClub.getId(), userId);
             int currentMemberCount = jdbcTemplateHelper.selectTestClub(testClub.getId()).getMemberCount();
@@ -147,7 +147,7 @@ class ClubMapperTest {
         int managerSize = 5;
         Set<User> userSet = new HashSet<>();
         for (int i = 0; i < managerSize; i++) {
-            long userId = jdbcTemplateHelper.insertTestUser("testUset" + i + "@test.com", "testnick" + i, "testpass");
+            long userId = jdbcTemplateHelper.insertTestUser("testUset" + i + "@test.com", "testnick" + i, "testpass", LocalDateTime.now());
             userSet.add(jdbcTemplateHelper.selectTestUser(userId));
             jdbcTemplateHelper.insertTestClubManagers(testClub.getId(), userId);
         }
