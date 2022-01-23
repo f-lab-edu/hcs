@@ -51,9 +51,13 @@ class ClubServiceTest {
     @Mock
     CategoryService categoryService;
 
+    @Mock
+    UserService userService;
+
     Club fixtureClub;
 
     User fixtureUser;
+    User fixtureUser_2;
 
     @BeforeEach
     void init() {
@@ -69,6 +73,12 @@ class ClubServiceTest {
                 .id(10L)
                 .email("testuser@test.com")
                 .nickname("testuser")
+                .password("testPass")
+                .build();
+        fixtureUser_2 = User.builder()
+                .id(11L)
+                .email("testuser2@test.com")
+                .nickname("testuser2")
                 .password("testPass")
                 .build();
     }
@@ -272,4 +282,31 @@ class ClubServiceTest {
         assertEquals(dto.getApplicantId(), user.getId());
         assertEquals(dto.getCurrentMembersCount(), plusMemberCount);
     }
+
+    @DisplayName("clubId 와 userId, managerEmail이 주어지면, user를 member에서 삭제")
+    @Test
+    void expulsionMember() {
+        //given
+        User manager = fixtureUser;
+        User user = fixtureUser_2;
+        Club givenClub = fixtureClub;
+        int beforeMemberCount = 1;
+        givenClub.setMemberCount(beforeMemberCount);
+        given(clubMapper.findById(givenClub.getId())).willReturn(givenClub);
+        given(userService.findById(anyLong())).willReturn(new User());
+        given(userService.findByEmail(any())).willReturn(new User());
+        given(clubMapper.checkClubManager(anyLong(), anyLong())).willReturn(true);
+        given(clubMapper.deleteMember(anyLong(), anyLong())).willReturn(1);
+        given(clubMapper.updateMemberCount(anyLong(), anyInt())).willReturn(1);
+
+        //when
+        Club club = clubService.expulsionMember(givenClub.getId(), manager.getEmail(), user.getId());
+        //then
+        then(clubMapper).should(times(1)).checkClubManager(anyLong(), anyLong());
+        then(clubMapper).should(times(1)).deleteMember(anyLong(), anyLong());
+        then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
+        assertEquals(beforeMemberCount - 1, club.getManagerCount());
+
+    }
+
 }

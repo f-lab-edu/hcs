@@ -9,6 +9,7 @@ import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
 import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
+import com.hcs.exception.club.NotJoinedClubException;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class ClubService {
     private final SqlSession sqlSession;
     private final CategoryService categoryService;
     private final DomainUrlConfig domainUrlConfig;
+    private final UserService userService;
 
     public Club saveNewClub(@Valid ClubSubmitDto clubDto, long userId) {
         Club club = modelMapper.map(clubDto, Club.class);
@@ -134,4 +136,37 @@ public class ClubService {
         }
     }
 
+    public Club expulsionMember(long clubId, String managerEmail, long userId) {
+        Club club = getClub(clubId);
+        User manager = userService.findByEmail(managerEmail);
+        User member = userService.findById(userId);
+
+        boolean managerExist = clubMapper.checkClubManager(club.getId(), manager.getId());
+        if (!managerExist) {
+            throw new ClubAccessDeniedException();
+        }
+
+        boolean memberExist = clubMapper.checkClubMember(club.getId(), member.getId());
+        if (!memberExist) {
+            boolean memberIsManager = clubMapper.checkClubManager(club.getId(), member.getId());
+            if (memberIsManager) {
+                // TODO : manager 삭제 요청
+            } else {
+                throw new NotJoinedClubException();
+            }
+
+        }
+
+        int deleteMemberResult = clubMapper.deleteMember(club.getId(), member.getId());
+        if (deleteMemberResult != 1) {
+            throw new DatabaseException("DB club member delete");
+        }
+
+        club.setMemberCount(club.getMemberCount() - 1);
+        int updateMemberCountResult = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
+        if (updateMemberCountResult != 1) {
+            throw new DatabaseException("DB club memberCount update");
+        }
+        return club;
+    }
 }

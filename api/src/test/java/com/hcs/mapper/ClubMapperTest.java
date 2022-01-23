@@ -1,11 +1,12 @@
 package com.hcs.mapper;
 
-import com.hcs.common.UserType;
+import com.hcs.common.JdbcTemplateHelper;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,11 +16,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableEncryptableProperties
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig"})})
+@DataJpaTest(includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {".*DataSourceConfig", ".*JasyptConfig", ".*Helper"})})
 class ClubMapperTest {
 
     @Autowired
@@ -41,7 +41,33 @@ class ClubMapperTest {
     @Autowired
     SqlSession session;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    JdbcTemplateHelper jdbcTemplateHelper;
+
+    User fixtureUser1;
+
+    User fixtureUser2;
+
+    Club fixtureClub;
+
+    User fixtureManager;
+
+    @BeforeEach
+    void initFixture() {
+        long user1Id = jdbcTemplateHelper.insertTestUser("fixtureUser1@test.com", "fixUser1", "testpass");
+        fixtureUser1 = jdbcTemplateHelper.selectTestUser(user1Id);
+
+        long user2Id = jdbcTemplateHelper.insertTestUser("fixtureUser2@test.com", "fixUser2", "testpass");
+        fixtureUser2 = jdbcTemplateHelper.selectTestUser(user2Id);
+
+        long clubId = jdbcTemplateHelper.insertTestClub("fixtureClub", "test loc", 1L);
+        fixtureClub = jdbcTemplateHelper.selectTestClub(clubId);
+
+        long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass");
+        fixtureManager = jdbcTemplateHelper.selectTestUser(managerId);
+        jdbcTemplateHelper.insertTestClubManagers(clubId, managerId);
+        jdbcTemplateHelper.updateTestClub_managerCount(clubId, 1);
+
+    }
 
     @DisplayName("ClubMapper - club db에 저장 및 찾기 테스트")
     @Test
@@ -77,11 +103,8 @@ class ClubMapperTest {
     @Test
     void deleteTest() {
         //given
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
-        Club club = clubList.get(0);
-        Set<User> userSet = generateUserAndJoinClub(club, UserType.MANAGER, 1);
-        Iterator<User> iter = userSet.iterator();
-        User manager = iter.next();
+        Club club = fixtureClub;
+        User manager = fixtureManager;
 
         //when
         int result = clubMapper.deleteClub(club.getId(), manager.getId());
@@ -95,20 +118,22 @@ class ClubMapperTest {
     @DisplayName("ClubMapper - club member 저장 및 가져오기")
     @Test
     void findMembersTest() {
-        Club club = Club.builder()
-                .title("testClub")
-                .location("Bucheon")
-                .categoryId(1L)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        clubMapper.insertClub(club);
-        Club testClub = clubMapper.findByTitle("testClub");
-
+        //given
+        Club testClub = fixtureClub;
         int memberSize = 3;
+        Set<User> userSet = new HashSet<>();
+        for (int i = 0; i < memberSize; i++) {
+            long userId = jdbcTemplateHelper.insertTestUser("testUSer" + i + "@test.com", "testUSer" + i, "testpass");
+            userSet.add(jdbcTemplateHelper.selectTestUser(userId));
+            jdbcTemplateHelper.insertTestClubMembers(testClub.getId(), userId);
+            int currentMemberCount = jdbcTemplateHelper.selectTestClub(testClub.getId()).getMemberCount();
+            jdbcTemplateHelper.updateTestClub_memberCount(testClub.getId(), currentMemberCount + 1);
+        }
 
-        Set<User> userSet = generateUserAndJoinClub(testClub, UserType.MEMBER, memberSize);
+        //when
         Club aClubWithMembers = clubMapper.findClubWithMembers(testClub.getId());
+
+        //then
         Set<User> memberSet = aClubWithMembers.getMembers();
         assertEquals(userSet, memberSet);
     }
@@ -116,27 +141,36 @@ class ClubMapperTest {
     @DisplayName("ClubMapper - club manager 저장 및 가져오기")
     @Test
     void findManagersTest() {
-        Club club = Club.builder()
-                .title("testClub")
-                .location("Bucheon")
-                .categoryId(1L)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        clubMapper.insertClub(club);
-        Club testClub = clubMapper.findByTitle("testClub");
-
+        //given
+        long clubId = jdbcTemplateHelper.insertTestClub("test_Club", "test loc", 1);
+        Club testClub = jdbcTemplateHelper.selectTestClub(clubId);
         int managerSize = 5;
+        Set<User> userSet = new HashSet<>();
+        for (int i = 0; i < managerSize; i++) {
+            long userId = jdbcTemplateHelper.insertTestUser("testUset" + i + "@test.com", "testnick" + i, "testpass");
+            userSet.add(jdbcTemplateHelper.selectTestUser(userId));
+            jdbcTemplateHelper.insertTestClubManagers(testClub.getId(), userId);
+        }
 
-        Set<User> userSet = generateUserAndJoinClub(testClub, UserType.MANAGER, managerSize);
+        //when
         Club clubWithManagers = clubMapper.findClubWithManagers(testClub.getId());
+
+        //then
         assertEquals(userSet, clubWithManagers.getManagers());
+
     }
 
     @DisplayName("mybatis mapper pagination test")
     @Test
     void findAllClubWithPageTest() {
-        List<Club> clubList = generateClubBySizeAndCategoryId(30, 1);
+        jdbcTemplateHelper.deleteTestClub(fixtureClub.getId());
+        int clubSize = 30;
+        List<Club> clubList = new ArrayList<>();
+        for (int i = 0; i < clubSize; i++) {
+            long clubId = jdbcTemplateHelper.insertTestClub("testClub_" + i, "test loc", 1);
+            clubList.add(jdbcTemplateHelper.selectTestClub(clubId));
+        }
+
         int limit = 5, start = 0;
         RowBounds rowBounds = new RowBounds(start, limit);
         List<Club> pagingClubList = session.selectList("com.hcs.mapper.ClubMapper.findAllClubs", null, rowBounds);
@@ -162,7 +196,10 @@ class ClubMapperTest {
         int givenClubSize = 10;
         RowBounds rowBounds = new RowBounds(start - 1, count);
         long givenCategoryId = 2;
-        generateClubBySizeAndCategoryId(givenClubSize, givenCategoryId);
+
+        for (int i = 0; i < givenClubSize; i++) {
+            long clubId = jdbcTemplateHelper.insertTestClub("testClub_" + i, "test loc", givenCategoryId);
+        }
 
         //when
         List<Club> clubList = session.selectList("com.hcs.mapper.ClubMapper.findByPageAndCategory", givenCategoryId, rowBounds);
@@ -179,13 +216,16 @@ class ClubMapperTest {
     @ValueSource(ints = {1, 5, 10})
     void countByAllClubs(int givenClubSize) {
         //given
-        List<Club> givenClubList = generateClubBySizeAndCategoryId(givenClubSize, 1);
+        long beforeClubCount = jdbcTemplateHelper.selectCountAllTestClub();
+        for (int i = 0; i < givenClubSize; i++) {
+            long clubId = jdbcTemplateHelper.insertTestClub("testClub_" + i, "test loc", 1);
+        }
 
         //when
         long totalClubCount = clubMapper.countByAllClubs();
 
         //then
-        assertEquals(givenClubSize, totalClubCount);
+        assertEquals(givenClubSize + beforeClubCount, totalClubCount);
     }
 
     @DisplayName("club update")
@@ -193,8 +233,8 @@ class ClubMapperTest {
     void updateClub() {
         //given
         long initCategoryId = 1L;
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, initCategoryId);
-        Club givenClub = clubList.get(0);
+        long clubId = jdbcTemplateHelper.insertTestClub("testClub", "test loc", initCategoryId);
+        Club givenClub = jdbcTemplateHelper.selectTestClub(clubId);
         long changedCategoryId = 2L;
         String changedDescription = "changed description at " + LocalDateTime.now().getSecond() + "sec";
         String changedLocation = "changed at " + LocalDateTime.now().getSecond() + "sec";
@@ -208,15 +248,7 @@ class ClubMapperTest {
         clubMapper.updateClub(givenClub);
 
         //then
-        List<Club> list = jdbcTemplate.query("select * from Club where id=" + givenClub.getId()
-                , (rs, rowNum) -> Club.builder()
-                        .id(rs.getLong("id"))
-                        .title(rs.getString("title"))
-                        .description(rs.getString("description"))
-                        .categoryId(rs.getLong("categoryId"))
-                        .location(rs.getString("location"))
-                        .build());
-        Club modifiedClub = list.get(0);
+        Club modifiedClub = jdbcTemplateHelper.selectTestClub(givenClub.getId());
         assertEquals(givenClub.getId(), modifiedClub.getId());
         assertEquals(changedTitle, modifiedClub.getTitle());
         assertEquals(changedDescription, modifiedClub.getDescription());
@@ -228,18 +260,15 @@ class ClubMapperTest {
     @DisplayName(" club id 와 user id 가 주어지면 manager 등록하기")
     @Test
     void joinManagerById() {
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
-        Club club = clubList.get(0);
-        User user = generateUser("test");
+        long clubId = jdbcTemplateHelper.insertTestClub("testClub", "test loc", 1);
+        Club club = jdbcTemplateHelper.selectTestClub(clubId);
+        User user = fixtureUser1;
 
         int result = clubMapper.joinManagerById(club.getId(), user.getId());
 
         assertEquals(result, 1);
 
-        String selectUserByEmail = "select count(*) from club_managers " +
-                "where clubId = '" + club.getId() + "'" +
-                "and managerId  ='" + user.getId() + "'";
-        int managerCount = jdbcTemplate.queryForObject(selectUserByEmail, int.class);
+        int managerCount = jdbcTemplateHelper.selectTestManagerCountAtClubManagers(clubId, user.getId());
 
         assertEquals(managerCount, 1);
     }
@@ -247,10 +276,8 @@ class ClubMapperTest {
     @DisplayName("club id 와 user id 가 주어지면 해당 user 가 manager 인지 확인하기 ")
     @Test
     void checkClubManager() {
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
-        Club club = clubList.get(0);
-        Set<User> userSet = generateUserAndJoinClub(club, UserType.MANAGER, 1);
-        User manager = userSet.stream().iterator().next();
+        Club club = fixtureClub;
+        User manager = fixtureManager;
 
         //club 에 등록된 user 체크
         boolean result = clubMapper.checkClubManager(club.getId(), manager.getId());
@@ -258,7 +285,7 @@ class ClubMapperTest {
         assertTrue(result);
 
         //club 에 등록되지 않은 user 체크
-        User testUser = User.builder().id(-1).build();
+        User testUser = fixtureUser1;
         boolean wrongResult = clubMapper.checkClubManager(club.getId(), testUser.getId());
         assertFalse(wrongResult);
 
@@ -267,10 +294,9 @@ class ClubMapperTest {
     @DisplayName("club id 와 user id 가 주어지면 해당 user 가 mamber 인지 확인하기 ")
     @Test
     void checkClubMember() {
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
-        Club club = clubList.get(0);
-        Set<User> userSet = generateUserAndJoinClub(club, UserType.MEMBER, 1);
-        User member = userSet.stream().iterator().next();
+        Club club = fixtureClub;
+        User member = fixtureUser1;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member.getId());
 
         //club 에 등록된 user 체크
         boolean result = clubMapper.checkClubMember(club.getId(), member.getId());
@@ -278,7 +304,7 @@ class ClubMapperTest {
         assertTrue(result);
 
         //club 에 등록되지 않은 user 체크
-        User testUser = User.builder().id(-1).build();
+        User testUser = fixtureUser2;
         boolean wrongResult = clubMapper.checkClubMember(club.getId(), testUser.getId());
         assertFalse(wrongResult);
 
@@ -287,18 +313,14 @@ class ClubMapperTest {
     @DisplayName("club id 와 user id 가 주어지면 member 등록하기")
     @Test
     void joinMember() {
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1);
-        Club club = clubList.get(0);
-        User user = generateUser("member");
+        Club club = fixtureClub;
+        User user = fixtureUser1;
 
         int result = clubMapper.joinMemberById(club.getId(), user.getId());
 
         assertEquals(result, 1);
 
-        String selectMemberIdByEmail = "select count(*) from club_members " +
-                "where clubId = '" + club.getId() + "'" +
-                "and memberId  ='" + user.getId() + "'";
-        int memberCount = jdbcTemplate.queryForObject(selectMemberIdByEmail, int.class);
+        int memberCount = jdbcTemplateHelper.selectTestMemberCountAtClubMembers(club.getId(), user.getId());
 
         assertEquals(memberCount, 1);
 
@@ -307,7 +329,7 @@ class ClubMapperTest {
     @DisplayName(" club id 와 숫자가 주어지면, memberCount update 하기")
     @Test
     void updateMemberCount() {
-        Club club = generateClubBySizeAndCategoryId(1, 1).get(0);
+        Club club = fixtureClub;
         int memberCount = club.getMemberCount();
         int updatedMemberCount = memberCount + 1;
 
@@ -315,67 +337,26 @@ class ClubMapperTest {
 
         assertEquals(result, 1);
 
-        String selectMemberCount = "select memberCount from Club where id ='" + club.getId() + "'";
-        List<Integer> countList = jdbcTemplate.query(selectMemberCount,
-                (rs, rowNum) -> rs.getInt("memberCount"));
-        assertEquals(updatedMemberCount, countList.get(0));
+        int currentMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+        assertEquals(updatedMemberCount, currentMemberCount);
     }
 
-    private Set<User> generateUserAndJoinClub(Club club, UserType userType, int userSize) {
-        Set<User> userSet = new HashSet<>();
-        for (int i = 0; i < userSize; i++) {
-            String username = "testuser" + i;
-            User user = User.builder()
-                    .email(username + "@gmail.com")
-                    .nickname(username)
-                    .password(username + "pass").build();
+    @DisplayName(" club id 와 member id 가 주어지면 member delete 하기")
+    @Test
+    void deleteMember() {
+        //given
+        Club club = fixtureClub;
+        User member = fixtureUser1;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member.getId());
+        ;
 
-            userMapper.insertUser(user);
-            User newUser = userMapper.findByEmail(username + "@gmail.com");
-            if (userType == UserType.MANAGER) {
-                clubMapper.joinManagerById(club.getId(), newUser.getId());
-            } else if (userType == UserType.MEMBER) {
-                clubMapper.joinMemberById(club.getId(), newUser.getId());
-            }
-            userSet.add(user);
-        }
-        return userSet;
+        //when
+        int result = clubMapper.deleteMember(club.getId(), member.getId());
+
+        //them
+        assertEquals(result, 1);
+        int clubMemberCount = jdbcTemplateHelper.selectTestMemberCountAtClubMembers(club.getId(), member.getId());
+        assertEquals(clubMemberCount, 0);
     }
 
-    private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
-        String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
-                "values(?,?,?,?)";
-        for (int i = 0; i < clubSize; i++) {
-            jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i, LocalDateTime.now(), categoryId, "test location"});
-
-        }
-        String selectAllClubs = "select * from Club";
-        List<Club> clubList = jdbcTemplate.query(selectAllClubs,
-                (rs, rowNum) -> Club.builder()
-                        .id(rs.getLong("id"))
-                        .title(rs.getString("title"))
-                        .categoryId(rs.getLong("categoryId"))
-                        .location(rs.getString("location"))
-                        .createdAt(LocalDateTime.now())
-                        .build()); // id 값을 가져오기위해 재검색
-        return clubList;
-    }
-
-    private User generateUser(String name) {
-        String email = name + "@test.com";
-
-        String insertSql = "insert into User (email, nickname, password)\n" +
-                "values (?, ?, ?)";
-
-        jdbcTemplate.update(insertSql, new Object[]{email, name, name + "pass"});
-
-        String selectUserByEmail = "select * from User where email ='" + email + "'";
-        List<User> userList = jdbcTemplate.query(selectUserByEmail,
-                (rs, rowNum) -> User.builder()
-                        .id(rs.getLong("id"))
-                        .nickname(rs.getString("nickname"))
-                        .email(rs.getString("email"))
-                        .build());
-        return userList.get(0);
-    }
 }

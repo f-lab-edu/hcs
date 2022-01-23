@@ -2,7 +2,7 @@ package com.hcs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
-import com.hcs.common.UserType;
+import com.hcs.common.JdbcTemplateHelper;
 import com.hcs.config.DomainUrlConfig;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
@@ -21,17 +21,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,11 +61,17 @@ class ClubControllerTest {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    JdbcTemplateHelper jdbcTemplateHelper;
     @Autowired
     private DomainUrlConfig domainUrlConfig;
 
     User fixtureUser1;
+
+    User fixtureUser2;
+
+    Club fixtureClub;
+
+    User fixtureManager;
 
     static Stream<Arguments> stringListProvider() {
         return Stream.of(
@@ -78,13 +82,20 @@ class ClubControllerTest {
 
     @BeforeEach
     void initFixture() {
-        fixtureUser1 = User.builder()
-                .nickname("user1")
-                .password("user1")
-                .email("user1@test.com")
-                .age(1)
-                .location("1 loc")
-                .build();
+        long user1Id = jdbcTemplateHelper.insertTestUser("fixtureUser1@test.com", "fixUser1", "testpass");
+        fixtureUser1 = jdbcTemplateHelper.selectTestUser(user1Id);
+
+        long user2Id = jdbcTemplateHelper.insertTestUser("fixUser2@test.com", "fixUser2", "testpass");
+        fixtureUser2 = jdbcTemplateHelper.selectTestUser(user2Id);
+
+        long clubId = jdbcTemplateHelper.insertTestClub("fixtureClub", "test loc", 1L);
+        fixtureClub = jdbcTemplateHelper.selectTestClub(clubId);
+
+        long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass");
+        fixtureManager = jdbcTemplateHelper.selectTestUser(managerId);
+        jdbcTemplateHelper.insertTestClubManagers(clubId, managerId);
+        jdbcTemplateHelper.updateTestClub_managerCount(clubId, 1);
+
     }
 
     @DisplayName("Club Submit - 새로운 club 생성과 manager join")
@@ -94,7 +105,6 @@ class ClubControllerTest {
         clubDto.setDescription("농구하고싶은사람 모여라");
         clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
-        userMapper.insertUser(fixtureUser1);
 
         MvcResult mvcResult = mockMvc.perform(post("/club/submit")
                         .param("userEmail", fixtureUser1.getEmail())
@@ -147,13 +157,7 @@ class ClubControllerTest {
     @DisplayName("ClubInfo - 클럽 정보 요청")
     @Test
     void clubInfo() throws Exception {
-        Club club = Club.builder()
-                .title("testClub")
-                .location("Bucheon")
-                .categoryId(1L)
-                .createdAt(LocalDateTime.now())
-                .build();
-        clubMapper.insertClub(club);
+        Club club = fixtureClub;
 
         //when
         MvcResult mvcResult = mockMvc.perform(get("/club/info")
@@ -181,10 +185,15 @@ class ClubControllerTest {
     @Test
     void clubList() throws Exception {
         //given
+        jdbcTemplateHelper.deleteTestClub(fixtureClub.getId());
         int page = 1, generatedClubSize = 20;
         long givenCategoryId = 1;
         String givenCategory = "sports";
-        List<Club> generatedClubList = generateClubBySizeAndCategoryId(generatedClubSize, givenCategoryId);
+        List<Club> generatedClubList = new ArrayList<>();
+        for (int i = 0; i < generatedClubSize; i++) {
+            long clubId = jdbcTemplateHelper.insertTestClub("test_" + i, "test location", givenCategoryId);
+            generatedClubList.add(jdbcTemplateHelper.selectTestClub(clubId));
+        }
 
         //when
         mockMvc.perform(get("/club/list")
@@ -203,8 +212,7 @@ class ClubControllerTest {
     @DisplayName("Club modify - 클럽 정보 업데이트")
     @Test
     void modifyClub() throws Exception {
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
-        long clubId = clubList.get(0).getId();
+        long clubId = jdbcTemplateHelper.insertTestClub("test_club", "test loc", 1L);
         String changedCategory = "study";
         ClubSubmitDto clubSubmitDto = new ClubSubmitDto();
         String changedDescription = "changed description at " + LocalDateTime.now().getSecond() + "sec";
@@ -228,20 +236,11 @@ class ClubControllerTest {
     @DisplayName("Club delete - manager 가 아닌 user 요청, manager 인 user 요청")
     @Test
     void deleteClub() throws Exception {
-        List<Club> clubList = generateClubBySizeAndCategoryId(1, 1L);
-        Club club = clubList.get(0);
-        Set<User> userSet = generateUserAndJoinClub(club, UserType.MANAGER, 1);
-        Iterator<User> iter = userSet.iterator();
-        User manager = iter.next();
+        Club club = fixtureClub;
+        User manager = fixtureManager;
 
         //잘못된 접근 : manager 아닌 user 가 delete 요청
-        User newUser = User.builder().email("newUserTest0@gmail.com")
-                .nickname("newUser")
-                .location("location")
-                .password("qwer1234")
-                .age(12)
-                .joinedAt(LocalDateTime.now()).build();
-        userMapper.insertUser(newUser);
+        User newUser = fixtureUser1;
 
         mockMvc.perform(delete("/club/delete")
                         .param("clubId", club.getId().toString())
@@ -268,24 +267,24 @@ class ClubControllerTest {
     @DisplayName("Club members - member 등록 요청")
     @Test
     void joinClubAsMember() throws Exception {
-        User user = generateUser("testUser");
-        Club club = generateClubBySizeAndCategoryId(1, 1).get(0);
-        User manager = generateUserAndJoinClub(club, UserType.MANAGER, 1).iterator().next();
+        User newUser = fixtureUser1;
+        Club club = fixtureClub;
+        User manager = fixtureManager;
 
         //올바른 요청
         mockMvc.perform(post("/club/members")
                         .param("clubId", club.getId().toString())
-                        .param("userEmail", user.getEmail())
+                        .param("userEmail", newUser.getEmail())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.status").value(200))
-                .andExpect(jsonPath("$.HCS.item.member.applicantId").value(user.getId()))
+                .andExpect(jsonPath("$.HCS.item.member.applicantId").value(newUser.getId()))
                 .andExpect(jsonPath("$.HCS.item.member.currentMembersCount").value(1));
 
         //잘못된 요청 : 이미 가입한 member
         mockMvc.perform(post("/club/members")
                         .param("clubId", club.getId().toString())
-                        .param("userEmail", user.getEmail())
+                        .param("userEmail", newUser.getEmail())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED_CLUB.getErrorCode()))
@@ -317,62 +316,57 @@ class ClubControllerTest {
 
     }
 
-    private List<Club> generateClubBySizeAndCategoryId(int clubSize, long categoryId) {
-        String insertSql = "insert into Club (title, createdAt, categoryId, location) \n" +
-                "values(?,?,?,?)";
-        for (int i = 0; i < clubSize; i++) {
-            jdbcTemplate.update(insertSql, new Object[]{"testClub_" + i, LocalDateTime.now(), categoryId, "test location"});
+    @DisplayName("Club expulsion members - 멤버 강퇴")
+    @Test
+    void expulsionMember() throws Exception {
+        Club club = fixtureClub;
+        User member = fixtureUser1;
+        User manager = fixtureManager;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member.getId());
+        jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), 1);
 
-        }
-        String selectAllClubs = "select * from Club";
-        List<Club> clubList = jdbcTemplate.query(selectAllClubs,
-                (rs, rowNum) -> Club.builder()
-                        .id(rs.getLong("id"))
-                        .title(rs.getString("title"))
-                        .categoryId(rs.getLong("categoryId"))
-                        .location(rs.getString("location"))
-                        .createdAt(LocalDateTime.now())
-                        .build()); // id 값을 가져오기위해 재검색
-        return clubList;
-    }
+        //잘못된 입력 :  manager 가 아닌 member user 가 요청할경우 - CLUB_ACCESS_DENIED
+        User member2 = fixtureUser2;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member2.getId());
+        jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), 2);
+        mockMvc.perform(delete("/club/delete/members")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", member2.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.CLUB_ACCESS_DENIED.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.CLUB_ACCESS_DENIED.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()));
 
-    private Set<User> generateUserAndJoinClub(Club club, UserType userType, int userSize) {
-        Set<User> userSet = new HashSet<>();
-        for (int i = 0; i < userSize; i++) {
-            String username = "testuser" + i;
-            User user = User.builder()
-                    .email(username + "@gmail.com")
-                    .nickname(username)
-                    .password(username + "pass").build();
+        //잘못된 입력 :  member 가 아닌 user 탈퇴를 요청할경우 - NOT_JOINED_CLUB
+        long justUserId = jdbcTemplateHelper.insertTestUser("justUser@test.com", "justUser", "justUserPass");
+        mockMvc.perform(delete("/club/delete/members")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(justUserId))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.NOT_JOINED_CLUB.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.NOT_JOINED_CLUB.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.NOT_JOINED_CLUB.getMessage()));
 
-            userMapper.insertUser(user);
-            User newUser = userMapper.findByEmail(username + "@gmail.com");
-            if (userType == UserType.MANAGER) {
-                clubMapper.joinManagerById(club.getId(), newUser.getId());
-            } else if (userType == UserType.MEMBER) {
-                clubMapper.joinMemberById(club.getId(), newUser.getId());
-            }
-            userSet.add(user);
-        }
-        return userSet;
-    }
+        //바른 입력 : manager 가 member 탈퇴 요청
+        int beforeMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+        mockMvc.perform(delete("/club/delete/members")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful())
+                .andExpect((jsonPath("$.HCS.status").value(200)))
+                .andExpect((jsonPath("$.HCS.item.member.firedId").value(member.getId())))
+                .andExpect((jsonPath("$.HCS.item.member.currentMembersCount").value(beforeMemberCount - 1)));
 
-    private User generateUser(String name) {
-        String email = name + "@test.com";
+        int currentMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+        assertEquals(currentMemberCount, beforeMemberCount - 1);
 
-        String insertSql = "insert into User (email, nickname, password)\n" +
-                "values (?, ?, ?)";
-
-        jdbcTemplate.update(insertSql, new Object[]{email, name, name + "pass"});
-
-        String selectUserByEmail = "select * from User where email ='" + email + "'";
-        List<User> userList = jdbcTemplate.query(selectUserByEmail,
-                (rs, rowNum) -> User.builder()
-                        .id(rs.getLong("id"))
-                        .nickname(rs.getString("nickname"))
-                        .email(rs.getString("email"))
-                        .build());
-        return userList.get(0);
     }
 
 }

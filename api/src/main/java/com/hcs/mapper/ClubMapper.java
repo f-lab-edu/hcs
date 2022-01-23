@@ -46,6 +46,6 @@ public interface ClubMapper {
 
     int updateMemberCount(@Param("id") long id, @Param("memberCount") int memberCount);
 
-    //TODO: sort
+    int deleteMember(@Param("clubId")long clubId, @Param("memberId") long userId);
 
 }

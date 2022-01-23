@@ -4,6 +4,7 @@ import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.HcsResponse;
+import com.hcs.dto.response.club.ClubExpulsionDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
@@ -41,7 +42,7 @@ public class ClubController {
     private final HcsInfo info;
     private final HcsSubmit submit;
     private final HcsList hcsList;
-    private final HcsDelete hcsDelete;
+    private final HcsDelete delete;
     private final HcsModify hcsUpdate;
     private final CategoryService categoryService;
     private final UserService userService;
@@ -81,7 +82,7 @@ public class ClubController {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
         clubService.deleteClub(clubId, user.getId());
-        return HcsResponse.of(hcsDelete.club(clubId));
+        return HcsResponse.of(delete.club(clubId));
     }
 
     @PostMapping("/members")
@@ -90,6 +91,14 @@ public class ClubController {
         User user = userService.findByEmail(userEmail);
         ClubJoinDto clubJoinDto = clubService.joinClub(clubId, user);
         return HcsResponse.of(submit.joinClub(clubJoinDto));
+    }
+
+    @DeleteMapping("/delete/members")
+    public HcsResponse expulsionMember(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail,@RequestParam("userId") long userId) {
+        //TODO : 보안 설정 후 userEmail 변경
+        Club club = clubService.expulsionMember(clubId, managerEmail, userId);
+        ClubExpulsionDto dto = new ClubExpulsionDto(userId, club.getMemberCount());
+        return HcsResponse.of(delete.expulsion(dto));
     }
 
 }

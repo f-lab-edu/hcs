@@ -5,6 +5,7 @@
 <configuration>
     <typeAliases>
         <typeAlias alias="User" type="com.hcs.domain.User"/>
+        <typeAlias alias="Club" type="com.hcs.domain.Club"/>
         <typeAlias alias="UserForJPA" type="com.hcs.domain.UserForJPA"/>
         <typeAlias alias="TradePost" type="com.hcs.domain.TradePost"/>
         <typeAlias alias="Comment" type="com.hcs.domain.Comment"/>

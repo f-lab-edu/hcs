@@ -5,6 +5,7 @@ import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
 import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
+import com.hcs.exception.club.NotJoinedClubException;
 import com.hcs.exception.global.DatabaseException;
 import com.hcs.exception.result.ExceptionResult;
 import com.hcs.exception.result.ValidationResult;
@@ -88,6 +89,15 @@ public class ExceptionAdvisor {
         ErrorCode error = ErrorCode.ILLEGAL_ARGUMENT;
 
         return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()),e.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotJoinedClubException.class)
+    public HcsResponse NotJoinedClubException() {
+
+        ErrorCode error = ErrorCode.NOT_JOINED_CLUB;
+
+        return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
     // TODO 추후 Response가 만들어지면 공통으로 처리될 error에 대한 전역적인 @ExceptionHandler 추가 작성될 것임.
