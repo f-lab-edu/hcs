@@ -106,10 +106,10 @@ class ClubControllerTest {
         clubDto.setLocation("Bucheon");
 
         MvcResult mvcResult = mockMvc.perform(post("/club")
-                .param("userEmail", fixtureUser1.getEmail())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clubDto))
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("userEmail", fixtureUser1.getEmail())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clubDto))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.HCS.status").value("200"))
@@ -135,10 +135,10 @@ class ClubControllerTest {
         clubDto.setCategory(category);
 
         MvcResult mvcResult = mockMvc.perform(post("/club")
-                .param("userEmail", fixtureUser1.getEmail())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clubDto))
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("userEmail", fixtureUser1.getEmail())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clubDto))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andReturn();
@@ -160,8 +160,8 @@ class ClubControllerTest {
 
         //when
         MvcResult mvcResult = mockMvc.perform(get("/club")
-                .param("clubId", club.getId().toString())//올바른 id
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())//올바른 id
+                        .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -196,8 +196,8 @@ class ClubControllerTest {
 
         //when
         mockMvc.perform(get("/club/list")
-                .param("page", String.valueOf(page))
-                .param("category", givenCategory))
+                        .param("page", String.valueOf(page))
+                        .param("category", givenCategory))
                 //then
                 .andExpect(jsonPath("$.HCS.item.category").value(givenCategory))
                 .andExpect(jsonPath("$.HCS.item.page").value(page))
@@ -223,10 +223,10 @@ class ClubControllerTest {
         clubSubmitDto.setTitle(changedTitle);
 
         mockMvc.perform(put("/club")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("clubId", String.valueOf(clubId))
-                .content(objectMapper.writeValueAsString(clubSubmitDto))
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("clubId", String.valueOf(clubId))
+                        .content(objectMapper.writeValueAsString(clubSubmitDto))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.clubId").value(clubId));
 
@@ -242,9 +242,9 @@ class ClubControllerTest {
         User newUser = fixtureUser1;
 
         mockMvc.perform(delete("/club")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", newUser.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", newUser.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.CLUB_ACCESS_DENIED.getErrorCode()))
                 .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()))
@@ -252,9 +252,9 @@ class ClubControllerTest {
 
         //올바른 접근
         mockMvc.perform(delete("/club")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", manager.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", manager.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.clubId").value(club.getId()));
 
@@ -272,9 +272,9 @@ class ClubControllerTest {
 
         //올바른 요청
         mockMvc.perform(post("/club/member")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", newUser.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", newUser.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.status").value(200))
                 .andExpect(jsonPath("$.HCS.item.member.applicantId").value(newUser.getId()))
@@ -282,9 +282,9 @@ class ClubControllerTest {
 
         //잘못된 요청 : 이미 가입한 member
         mockMvc.perform(post("/club/member")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", newUser.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", newUser.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED_CLUB.getErrorCode()))
                 .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED_CLUB.getMessage()))
@@ -292,9 +292,9 @@ class ClubControllerTest {
 
         //잘못된 요청 : 이미 가입한 manager
         mockMvc.perform(post("/club/member")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", manager.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", manager.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED_CLUB.getErrorCode()))
                 .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED_CLUB.getMessage()))
@@ -305,8 +305,8 @@ class ClubControllerTest {
     @Test
     void IllegalArgumentException() throws Exception {
         mockMvc.perform(get("/club")
-                .param("clubId", "-1")
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", "-1")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ILLEGAL_ARGUMENT.getErrorCode()))
                 .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ILLEGAL_ARGUMENT.getMessage()))
@@ -329,10 +329,10 @@ class ClubControllerTest {
         jdbcTemplateHelper.insertTestClubMembers(club.getId(), member2.getId());
         jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), 2);
         mockMvc.perform(delete("/club/member/expulsion")
-                .param("clubId", club.getId().toString())
-                .param("managerEmail", member2.getEmail())
-                .param("userId", String.valueOf(member.getId()))
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", member2.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.status").value(ErrorCode.CLUB_ACCESS_DENIED.getStatus()))
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.CLUB_ACCESS_DENIED.getErrorCode()))
@@ -341,10 +341,10 @@ class ClubControllerTest {
         //잘못된 입력 :  member 가 아닌 user 탈퇴를 요청할경우 - NOT_JOINED_CLUB
         long justUserId = jdbcTemplateHelper.insertTestUser("justUser@test.com", "justUser", "justUserPass", LocalDateTime.now());
         mockMvc.perform(delete("/club/member/expulsion")
-                .param("clubId", club.getId().toString())
-                .param("managerEmail", manager.getEmail())
-                .param("userId", String.valueOf(justUserId))
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(justUserId))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.HCS.status").value(ErrorCode.NOT_JOINED_CLUB.getStatus()))
                 .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.NOT_JOINED_CLUB.getErrorCode()))
@@ -353,10 +353,10 @@ class ClubControllerTest {
         //바른 입력 : manager 가 member 탈퇴 요청
         int beforeMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
         mockMvc.perform(delete("/club/member/expulsion")
-                .param("clubId", club.getId().toString())
-                .param("managerEmail", manager.getEmail())
-                .param("userId", String.valueOf(member.getId()))
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect((jsonPath("$.HCS.status").value(200)))
@@ -379,9 +379,9 @@ class ClubControllerTest {
         //잘못된 입력 :  member 가 아닌 user 가 요청할 경우 - NOT_JOINED_CLUB
         User justUser = fixtureUser2;
         mockMvc.perform(delete("/club/member/resign")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", justUser.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", justUser.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.HCS.status").value(ErrorCode.NOT_JOINED_CLUB.getStatus()))
@@ -391,9 +391,9 @@ class ClubControllerTest {
         //바른 입력 : manager 가 member 탈퇴 요청
         int beforeMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
         mockMvc.perform(delete("/club/member/resign")
-                .param("clubId", club.getId().toString())
-                .param("userEmail", member.getEmail())
-                .accept(MediaType.APPLICATION_JSON))
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", member.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect((jsonPath("$.HCS.status").value(200)))
