@@ -65,26 +65,32 @@ public class HcsSubmit {
         return hcs;
     }
 
-    public ObjectNode comment(long postId, long commentId, boolean isSuccess) {
+    public ObjectNode comment(long tradePostId, long commentId) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
         hcs.put("status", 200);
 
-        item.put("postId", postId);
+        item.put("tradePostId", tradePostId);
         item.put("commentId", commentId);
-        item.put("isSuccess", isSuccess);
 
         hcs.set("item", item);
 
         return hcs;
     }
 
-    public ObjectNode reply(long postId, long parentCommentId, long commentId, boolean isSuccess) {
-        ObjectNode hcs = this.comment(postId, commentId, isSuccess);
-        ObjectNode item = (ObjectNode) hcs.get("item");
+    public ObjectNode reply(long tradePostId, long parentCommentId, long replyId) {
 
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.createObjectNode();
+
+        hcs.put("status", 200);
+
+        item.put("tradePostId", tradePostId);
         item.put("parentCommentId", parentCommentId);
+        item.put("replyId", replyId);
+
+        hcs.set("item", item);
 
         return hcs;
     }

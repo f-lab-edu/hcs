@@ -106,14 +106,28 @@ public class CommentControllerTest {
     @Test
     void addComment_with_correct_commentDto() throws Exception {
 
-        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        String tradePostId = "1";
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
 
         testCommentDto.setContents(contents);
 
-        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment/submit")
-                        .param("postId", tradePostId)
+        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment")
+                        .param("authorId", String.valueOf(authorId))
+                        .param("tradePostId", String.valueOf(tradePostId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testCommentDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -124,29 +138,42 @@ public class CommentControllerTest {
 
         String response = mvcResult.getResponse().getContentAsString();
 
-        List<Long> commentIds = commentMapper.findByTradePostId(Long.parseLong(tradePostId)).stream().map(comment -> comment.getId()).collect(toList());
+        List<Long> commentIds = commentMapper.findByTradePostId(tradePostId).stream().map(comment -> comment.getId()).collect(toList());
 
         int status = JsonPath.parse(response).read("$.HCS.status");
         HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
 
         assertThat(status).isEqualTo(200);
-        assertThat(item.get("postId")).isEqualTo(Integer.parseInt(tradePostId));
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
         assertThat(item.get("commentId")).isIn(commentIds.stream().map(c -> c.intValue()).collect(toList()));
-        assertThat(item.get("isSuccess")).isEqualTo(true);
     }
 
     @DisplayName("댓글 달기 - commentDto 오류 - 허용된 댓글 길이 초과")
     @Test
     void addComment_with_wrong_commentDto() throws Exception {
 
-        String contents = "(테스트용) 허용된 길이를 초과하는 댓글입니다.".repeat(30);
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
 
-        String tradePostId = "1";
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.".repeat(30);
 
         testCommentDto.setContents(contents);
 
-        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment/submit")
-                        .param("postId", tradePostId)
+        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment")
+                        .param("authorId", String.valueOf(authorId))
+                        .param("tradePostId", String.valueOf(tradePostId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testCommentDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -175,4 +202,57 @@ public class CommentControllerTest {
         assertThat(message).isEqualTo("길이가 5에서 200 사이여야 합니다");
     }
 
+    @DisplayName("대댓글 달기 - commentDto 정상")
+    @Test
+    void addReplyOnComment_with_correct_commentDto() throws Exception {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
+
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        String reply_contents = "(테스트용) 허용된 길이안으로 작성된 대댓글입니다.";
+
+        testCommentDto.setContents(reply_contents);
+
+        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment/reply")
+                        .param("authorId", String.valueOf(authorId))
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .param("parentCommentId", String.valueOf(parentCommentId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testCommentDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        List<Long> replyIds = commentMapper.findReplysByParentCommentId(parentCommentId).stream().map(comment -> comment.getId()).collect(toList());
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
+        assertThat(item.get("parentCommentId")).isEqualTo((int) parentCommentId);
+        assertThat(item.get("replyId")).isIn(replyIds.stream().map(c -> c.intValue()).collect(toList()));
+    }
 }
