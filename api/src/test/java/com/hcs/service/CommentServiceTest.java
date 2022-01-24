@@ -79,6 +79,43 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("댓글에 달린 대댓글들을 페이지당 리스트로 리턴하는 테스트")
+    void findReplysByTradePostIdTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        int lng = 5;
+
+        String reply_contents = "test 대댓글내용";
+        LocalDateTime reply_registerationTime = LocalDateTime.now();
+
+        for (int i = 0; i < lng; i++) {
+            jdbcTemplateHelper.insertTestComment(parentCommentId, authorId, tradePostId, reply_contents + i, reply_registerationTime.plusMinutes(i));
+        }
+
+        List<Comment> replys = commentService.findReplysWithPaging(1, parentCommentId);
+
+        assertThat(replys.size()).isEqualTo(lng);
+    }
+
+    @Test
     @DisplayName("Comment 추가가 제대로 동작하는지 테스트")
     void saveNewCommentTest() {
 

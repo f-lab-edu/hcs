@@ -11,5 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(value = "Comment.withAuthor", type = EntityGraph.EntityGraphType.LOAD)
-    Page<Comment> findListsByTradePostId(long tradePostId, Pageable pageable);
+    Page<Comment> findCommentsByTradePostId(long tradePostId, Pageable pageable);
+
+    @EntityGraph(value = "Comment.withAuthor", type = EntityGraph.EntityGraphType.LOAD)
+    Page<Comment> findReplysByParentCommentId(long parentCommentId, Pageable pageable);
 }
