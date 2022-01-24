@@ -71,6 +71,34 @@ class CommentMapperTest {
         assertThat(comment.getContents()).isEqualTo(contents);
     }
 
+    @DisplayName("CommentMapper - findAuthorIdById 테스트")
+    @Test
+    void findAuthorIdByIdTest() {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        assertThat(commentMapper.findAuthorIdById(commentId)).isEqualTo(authorId);
+    }
+
     @DisplayName("CommentMapper - findByTradePostId 테스트")
     @Test
     void findByTradePostIdTest() {

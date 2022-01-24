@@ -9,6 +9,12 @@
         where id = #{id}
     </select>
 
+    <select id="findAuthorIdById" parameterType="long" resultType="long">
+        select authorId
+        from Comment
+        where id = #{id}
+    </select>
+
     <select id="findByTradePostId" parameterType="long" resultType="Comment">
         select *
         from Comment
