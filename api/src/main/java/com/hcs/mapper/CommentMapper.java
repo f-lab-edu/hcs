@@ -10,6 +10,8 @@ public interface CommentMapper {
 
     Comment findById(long id);
 
+    long findAuthorIdById(long id);
+
     List<Comment> findByTradePostId(long tradePostId);
 
     List<Comment> findReplysByParentCommentId(long parentCommentId);
