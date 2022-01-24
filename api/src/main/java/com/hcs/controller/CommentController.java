@@ -7,6 +7,7 @@ import com.hcs.dto.request.CommentDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.comment.CommentInfoDto;
 import com.hcs.dto.response.comment.CommentListDto;
+import com.hcs.dto.response.comment.ReplyListDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
@@ -74,6 +75,32 @@ public class CommentController {
                 .build();
 
         return HcsResponse.of(list.comment(commentListDto));
+    }
+
+    @GetMapping("/comment/reply/list")
+    public HcsResponse replysOntheComment(@RequestParam("page") int page, @RequestParam("tradePostId") long tradePostId, @RequestParam(value = "parentCommentId") long parentCommentId) {
+
+        List<Comment> replys = commentService.findReplysWithPaging(page, parentCommentId);
+        List<CommentInfoDto> replyInfoDtos = new ArrayList<>();
+
+        for (Comment reply : replys) {
+            CommentInfoDto info = modelMapper.map(reply, CommentInfoDto.class);
+
+            long authorId = commentService.findAuthorIdById(reply.getId());
+            info.setAuthorId(authorId);
+
+            replyInfoDtos.add(info);
+        }
+
+        ReplyListDto replyListDto = ReplyListDto.builder()
+                .page(page)
+                .count(replys.size())
+                .tradePostId(tradePostId)
+                .parentCommentId(parentCommentId)
+                .replys(replyInfoDtos)
+                .build();
+
+        return HcsResponse.of(list.reply(replyListDto));
     }
 
     @PostMapping("/comment")
