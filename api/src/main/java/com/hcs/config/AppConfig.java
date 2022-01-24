@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hcs.domain.Club;
+import com.hcs.domain.Comment;
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
+import com.hcs.dto.response.comment.CommentInfoDto;
 import com.hcs.dto.response.tradePost.TradePostInfoDto;
 import com.hcs.dto.response.user.UserInfoDto;
 import org.modelmapper.ModelMapper;
@@ -41,6 +43,10 @@ public class AppConfig {
 
         modelMapper.typeMap(TradePost.class, TradePostInfoDto.class).addMappings(mapping -> {
             mapping.map(TradePost::getId, TradePostInfoDto::setTradePostId);
+        });
+
+        modelMapper.typeMap(Comment.class, CommentInfoDto.class).addMappings(mapping -> {
+            mapping.map(Comment::getId, CommentInfoDto::setCommentId);
         });
 
         return modelMapper;

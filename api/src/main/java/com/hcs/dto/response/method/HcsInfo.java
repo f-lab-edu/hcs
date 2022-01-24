@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubUserDto;
+import com.hcs.dto.response.comment.CommentInfoDto;
 import com.hcs.dto.response.tradePost.TradePostInfoDto;
 import com.hcs.dto.response.user.UserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,22 @@ public class HcsInfo {
         ObjectNode item = objectMapper.valueToTree(tradePostInfoDto);
 
         hcs.put("status", 200);
+        hcs.set("item", item);
+
+        return hcs;
+    }
+
+    public ObjectNode comment(long tradePostId, CommentInfoDto commentInfoDto) {
+
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.createObjectNode();
+        ObjectNode comment = objectMapper.valueToTree(commentInfoDto);
+
+        hcs.put("status", 200);
+
+        item.put("tradePostId", tradePostId);
+        item.set("comment", comment);
+
         hcs.set("item", item);
 
         return hcs;

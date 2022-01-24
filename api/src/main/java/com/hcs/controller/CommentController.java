@@ -1,12 +1,18 @@
 package com.hcs.controller;
 
+import com.hcs.domain.Comment;
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.request.CommentDto;
 import com.hcs.dto.response.HcsResponse;
+import com.hcs.dto.response.comment.CommentInfoDto;
+import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CommentService;
+import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +27,23 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CommentController {
 
+    private final ModelMapper modelMapper;
+    private final UserService userService;
     private final CommentService commentService;
+    private final HcsInfo info;
     private final HcsSubmit submit;
-//    private final UserService userService; // 충분히 구현된 후 사용될 것임
+
+    @GetMapping("/comment")
+    public HcsResponse commentInfo(@RequestParam("tradePostId") long tradePostId, @RequestParam("commentId") long commentId) {
+
+        Comment comment = commentService.findById(commentId);
+        CommentInfoDto commentInfoDto = modelMapper.map(comment, CommentInfoDto.class);
+
+        long authorId = commentService.findAuthorIdById(commentId);
+        commentInfoDto.setAuthorId(authorId);
+
+        return HcsResponse.of(info.comment(tradePostId, commentInfoDto));
+    }
 
     @PostMapping("/comment/submit")
     public HcsResponse addComment(@Valid @RequestBody CommentDto commentDto, @RequestParam(value = "parentCommentId", required = false) Long parentCommentId,
