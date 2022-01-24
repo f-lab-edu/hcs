@@ -8,6 +8,7 @@ import com.hcs.dto.response.club.ClubExpulsionDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
+import com.hcs.dto.response.club.ClubResignDto;
 import com.hcs.dto.response.method.HcsDelete;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
@@ -85,7 +86,7 @@ public class ClubController {
         return HcsResponse.of(delete.club(clubId));
     }
 
-    @PostMapping("/members")
+    @PostMapping("/members") // TODO : member 로 변경예정
     public HcsResponse joinClubAsMember(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
@@ -93,12 +94,21 @@ public class ClubController {
         return HcsResponse.of(submit.joinClub(clubJoinDto));
     }
 
-    @DeleteMapping("/delete/members")
-    public HcsResponse expulsionMember(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail,@RequestParam("userId") long userId) {
+    @DeleteMapping("/delete/members") // TODO : member 로 변경예정
+    public HcsResponse expulsionMember(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
         //TODO : 보안 설정 후 userEmail 변경
         Club club = clubService.expulsionMember(clubId, managerEmail, userId);
         ClubExpulsionDto dto = new ClubExpulsionDto(userId, club.getMemberCount());
         return HcsResponse.of(delete.expulsion(dto));
+    }
+
+    @DeleteMapping("/resign/member")
+    public HcsResponse resignMember(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
+        //TODO : 보안 설정 후 userEmail 변경
+        User user = userService.findByEmail(userEmail);
+        Club club = clubService.resignMember(clubId, user.getId());
+        ClubResignDto dto = new ClubResignDto(user.getId(), club.getMemberCount());
+        return HcsResponse.of(delete.resignMember(dto));
     }
 
 }

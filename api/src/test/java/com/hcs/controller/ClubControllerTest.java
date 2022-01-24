@@ -368,4 +368,41 @@ class ClubControllerTest {
 
     }
 
+    @DisplayName("Club resign member - 멤버 탈퇴")
+    @Test
+    void resignMember() throws Exception {
+        Club club = fixtureClub;
+        User member = fixtureUser1;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member.getId());
+        jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), 1);
+
+        //잘못된 입력 :  member 가 아닌 user 가 요청할 경우 - NOT_JOINED_CLUB
+        User justUser = fixtureUser2;
+        mockMvc.perform(delete("/club/resign/member")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", justUser.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.NOT_JOINED_CLUB.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.NOT_JOINED_CLUB.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.NOT_JOINED_CLUB.getMessage()));
+
+        //바른 입력 : manager 가 member 탈퇴 요청
+        int beforeMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+        mockMvc.perform(delete("/club/resign/member")
+                        .param("clubId", club.getId().toString())
+                        .param("userEmail", member.getEmail())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful())
+                .andExpect((jsonPath("$.HCS.status").value(200)))
+                .andExpect((jsonPath("$.HCS.item.member.resignedId").value(member.getId())))
+                .andExpect((jsonPath("$.HCS.item.member.currentMemberCount").value(beforeMemberCount - 1)));
+
+        int currentMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+        assertEquals(currentMemberCount, beforeMemberCount - 1);
+
+    }
+
 }

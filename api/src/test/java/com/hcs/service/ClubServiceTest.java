@@ -308,7 +308,31 @@ class ClubServiceTest {
         then(clubMapper).should(times(2)).checkClubManager(anyLong(), anyLong());
         then(clubMapper).should(times(1)).deleteMember(anyLong(), anyLong());
         then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
-        assertEquals(beforeMemberCount - 1, club.getManagerCount());
+        assertEquals(beforeMemberCount - 1, club.getMemberCount());
+
+    }
+
+    @DisplayName("clubId 와 member id 가 주어지면,  club member에서 삭제")
+    @Test
+    void resignMember() {
+        //given
+        User user = fixtureUser_2;
+        Club givenClub = fixtureClub;
+        int beforeMemberCount = 1;
+        givenClub.setMemberCount(beforeMemberCount);
+        given(clubMapper.findById(givenClub.getId())).willReturn(givenClub);
+        given(clubMapper.checkClubMember(anyLong(), anyLong())).willReturn(true);
+        given(clubMapper.deleteMember(anyLong(), anyLong())).willReturn(1);
+        given(clubMapper.updateMemberCount(anyLong(), anyInt())).willReturn(1);
+
+        //when
+        Club club = clubService.resignMember(givenClub.getId(), user.getId());
+
+        //then
+        then(clubMapper).should(times(1)).checkClubMember(anyLong(), anyLong());
+        then(clubMapper).should(times(1)).deleteMember(anyLong(), anyLong());
+        then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
+        assertEquals(beforeMemberCount - 1, club.getMemberCount());
 
     }
 
