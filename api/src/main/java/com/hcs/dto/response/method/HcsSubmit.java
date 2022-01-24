@@ -38,12 +38,26 @@ public class HcsSubmit {
         return hcs;
     }
 
-    public ObjectNode joinClub(ClubJoinDto dto){
+    public ObjectNode joinClub(ClubJoinDto dto) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
         ObjectNode member = objectMapper.valueToTree(dto);
         item.set("member", member);
+
+        hcs.put("status", 200);
+        hcs.set("item", item);
+
+        return hcs;
+    }
+
+    public ObjectNode tradePost(long authorId, long tradePostId) {
+
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.createObjectNode();
+
+        item.put("authorId", authorId);
+        item.put("tradePostId", tradePostId);
 
         hcs.put("status", 200);
         hcs.set("item", item);
