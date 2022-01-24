@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class ClubResignDto {
     private long resignedId;
-    private int currentMemberCount;
+    private int currentMembersCount;
 }

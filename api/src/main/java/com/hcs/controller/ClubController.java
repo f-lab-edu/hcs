@@ -48,7 +48,7 @@ public class ClubController {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    @PostMapping("/submit")
+    @PostMapping("")
     public HcsResponse createClub(@Valid @RequestBody ClubSubmitDto clubDto, @RequestParam("userEmail") String userEmail) {
         //TODO : 로그인한 유저인지 검증 추가
         User manager = userService.findByEmail(userEmail);
@@ -56,7 +56,7 @@ public class ClubController {
         return HcsResponse.of(submit.club(newClub.getId()));
     }
 
-    @GetMapping("/info")
+    @GetMapping("")
     public HcsResponse clubInfo(@RequestParam("clubId") long id) {
         ClubInfoDto clubInfoDto = clubService.getClubInfo(id);
         return HcsResponse.of(info.club(clubInfoDto));
@@ -71,14 +71,14 @@ public class ClubController {
         return HcsResponse.of(hcsList.club(clubInListDtos, page, count, allClubCounts));
     }
 
-    @PutMapping("/modify")
+    @PutMapping("")
     public HcsResponse modifyClub(@RequestBody ClubSubmitDto clubDto, @RequestParam("clubId") long clubId) {
         clubId = clubService.modifyClub(clubId, clubDto);
         String clubUrl = clubService.makeClubUrl(clubId);
         return HcsResponse.of(hcsUpdate.club(clubId, clubUrl));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("")
     public HcsResponse deleteClub(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
@@ -86,7 +86,7 @@ public class ClubController {
         return HcsResponse.of(delete.club(clubId));
     }
 
-    @PostMapping("/members") // TODO : member 로 변경예정
+    @PostMapping("/member")
     public HcsResponse joinClubAsMember(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
@@ -94,15 +94,15 @@ public class ClubController {
         return HcsResponse.of(submit.joinClub(clubJoinDto));
     }
 
-    @DeleteMapping("/delete/members") // TODO : member 로 변경예정
+    @DeleteMapping("/member/expulsion")
     public HcsResponse expulsionMember(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
         //TODO : 보안 설정 후 userEmail 변경
         Club club = clubService.expulsionMember(clubId, managerEmail, userId);
         ClubExpulsionDto dto = new ClubExpulsionDto(userId, club.getMemberCount());
-        return HcsResponse.of(delete.expulsion(dto));
+        return HcsResponse.of(delete.expulsionMember(dto));
     }
 
-    @DeleteMapping("/resign/member")
+    @DeleteMapping("/member/resign")
     public HcsResponse resignMember(@RequestParam("clubId") long clubId, @RequestParam("userEmail") String userEmail) {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
