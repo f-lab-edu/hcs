@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.common.JdbcTemplateHelper;
+import com.hcs.domain.Comment;
 import com.hcs.dto.request.CommentDto;
 import com.hcs.exception.ErrorCode;
 import com.hcs.mapper.CommentMapper;
@@ -28,6 +29,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -402,5 +404,119 @@ public class CommentControllerTest {
         assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
         assertThat(item.get("parentCommentId")).isEqualTo((int) parentCommentId);
         assertThat(item.get("replyId")).isIn(replyIds.stream().map(c -> c.intValue()).collect(toList()));
+    }
+
+    @DisplayName("댓글 수정 - commentDto 정상")
+    @Test
+    void modifyComment_with_correct_commentDto() throws Exception {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
+
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        String modify_contents = "(테스트용) 허용된 길이안으로 수정된 댓글입니다.";
+
+        testCommentDto.setContents(modify_contents);
+
+        MvcResult mvcResult = mockMvc.perform(put(ROOT_URL + "/comment/")
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .param("commentId", String.valueOf(commentId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testCommentDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        Comment comment = commentMapper.findById(commentId);
+
+        assertThat(comment.getContents()).isEqualTo(modify_contents);
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
+        assertThat(item.get("commentId")).isEqualTo((int) comment.getId());
+    }
+
+    @DisplayName("댓글 수정 - commentDto 오류 - 허용된 댓글 길이 초과")
+    @Test
+    void modifyComment_with_wrong_commentDto() throws Exception {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
+
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        String modify_contents = "(테스트용) 허용된 길이가 초과되어 수정된 댓글입니다.".repeat(30);
+
+        testCommentDto.setContents(modify_contents);
+
+        MvcResult mvcResult = mockMvc.perform(put(ROOT_URL + "/comment/")
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .param("commentId", String.valueOf(commentId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testCommentDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        ErrorCode error = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
+
+        assertThat(status).isEqualTo(error.getStatus());
+        assertThat(item.get("errorCode")).isEqualTo(error.getErrorCode());
+        assertThat(item.get("message")).isEqualTo(error.getMessage());
+
+        String field = JsonPath.parse(response).read("$.HCS.item.errors[0].field");
+        String code = JsonPath.parse(response).read("$.HCS.item.errors[0].code");
+        String message = JsonPath.parse(response).read("$.HCS.item.errors[0].message");
+
+        assertThat(field).isEqualTo("contents");
+        assertThat(code).isEqualTo("Length");
+        assertThat(message).isEqualTo("길이가 5에서 200 사이여야 합니다");
     }
 }

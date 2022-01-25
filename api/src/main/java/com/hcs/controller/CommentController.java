@@ -10,6 +10,7 @@ import com.hcs.dto.response.comment.CommentListDto;
 import com.hcs.dto.response.comment.ReplyListDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
+import com.hcs.dto.response.method.HcsModify;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CommentService;
 import com.hcs.service.TradePostService;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,8 +39,9 @@ public class CommentController {
     private final TradePostService tradePostService;
     private final CommentService commentService;
     private final HcsInfo info;
-    private final HcsSubmit submit;
     private final HcsList list;
+    private final HcsSubmit submit;
+    private final HcsModify modify;
 
     @GetMapping("/comment")
     public HcsResponse commentInfo(@RequestParam("tradePostId") long tradePostId, @RequestParam("commentId") long commentId) {
@@ -124,5 +127,14 @@ public class CommentController {
         long replyId = commentService.saveNewReply(commentDto, user, tradePost, parentCommentId);
 
         return HcsResponse.of(submit.reply(tradePostId, parentCommentId, replyId));
+    }
+
+    @PutMapping("/comment")
+    public HcsResponse modifyComment(@Valid @RequestBody CommentDto commentDto, @RequestParam("tradePostId") long tradePostId,
+                                     @RequestParam("commentId") long commentId) {
+
+        commentService.modifyComment(commentId, commentDto);
+
+        return HcsResponse.of(modify.comment(tradePostId, commentId));
     }
 }
