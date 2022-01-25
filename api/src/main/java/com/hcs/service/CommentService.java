@@ -55,6 +55,10 @@ public class CommentService {
         return commentMapper.findById(commentId);
     }
 
+    public long findAuthorIdById(long commentId) {
+        return commentMapper.findAuthorIdById(commentId);
+    }
+
     public List<Comment> findCommentsWithPaging(int page, long tradePostId) {
 
         int pagePerCount = 5;
