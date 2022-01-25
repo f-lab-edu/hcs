@@ -359,4 +359,20 @@ class ClubMapperTest {
         assertEquals(clubMemberCount, 0);
     }
 
+    @DisplayName("club id 와 숫자가 주어지면 managerCount update 하기")
+    @ParameterizedTest
+    @ValueSource(ints = {5, 10, 20})
+    void updateManagerCount(int givenNumber) {
+        //given
+        Club club = fixtureClub;
+
+        //when
+        int result = clubMapper.updateManagerCount(club.getId(), givenNumber);
+
+        //then
+        int managerCount = jdbcTemplateHelper.selectTestClub(club.getId()).getManagerCount();
+        assertEquals(result, 1);
+        assertEquals(managerCount, givenNumber);
+    }
+
 }

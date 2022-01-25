@@ -118,4 +118,20 @@ public class HcsSubmit {
         hcs.set("item", item);
         return hcs;
     }
+
+    public ObjectNode addManager(long userId, int managerCount) {
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.createObjectNode();
+        ObjectNode manager = objectMapper.createObjectNode();
+
+        manager.put("applicantId", userId);
+        manager.put("currentManagersCount", managerCount);
+
+        hcs.put("status", 200);
+
+        item.put("manager",manager);
+
+        hcs.set("item", item);
+        return hcs;
+    }
 }

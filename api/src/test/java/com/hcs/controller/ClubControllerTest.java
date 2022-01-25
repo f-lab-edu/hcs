@@ -93,7 +93,8 @@ class ClubControllerTest {
         long managerId = jdbcTemplateHelper.insertTestUser("fixtureManager@test.com", "fixManager", "testpass", LocalDateTime.now());
         fixtureManager = jdbcTemplateHelper.selectTestUser(managerId);
         jdbcTemplateHelper.insertTestClubManagers(clubId, managerId);
-        jdbcTemplateHelper.updateTestClub_managerCount(clubId, 1);
+        fixtureClub.setManagerCount(1);
+        jdbcTemplateHelper.updateTestClub_managerCount(clubId, fixtureClub.getManagerCount());
 
     }
 
@@ -403,6 +404,104 @@ class ClubControllerTest {
         int currentMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
         assertEquals(currentMemberCount, beforeMemberCount - 1);
 
+    }
+
+    @DisplayName("Club - manager 추가 바른 응답")
+    @Test
+    void addManager() throws Exception {
+        Club club = fixtureClub;
+        User manager = fixtureManager;
+        User member = fixtureUser1;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member.getId());
+        club.setMemberCount(club.getMemberCount() + 1);
+        jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), club.getMemberCount());
+
+        //바른 응답 : manager 가 club member 인 user id 로 요청
+        int beforeManagerCount = jdbcTemplateHelper.selectTestClub(club.getId()).getManagerCount();
+        int beforeMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+
+        mockMvc.perform(post("/club/manager")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful())
+                .andExpect((jsonPath("$.HCS.status").value(200)))
+                .andExpect((jsonPath("$.HCS.item.manager.applicantId").value(member.getId())))
+                .andExpect((jsonPath("$.HCS.item.manager.currentManagersCount").value(beforeManagerCount + 1)));
+
+        int afterMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
+        assertEquals(beforeMemberCount - 1, afterMemberCount);
+
+    }
+
+    @DisplayName("Club - manager 추가 잘못된 응답")
+    @Test
+    void addManager_wrong() throws Exception {
+
+        Club club = fixtureClub;
+        User manager = fixtureManager;
+        User member = fixtureUser1;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member.getId());
+        club.setMemberCount(club.getMemberCount() + 1);
+        jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), club.getMemberCount());
+
+        //잘못된 응답 : 요청자가 manager 가 아닌 user - CLUB_ACCESS_DENIED
+        User justUser = fixtureUser2;
+        mockMvc.perform(post("/club/manager")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", justUser.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.CLUB_ACCESS_DENIED.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.CLUB_ACCESS_DENIED.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()));
+
+        //잘못된 응답 : manager 로 추가를 요청한 user id 가  club member 가 아닌경우 - NOT_JOINED_CLUB
+        mockMvc.perform(post("/club/manager")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(justUser.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.NOT_JOINED_CLUB.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.NOT_JOINED_CLUB.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.NOT_JOINED_CLUB.getMessage()));
+
+        //잘못된 응답 : 요청자가 manager 가 아닌 member - CLUB_ACCESS_DENIED
+        User member2 = fixtureUser2;
+        jdbcTemplateHelper.insertTestClubMembers(club.getId(), member2.getId());
+        club.setMemberCount(club.getMemberCount() + 1);
+        jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), club.getMemberCount());
+        mockMvc.perform(post("/club/manager")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", member2.getEmail())
+                        .param("userId", String.valueOf(member.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.CLUB_ACCESS_DENIED.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.CLUB_ACCESS_DENIED.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()));
+
+        //잘못된 응답 : manager 로 추가를 요청한 user id 가 이미 manager 인경우 - ALREADY_JOINED_CLUB_AS_MANAGER
+        long manager2Id = jdbcTemplateHelper.insertTestUser("manager2@test.com", "manager2", "password", LocalDateTime.now());
+        User manager2 = jdbcTemplateHelper.selectTestUser(manager2Id);
+        jdbcTemplateHelper.insertTestClubManagers(club.getId(), manager2.getId());
+        mockMvc.perform(post("/club/manager")
+                        .param("clubId", club.getId().toString())
+                        .param("managerEmail", manager.getEmail())
+                        .param("userId", String.valueOf(manager2.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.HCS.status").value(ErrorCode.ALREADY_JOINED_CLUB_AS_MANAGER.getStatus()))
+                .andExpect(jsonPath("$.HCS.item.errorCode").value(ErrorCode.ALREADY_JOINED_CLUB_AS_MANAGER.getErrorCode()))
+                .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.ALREADY_JOINED_CLUB_AS_MANAGER.getMessage()));
     }
 
 }

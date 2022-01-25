@@ -46,6 +46,8 @@ public interface ClubMapper {
 
     int updateMemberCount(@Param("id") long id, @Param("memberCount") int memberCount);
 
+    int updateManagerCount(@Param("id") long id, @Param("managerCount") int managerCount);
+
     int deleteMember(@Param("clubId")long clubId, @Param("memberId") long userId);
 
 }
