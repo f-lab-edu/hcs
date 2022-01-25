@@ -92,6 +92,10 @@ public class TradePostService {
         return result;
     }
 
+    public int countByTitle(String title) {
+        return tradePostMapper.countByTitle(title);
+    }
+
     public long deleteTradePostById(long Id) {
         return tradePostMapper.deleteTradePostById(Id);
     }

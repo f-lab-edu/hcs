@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,6 +66,14 @@ public class TradePostControllerTest {
         return Stream.of(
                 arguments("tes", "", "", "", "loca", "-181", "-91", "999", Arrays.asList("title", "category", "productStatus", "description", "locationName", "lng", "lat", "price")),
                 arguments("tes", "중", "중", "중", "seoul station", "126.97230870958784", "37.55602954224621", "10000", Arrays.asList("title")),
+                arguments("testTitle", "중", "중", "중", "cafe", "126.97230870958784", "37.55602954224621", "10000", Arrays.asList("locationName")),
+                arguments("testTitle", "중", "중", "중", "seoul station", "126.97230870958784", "37.55602954224621", "10000000", Arrays.asList("price"))
+        );
+    }
+
+    static Stream<Arguments> stringListProvider2() {
+        return Stream.of(
+                arguments("testT", "중", "중", "중", "seoul station", "126.97230870958784", "37.55602954224621", "10000", Arrays.asList("title")),
                 arguments("testTitle", "중", "중", "중", "cafe", "126.97230870958784", "37.55602954224621", "10000", Arrays.asList("locationName")),
                 arguments("testTitle", "중", "중", "중", "seoul station", "126.97230870958784", "37.55602954224621", "10000000", Arrays.asList("price"))
         );
@@ -275,6 +284,119 @@ public class TradePostControllerTest {
 
         MvcResult mvcResult = mockMvc.perform(post("/post/tradePost/submit")
                         .param("authorId", String.valueOf(authorId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tradePostDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        int length = JsonPath.parse(response).read("$.HCS.item.errors.length()");
+
+        assertThat(status).isEqualTo(400);
+
+        for (int i = 0; i < length; i++) {
+            String field = JsonPath.parse(response).read("$.HCS.item.errors[" + i + "].field");
+            assertThat(invalidFields).contains(field);
+        }
+    }
+
+    @DisplayName("중고거래 글 수정 처리 - 입력값 정상")
+    @Test
+    void modifyTradePost_with_correct_input() throws Exception {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+
+        String title = "testTitle";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String locationName = "seoul station";
+        double lng = 126.97230870958784;
+        double lat = 37.55602954224621;
+
+        tradePostDto = TradePostDto.builder()
+                .title(title + 1)
+                .category(category + 1)
+                .productStatus(productStatus + 1)
+                .description(description + 1)
+                .locationName(locationName + 1)
+                .lng(lng)
+                .lat(lat)
+                .price(price + 1)
+                .build();
+
+        MvcResult mvcResult = mockMvc.perform(put("/post/tradePost/")
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tradePostDto))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
+    }
+
+    @DisplayName("중고거래 글 수정 처리 - 입력값 오류")
+    @ParameterizedTest(name = "#{index} - {displayName} = Test with Argument={0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}")
+    @MethodSource("stringListProvider2")
+    void modifyTradePost_with_wrong_input(String title, String productStatus, String category, String description,
+                                          String locationName, double lng, double lat, int price, List<String> invalidFields) throws Exception {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+
+        String title_ = "testT";
+        String productStatus_ = "중";
+        String category_ = "중";
+        String description_ = "중";
+        int price_ = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId1 = jdbcTemplateHelper.insertTestTradePost(authorId, title_, productStatus_, category_, description_, price_, salesStatus, registrationTime);
+        long tradePostId2 = jdbcTemplateHelper.insertTestTradePost(authorId, title_ + 1, productStatus_, category_, description_, price_, salesStatus, registrationTime);
+
+        tradePostDto = TradePostDto.builder()
+                .title(title)
+                .category(category)
+                .productStatus(productStatus)
+                .description(description)
+                .locationName(locationName)
+                .lng(lng)
+                .lat(lat)
+                .price(price)
+                .build();
+
+        MvcResult mvcResult = mockMvc.perform(put("/post/tradePost/")
+                        .param("tradePostId", String.valueOf(tradePostId2))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tradePostDto))
                         .accept(MediaType.APPLICATION_JSON))
