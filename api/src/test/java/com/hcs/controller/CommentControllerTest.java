@@ -24,9 +24,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -518,5 +520,52 @@ public class CommentControllerTest {
         assertThat(field).isEqualTo("contents");
         assertThat(code).isEqualTo("Length");
         assertThat(message).isEqualTo("길이가 5에서 200 사이여야 합니다");
+    }
+
+    @DisplayName("댓글 삭제")
+    @Test
+    void deleteCommentTest() throws Exception {
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
+
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        MvcResult mvcResult = mockMvc.perform(delete(ROOT_URL + "/comment/")
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .param("commentId", String.valueOf(commentId))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Optional<Comment> returned = Optional.ofNullable(commentMapper.findById(commentId));
+        assertThat(returned.isPresent()).isFalse();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
+        assertThat(item.get("commentId")).isEqualTo((int) commentId);
     }
 }

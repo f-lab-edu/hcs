@@ -8,6 +8,7 @@ import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.comment.CommentInfoDto;
 import com.hcs.dto.response.comment.CommentListDto;
 import com.hcs.dto.response.comment.ReplyListDto;
+import com.hcs.dto.response.method.HcsDelete;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsModify;
@@ -17,6 +18,7 @@ import com.hcs.service.TradePostService;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,6 +44,7 @@ public class CommentController {
     private final HcsList list;
     private final HcsSubmit submit;
     private final HcsModify modify;
+    private final HcsDelete delete;
 
     @GetMapping("/comment")
     public HcsResponse commentInfo(@RequestParam("tradePostId") long tradePostId, @RequestParam("commentId") long commentId) {
@@ -136,5 +139,15 @@ public class CommentController {
         commentService.modifyComment(commentId, commentDto);
 
         return HcsResponse.of(modify.comment(tradePostId, commentId));
+    }
+
+    @DeleteMapping("/comment")
+    public HcsResponse deleteUser(@RequestParam("tradePostId") long tradePostId, @RequestParam("commentId") long commentId) {
+
+        // TODO : 인가 체크 (본인 확인) 후 삭제
+
+        commentService.deleteCommentById(commentId);
+
+        return HcsResponse.of(delete.comment(tradePostId, commentId));
     }
 }
