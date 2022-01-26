@@ -37,7 +37,7 @@ public class HcsDelete {
         return hcs;
     }
 
-    public ObjectNode expulsion(ClubExpulsionDto dto) { //TODO : expulsionMember 로 이름 변경 예정
+    public ObjectNode expulsionMember(ClubExpulsionDto dto) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
