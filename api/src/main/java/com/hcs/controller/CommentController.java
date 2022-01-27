@@ -9,6 +9,7 @@ import com.hcs.dto.response.comment.CommentInfoDto;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CommentService;
+import com.hcs.service.TradePostService;
 import com.hcs.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/post/tradePost/")
@@ -29,6 +29,7 @@ public class CommentController {
 
     private final ModelMapper modelMapper;
     private final UserService userService;
+    private final TradePostService tradePostService;
     private final CommentService commentService;
     private final HcsInfo info;
     private final HcsSubmit submit;
@@ -45,29 +46,26 @@ public class CommentController {
         return HcsResponse.of(info.comment(tradePostId, commentInfoDto));
     }
 
-    @PostMapping("/comment/submit")
-    public HcsResponse addComment(@Valid @RequestBody CommentDto commentDto, @RequestParam(value = "parentCommentId", required = false) Long parentCommentId,
-                                  @RequestParam("postId") long tradePostId) throws IOException {
+    @PostMapping("/comment")
+    public HcsResponse addComment(@Valid @RequestBody CommentDto commentDto, @RequestParam("authorId") long authorId, @RequestParam("tradePostId") long tradePostId) {
 
-        User user = User.builder()
-                .id(31L)
-                .build(); // Dummy 데이터
-
-        TradePost tradePost = TradePost.builder()
-                .id(tradePostId)
-                .build(); // Dummy 데이터
+        User user = userService.findById(authorId);
+        TradePost tradePost = tradePostService.findById(tradePostId);
 
         long commentId = commentService.saveNewComment(commentDto, user, tradePost);
-        boolean isSuccess = false;
 
-        if (commentId > 0) {
-            isSuccess = true;
-        }
+        return HcsResponse.of(submit.comment(tradePostId, commentId));
+    }
 
-        if (parentCommentId == null) {
-            return HcsResponse.of(submit.comment(tradePostId, commentId, isSuccess));
-        }
+    @PostMapping("/comment/reply")
+    public HcsResponse addreplyOnComment(@Valid @RequestBody CommentDto commentDto, @RequestParam("authorId") long authorId, @RequestParam("tradePostId") long tradePostId,
+                                         @RequestParam(value = "parentCommentId") long parentCommentId) {
 
-        return HcsResponse.of(submit.reply(tradePostId, parentCommentId, commentId, isSuccess));
+        User user = userService.findById(authorId);
+        TradePost tradePost = tradePostService.findById(tradePostId);
+
+        long replyId = commentService.saveNewReply(commentDto, user, tradePost, parentCommentId);
+
+        return HcsResponse.of(submit.reply(tradePostId, parentCommentId, replyId));
     }
 }
