@@ -63,7 +63,7 @@ public class CommentService {
 
         int pagePerCount = 5;
 
-        PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, Sort.by("registerationTime").ascending());
+        PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, Sort.by("registerationTime").descending());
 
         List<Comment> result = commentRepository.findListsByTradePostId(tradePostId, pageRequest).getContent();
 

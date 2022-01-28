@@ -6,7 +6,9 @@ import com.hcs.domain.User;
 import com.hcs.dto.request.CommentDto;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.comment.CommentInfoDto;
+import com.hcs.dto.response.comment.CommentListDto;
 import com.hcs.dto.response.method.HcsInfo;
+import com.hcs.dto.response.method.HcsList;
 import com.hcs.dto.response.method.HcsSubmit;
 import com.hcs.service.CommentService;
 import com.hcs.service.TradePostService;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/post/tradePost/")
@@ -33,6 +37,7 @@ public class CommentController {
     private final CommentService commentService;
     private final HcsInfo info;
     private final HcsSubmit submit;
+    private final HcsList list;
 
     @GetMapping("/comment")
     public HcsResponse commentInfo(@RequestParam("tradePostId") long tradePostId, @RequestParam("commentId") long commentId) {
@@ -44,6 +49,31 @@ public class CommentController {
         commentInfoDto.setAuthorId(authorId);
 
         return HcsResponse.of(info.comment(tradePostId, commentInfoDto));
+    }
+
+    @GetMapping("/comment/list")
+    public HcsResponse commentsOntheTradePost(@RequestParam("page") int page, @RequestParam("tradePostId") long tradePostId) {
+
+        List<Comment> comments = commentService.findCommentsWithPaging(page, tradePostId);
+        List<CommentInfoDto> commentInfoDtos = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            CommentInfoDto info = modelMapper.map(comment, CommentInfoDto.class);
+
+            long authorId = commentService.findAuthorIdById(comment.getId());
+            info.setAuthorId(authorId);
+
+            commentInfoDtos.add(info);
+        }
+
+        CommentListDto commentListDto = CommentListDto.builder()
+                .page(page)
+                .count(comments.size())
+                .tradePostId(tradePostId)
+                .comments(commentInfoDtos)
+                .build();
+
+        return HcsResponse.of(list.comment(commentListDto));
     }
 
     @PostMapping("/comment")

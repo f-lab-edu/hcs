@@ -8,6 +8,7 @@ import com.hcs.exception.ErrorCode;
 import com.hcs.mapper.CommentMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -100,6 +102,77 @@ public class CommentControllerTest {
         assertThat(commentItem.get("commentId")).isEqualTo((int) commentId);
         assertThat(commentItem.get("authorId")).isEqualTo((int) authorId);
         assertThat(commentItem.get("contents")).isEqualTo(contents);
+    }
+
+    @DisplayName("댓글 페이지 요청시 리턴되는 body를 확인")
+    @Test
+    void commentOntheTradePostTest_with_paging() throws Exception {
+
+        int lng = 5;
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "(테스트용) 허용된 길이안으로 작성된 댓글입니다.";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+
+        long commentId = 0;
+        long[] commentIds = new long[lng];
+
+        for (int i = 0; i < lng; i++) {
+
+            commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents + i, comment_registerationTime.plusMinutes(i));
+
+            commentIds[i] = commentId;
+        }
+
+        int page = 1;
+
+        MvcResult mvcResult = mockMvc.perform(get(ROOT_URL + "/comment/list")
+                        .param("page", String.valueOf(page))
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+
+        JSONArray comments = (JSONArray) item.get("comments");
+
+        assertThat(item.get("page")).isEqualTo(page);
+        assertThat(item.get("count")).isEqualTo(comments.size());
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
+
+        for (int i = 0; i < lng; i++) {
+
+            int latestIdx = lng - i - 1;
+
+            LinkedHashMap comment = (LinkedHashMap) comments.get(i);
+
+            assertThat((int) comment.get("commentId")).isEqualTo(commentIds[latestIdx]);
+            assertThat(comment.get("authorId")).isEqualTo((int) authorId);
+            assertThat(comment.get("contents")).isEqualTo(contents + latestIdx);
+        }
     }
 
     @DisplayName("댓글 달기 - commentDto 정상")
