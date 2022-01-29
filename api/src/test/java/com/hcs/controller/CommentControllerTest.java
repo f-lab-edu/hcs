@@ -106,7 +106,7 @@ public class CommentControllerTest {
 
     @DisplayName("댓글 페이지 요청시 리턴되는 body를 확인")
     @Test
-    void commentOntheTradePostTest_with_paging() throws Exception {
+    void commentsOntheTradePostTest_with_paging() throws Exception {
 
         int lng = 5;
 
@@ -172,6 +172,81 @@ public class CommentControllerTest {
             assertThat((int) comment.get("commentId")).isEqualTo(commentIds[latestIdx]);
             assertThat(comment.get("authorId")).isEqualTo((int) authorId);
             assertThat(comment.get("contents")).isEqualTo(contents + latestIdx);
+        }
+    }
+
+    @DisplayName("대댓글 페이지 요청시 리턴되는 body를 확인")
+    @Test
+    void replysOntheComment_with_paging() throws Exception {
+
+        int lng = 5;
+
+        String newEmail = "test@naver.com";
+        String newNickname = "test";
+        String newPassword = "password";
+        LocalDateTime joinedAt = LocalDateTime.now();
+
+        long authorId = jdbcTemplateHelper.insertTestUser(newEmail, newNickname, newPassword, joinedAt);
+        String title = "test";
+        String productStatus = "중";
+        String category = "중";
+        String description = "중";
+        int price = 10000;
+        int salesStatus = 0;
+        LocalDateTime registrationTime = LocalDateTime.now();
+        long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
+
+        String contents = "test 댓글내용";
+        LocalDateTime comment_registerationTime = LocalDateTime.now();
+        long parentCommentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
+
+        String reply_contents = "test 대댓글내용";
+        LocalDateTime reply_registerationTime = LocalDateTime.now();
+
+        long replyId = 0;
+        long[] replyIds = new long[lng];
+
+        for (int i = 0; i < lng; i++) {
+
+            replyId = jdbcTemplateHelper.insertTestComment(parentCommentId, authorId, tradePostId, reply_contents + i, reply_registerationTime.plusMinutes(i));
+            replyIds[i] = replyId;
+        }
+
+        int page = 1;
+
+        MvcResult mvcResult = mockMvc.perform(get(ROOT_URL + "/comment/reply/list")
+                        .param("page", String.valueOf(page))
+                        .param("tradePostId", String.valueOf(tradePostId))
+                        .param("parentCommentId", String.valueOf(parentCommentId))
+                        .accept(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        int status = JsonPath.parse(response).read("$.HCS.status");
+        HashMap<String, Object> item = JsonPath.parse(response).read("$.HCS.item");
+
+        assertThat(status).isEqualTo(200);
+
+        JSONArray replys = (JSONArray) item.get("replys");
+
+        assertThat(item.get("page")).isEqualTo(page);
+        assertThat(item.get("count")).isEqualTo(replys.size());
+        assertThat(item.get("tradePostId")).isEqualTo((int) tradePostId);
+        assertThat(item.get("parentCommentId")).isEqualTo((int) parentCommentId);
+
+        for (int i = 0; i < lng; i++) {
+
+            int latestIdx = lng - i - 1;
+
+            LinkedHashMap reply = (LinkedHashMap) replys.get(i);
+
+            assertThat((int) reply.get("commentId")).isEqualTo(replyIds[latestIdx]);
+            assertThat(reply.get("authorId")).isEqualTo((int) authorId);
+            assertThat(reply.get("contents")).isEqualTo(reply_contents + latestIdx);
         }
     }
 
