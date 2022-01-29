@@ -420,7 +420,7 @@ class ClubControllerTest {
         int beforeManagerCount = jdbcTemplateHelper.selectTestClub(club.getId()).getManagerCount();
         int beforeMemberCount = jdbcTemplateHelper.selectTestClub(club.getId()).getMemberCount();
 
-        mockMvc.perform(post("/club/manager")
+        mockMvc.perform(put("/club/manager")
                         .param("clubId", club.getId().toString())
                         .param("managerEmail", manager.getEmail())
                         .param("userId", String.valueOf(member.getId()))
@@ -449,7 +449,7 @@ class ClubControllerTest {
 
         //잘못된 응답 : 요청자가 manager 가 아닌 user - CLUB_ACCESS_DENIED
         User justUser = fixtureUser2;
-        mockMvc.perform(post("/club/manager")
+        mockMvc.perform(put("/club/manager")
                         .param("clubId", club.getId().toString())
                         .param("managerEmail", justUser.getEmail())
                         .param("userId", String.valueOf(member.getId()))
@@ -461,7 +461,7 @@ class ClubControllerTest {
                 .andExpect(jsonPath("$.HCS.item.message").value(ErrorCode.CLUB_ACCESS_DENIED.getMessage()));
 
         //잘못된 응답 : manager 로 추가를 요청한 user id 가  club member 가 아닌경우 - NOT_JOINED_CLUB
-        mockMvc.perform(post("/club/manager")
+        mockMvc.perform(put("/club/manager")
                         .param("clubId", club.getId().toString())
                         .param("managerEmail", manager.getEmail())
                         .param("userId", String.valueOf(justUser.getId()))
@@ -477,7 +477,7 @@ class ClubControllerTest {
         jdbcTemplateHelper.insertTestClubMembers(club.getId(), member2.getId());
         club.setMemberCount(club.getMemberCount() + 1);
         jdbcTemplateHelper.updateTestClub_memberCount(club.getId(), club.getMemberCount());
-        mockMvc.perform(post("/club/manager")
+        mockMvc.perform(put("/club/manager")
                         .param("clubId", club.getId().toString())
                         .param("managerEmail", member2.getEmail())
                         .param("userId", String.valueOf(member.getId()))
@@ -492,7 +492,7 @@ class ClubControllerTest {
         long manager2Id = jdbcTemplateHelper.insertTestUser("manager2@test.com", "manager2", "password", LocalDateTime.now());
         User manager2 = jdbcTemplateHelper.selectTestUser(manager2Id);
         jdbcTemplateHelper.insertTestClubManagers(club.getId(), manager2.getId());
-        mockMvc.perform(post("/club/manager")
+        mockMvc.perform(put("/club/manager")
                         .param("clubId", club.getId().toString())
                         .param("managerEmail", manager.getEmail())
                         .param("userId", String.valueOf(manager2.getId()))

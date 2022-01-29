@@ -111,7 +111,7 @@ public class ClubController {
         return HcsResponse.of(delete.resignMember(dto));
     }
 
-    @PostMapping("/manager")
+    @PutMapping("/manager")
     public HcsResponse addManager(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
         //TODO : 보안 설정 후 userEmail 변경
         Club club = clubService.makeManager(clubId, managerEmail, userId);

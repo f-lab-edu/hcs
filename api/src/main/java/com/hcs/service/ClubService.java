@@ -197,10 +197,11 @@ public class ClubService {
             throw new ClubAccessDeniedException();
         }
 
+        if (clubMapper.checkClubManager(club.getId(), member.getId())) {
+            throw new AlreadyJoinedClubAsManagerException();
+        }
+
         if (!clubMapper.checkClubMember(club.getId(), member.getId())) {
-            if (clubMapper.checkClubManager(club.getId(), member.getId())) {
-                throw new AlreadyJoinedClubAsManagerException();
-            }
             throw new NotJoinedClubException();
         }
 
