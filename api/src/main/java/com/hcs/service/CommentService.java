@@ -65,7 +65,18 @@ public class CommentService {
 
         PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, Sort.by("registerationTime").descending());
 
-        List<Comment> result = commentRepository.findListsByTradePostId(tradePostId, pageRequest).getContent();
+        List<Comment> result = commentRepository.findCommentsByTradePostId(tradePostId, pageRequest).getContent();
+
+        return result;
+    }
+
+    public List<Comment> findReplysWithPaging(int page, long parentCommentId) {
+
+        int pagePerCount = 5;
+
+        PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, Sort.by("registerationTime").descending());
+
+        List<Comment> result = commentRepository.findReplysByParentCommentId(parentCommentId, pageRequest).getContent();
 
         return result;
     }
