@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 
 @SpringBootTest
+@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 public class JpaWithMybatisTests {
 

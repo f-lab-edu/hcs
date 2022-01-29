@@ -7,7 +7,6 @@ import com.hcs.exception.club.AlreadyJoinedClubAsManagerException;
 import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.club.NotJoinedClubException;
-import com.hcs.exception.global.DatabaseException;
 import com.hcs.exception.result.ExceptionResult;
 import com.hcs.exception.result.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +65,14 @@ public class ExceptionAdvisor {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(DatabaseException.class)
-    public HcsResponse DatabaseExceptionHandler(DatabaseException e) {
+    @ExceptionHandler(RuntimeException.class)
+    public HcsResponse RuntimeExceptionHandler(RuntimeException e) {
 
-        ErrorCode error = ErrorCode.DATABASE_ERROR;
-
-        return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), e.getMessage()));
+        ErrorCode error = ErrorCode.RUNTIME;
+        if (!e.getMessage().isEmpty()) {
+            return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), e.getMessage())));
+        }
+        return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -3,7 +3,6 @@ package com.hcs.service;
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.request.TradePostDto;
-import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.TradePostMapper;
 import com.hcs.repository.TradePostRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,7 @@ public class TradePostService {
         int isSuccess = tradePostMapper.insertTradePost(tradePost);
 
         if (isSuccess != 1) {
-            throw new DatabaseException("DB tradePost click");
+            throw new RuntimeException("DB error");
         }
 
         return tradePost;
@@ -49,7 +48,7 @@ public class TradePostService {
         int isSuccess = tradePostMapper.updateTradePostForView(Id);
 
         if (isSuccess != 1) {
-            throw new DatabaseException("DB tradePost click");
+            throw new RuntimeException("DB error");
         }
     }
 
@@ -63,7 +62,7 @@ public class TradePostService {
         int isSuccess = tradePostMapper.updateTradePost(tradePost);
 
         if (isSuccess != 1) {
-            throw new DatabaseException("DB tradePost modify");
+            throw new RuntimeException("DB error");
         }
 
         return tradePost.getId();

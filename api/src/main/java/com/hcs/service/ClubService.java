@@ -11,7 +11,6 @@ import com.hcs.exception.club.AlreadyJoinedClubAsManagerException;
 import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.club.NotJoinedClubException;
-import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.ClubMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
@@ -43,11 +42,11 @@ public class ClubService {
 
         int insertClubResult = clubMapper.insertClub(club);
         if (insertClubResult != 1) {
-            throw new DatabaseException("DB club insert");
+            throw new RuntimeException("DB error");
         }
         int insertManagerResult = clubMapper.joinManagerById(club.getId(), userId);
         if (insertManagerResult != 1) {
-            throw new DatabaseException("DB club manager insert");
+            throw new RuntimeException("DB error");
         }
         return club;
     }
@@ -115,7 +114,7 @@ public class ClubService {
         checkAlreadyJoinedClub(club, user);
         int result = clubMapper.joinMemberById(club.getId(), user.getId());
         if (result != 1) {
-            throw new DatabaseException("DB club_members insert error");
+            throw new RuntimeException("DB error");
         }
         plusMemberCount(club);
         ClubJoinDto dto = new ClubJoinDto(user.getId(), club.getMemberCount());
@@ -133,7 +132,7 @@ public class ClubService {
         club.setMemberCount(club.getMemberCount() + 1);
         int result = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
         if (result != 1) {
-            throw new DatabaseException("DB club memberCount update");
+            throw new RuntimeException("DB error");
         }
     }
 
@@ -160,13 +159,13 @@ public class ClubService {
 
         int deleteMemberResult = clubMapper.deleteMember(club.getId(), member.getId());
         if (deleteMemberResult != 1) {
-            throw new DatabaseException("DB club member delete");
+            throw new RuntimeException("DB error");
         }
 
         club.setMemberCount(club.getMemberCount() - 1);
         int updateMemberCountResult = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
         if (updateMemberCountResult != 1) {
-            throw new DatabaseException("DB club memberCount update");
+            throw new RuntimeException("DB error");
         }
         return club;
     }
@@ -178,12 +177,12 @@ public class ClubService {
         }
         int deleteMemberResult = clubMapper.deleteMember(club.getId(), memberId);
         if (deleteMemberResult != 1) {
-            throw new DatabaseException("DB member error");
+            throw new RuntimeException("DB error");
         }
         club.setMemberCount(club.getMemberCount() - 1);
         int updateMemberCountResult = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
         if (updateMemberCountResult != 1) {
-            throw new DatabaseException("DB club error");
+            throw new RuntimeException("DB error");
         }
         return club;
     }
@@ -207,22 +206,22 @@ public class ClubService {
 
         int deleteMember = clubMapper.deleteMember(club.getId(), member.getId());
         if (deleteMember != 1) {
-            throw new DatabaseException("DB club member error");
+            throw new RuntimeException("DB error");
         }
         club.setMemberCount(club.getMemberCount() - 1);
         int updateMemberCount = clubMapper.updateMemberCount(club.getId(), club.getMemberCount());
         if (updateMemberCount != 1) {
-            throw new DatabaseException("DB club error");
+            throw new RuntimeException("DB error");
         }
 
         int insertManager = clubMapper.joinManagerById(club.getId(), member.getId());
         if (insertManager != 1) {
-            throw new DatabaseException("DB club manager error");
+            throw new RuntimeException("DB error");
         }
         club.setManagerCount(club.getManagerCount() + 1);
         int updateManagerCount = clubMapper.updateManagerCount(club.getId(), club.getManagerCount());
         if (updateManagerCount != 1) {
-            throw new DatabaseException("DB club error");
+            throw new RuntimeException("DB error");
         }
 
         return club;
