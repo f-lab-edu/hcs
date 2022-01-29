@@ -14,7 +14,8 @@ public enum ErrorCode {
 
     CLUB_ACCESS_DENIED(400, -100, "해당 club 의 manager 만 접근이 가능합니다"),
     ALREADY_JOINED_CLUB(400, -101, "이미 club 에 등록한 user 입니다"),
-    NOT_JOINED_CLUB(400, -102, "club 에 등록되지 않은 user 입니다");
+    ALREADY_JOINED_CLUB_AS_MANAGER(400, -102, "이미 club manager 인 user 입니다"),
+    NOT_JOINED_CLUB(400, -103, "club 에 등록되지 않은 user 입니다");
 
     private int status;
     private int errorCode;

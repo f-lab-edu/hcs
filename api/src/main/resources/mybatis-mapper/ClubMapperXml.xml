@@ -131,6 +131,12 @@
         where id = #{id}
     </update>
 
+    <update id="updateManagerCount">
+        update club
+        set managerCount = #{managerCount}
+        where id = #{id}
+    </update>
+
     <delete id="deleteMember">
         delete cm
         from club_members cm

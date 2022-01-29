@@ -3,6 +3,7 @@ package com.hcs.controller.advisor;
 import com.hcs.dto.response.HcsResponse;
 import com.hcs.dto.response.method.HcsException;
 import com.hcs.exception.ErrorCode;
+import com.hcs.exception.club.AlreadyJoinedClubAsManagerException;
 import com.hcs.exception.club.AlreadyJoinedClubException;
 import com.hcs.exception.club.ClubAccessDeniedException;
 import com.hcs.exception.club.NotJoinedClubException;
@@ -88,7 +89,7 @@ public class ExceptionAdvisor {
 
         ErrorCode error = ErrorCode.ILLEGAL_ARGUMENT;
 
-        return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()),e.getMessage()));
+        return HcsResponse.of(hcsException.exceptionAndLocation(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage()), e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -96,6 +97,15 @@ public class ExceptionAdvisor {
     public HcsResponse NotJoinedClubException() {
 
         ErrorCode error = ErrorCode.NOT_JOINED_CLUB;
+
+        return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AlreadyJoinedClubAsManagerException.class)
+    public HcsResponse AlreadyJoinedAsManagerExceptionHandler() {
+
+        ErrorCode error = ErrorCode.ALREADY_JOINED_CLUB_AS_MANAGER;
 
         return HcsResponse.of(hcsException.exception(error.getStatus(), new ExceptionResult(error.getErrorCode(), error.getMessage())));
     }

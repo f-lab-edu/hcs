@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -334,6 +336,36 @@ class ClubServiceTest {
         then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
         assertEquals(beforeMemberCount - 1, club.getMemberCount());
 
+    }
+
+    @DisplayName("club id 와 managerEmail, member id 가 주어지면 member 를 manager 로 만들기")
+    @ParameterizedTest
+    @ValueSource(ints = {5, 10, 20})
+    void makeManager(int givenNumber ) {
+        //given
+        Club givenClub = fixtureClub;
+        givenClub.setManagerCount(givenNumber);
+        givenClub.setMemberCount(givenNumber);
+        User givenManager = fixtureUser;
+        User givenMember = fixtureUser_2;
+        given(clubMapper.findById(givenClub.getId())).willReturn(givenClub);
+        given(userService.findByEmail(any())).willReturn(givenManager);
+        given(userService.findById(anyLong())).willReturn(givenMember);
+        given(clubMapper.checkClubManager(anyLong(), eq(givenManager.getId()))).willReturn(true);
+        given(clubMapper.checkClubMember(anyLong(), eq(givenMember.getId()))).willReturn(true);
+        given(clubMapper.deleteMember(anyLong(), anyLong())).willReturn(1);
+        given(clubMapper.updateMemberCount(anyLong(), anyInt())).willReturn(1);
+        given(clubMapper.joinManagerById(anyLong(), eq(givenMember.getId()))).willReturn(1);
+        given(clubMapper.updateManagerCount(anyLong(), anyInt())).willReturn(1);
+        //when
+        Club club = clubService.makeManager(givenClub.getId(), givenManager.getEmail(), givenMember.getId());
+        //then
+        then(clubMapper).should(times(1)).joinManagerById(anyLong(), anyLong());
+        then(clubMapper).should(times(1)).deleteMember(anyLong(), anyLong());
+        then(clubMapper).should(times(1)).updateMemberCount(anyLong(), anyInt());
+        then(clubMapper).should(times(1)).updateManagerCount(anyLong(), anyInt());
+        assertEquals(club.getManagerCount(), givenNumber + 1);
+        assertEquals(club.getMemberCount(), givenNumber - 1);
     }
 
 }

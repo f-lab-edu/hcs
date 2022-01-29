@@ -98,7 +98,7 @@ public class ClubController {
     public HcsResponse expulsionMember(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
         //TODO : 보안 설정 후 userEmail 변경
         Club club = clubService.expulsionMember(clubId, managerEmail, userId);
-        ClubExpulsionDto dto = new ClubExpulsionDto(userId, club.getMemberCount());
+        ClubExpulsionDto dto = new ClubExpulsionDto(userId, club.getMemberCount()); //TODO : dto 삭제예정
         return HcsResponse.of(delete.expulsionMember(dto));
     }
 
@@ -107,8 +107,15 @@ public class ClubController {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
         Club club = clubService.resignMember(clubId, user.getId());
-        ClubResignDto dto = new ClubResignDto(user.getId(), club.getMemberCount());
+        ClubResignDto dto = new ClubResignDto(user.getId(), club.getMemberCount()); //TODO : dto 삭제예정
         return HcsResponse.of(delete.resignMember(dto));
+    }
+
+    @PutMapping("/manager")
+    public HcsResponse addManager(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
+        //TODO : 보안 설정 후 userEmail 변경
+        Club club = clubService.makeManager(clubId, managerEmail, userId);
+        return HcsResponse.of(submit.addManager(userId,club.getManagerCount()));
     }
 
 }
