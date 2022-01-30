@@ -3,7 +3,6 @@ package com.hcs.service;
 import com.hcs.domain.User;
 import com.hcs.dto.request.SignUpDto;
 import com.hcs.dto.request.UserModifyDto;
-import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,11 +23,7 @@ public class UserService {
 
         User user = modelMapper.map(signUpDto, User.class);
 
-        long isSuccess = insertUser(user);
-
-        if (isSuccess != 1) {
-            throw new DatabaseException("DB user insert");
-        }
+        insertUser(user);
 
         return user;
     }
@@ -60,11 +55,7 @@ public class UserService {
         user = modelMapper.map(userModifyDto, User.class);
         user.setId(userId);
 
-        int isSuccess = userMapper.updateUser(user);
-
-        if (isSuccess != 1) {
-            throw new DatabaseException("DB user modify");
-        }
+        userMapper.updateUser(user);
 
         return user.getId();
     }

@@ -4,7 +4,6 @@ import com.hcs.domain.Comment;
 import com.hcs.domain.TradePost;
 import com.hcs.domain.User;
 import com.hcs.dto.request.CommentDto;
-import com.hcs.exception.global.DatabaseException;
 import com.hcs.mapper.CommentMapper;
 import com.hcs.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +30,7 @@ public class CommentService {
         comment.setTradePostId(tradePost.getId());
         comment.setRegisterationTime(LocalDateTime.now());
 
-        long isSuccess = commentMapper.insertComment(comment);
-        if (isSuccess != 1) throw new DatabaseException("DB comment insert");
+        commentMapper.insertComment(comment);
 
         return comment.getId();
     }
@@ -45,8 +43,7 @@ public class CommentService {
         reply.setParentCommentId(parentCommentId);
         reply.setRegisterationTime(LocalDateTime.now());
 
-        long isSuccess = commentMapper.insertReply(reply);
-        if (isSuccess != 1) throw new DatabaseException("DB reply insert");
+        commentMapper.insertReply(reply);
 
         return reply.getId();
     }
@@ -88,11 +85,7 @@ public class CommentService {
         String contents = commentDto.getContents();
         comment.setContents(contents);
 
-        int isSuccess = commentMapper.updateComment(comment);
-
-        if (isSuccess != 1) {
-            throw new DatabaseException("DB user modify");
-        }
+        commentMapper.updateComment(comment);
 
         return comment.getId();
     }

@@ -81,9 +81,7 @@
     <delete id="deleteClub" parameterType="long">
         delete c
         from Club c
-                 inner join club_managers cm on c.id = cm.clubId
         where c.id = #{clubId}
-          AND cm.managerId = #{managerId}
     </delete>
 
     <select id="findAllClubs" resultType="Club">

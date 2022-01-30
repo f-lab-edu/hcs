@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @EnableMockMvc
+@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 class ClubDtoValidationTest {
 
@@ -40,7 +42,7 @@ class ClubDtoValidationTest {
         clubDto.setCategory("sports");
         clubDto.setLocation("Bucheon");
 
-        mockMvc.perform(post("/club/submit")
+        mockMvc.perform(post("/club")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clubDto))
                         .accept(MediaType.APPLICATION_JSON))
