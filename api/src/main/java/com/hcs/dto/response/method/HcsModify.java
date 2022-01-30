@@ -44,4 +44,17 @@ public class HcsModify {
         hcs.set("item", item);
         return hcs;
     }
+
+    public ObjectNode comment(long tradePostId, long commentId) {
+
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.createObjectNode();
+
+        item.put("tradePostId", tradePostId);
+        item.put("commentId", commentId);
+
+        hcs.put("status", 200);
+        hcs.set("item", item);
+        return hcs;
+    }
 }
