@@ -30,8 +30,7 @@ public class CommentService {
         comment.setTradePostId(tradePost.getId());
         comment.setRegisterationTime(LocalDateTime.now());
 
-        long isSuccess = commentMapper.insertComment(comment);
-        if (isSuccess != 1) throw new RuntimeException("DB error");
+        commentMapper.insertComment(comment);
 
         return comment.getId();
     }
@@ -44,8 +43,7 @@ public class CommentService {
         reply.setParentCommentId(parentCommentId);
         reply.setRegisterationTime(LocalDateTime.now());
 
-        long isSuccess = commentMapper.insertReply(reply);
-        if (isSuccess != 1) throw new RuntimeException("DB error");
+        commentMapper.insertReply(reply);
 
         return reply.getId();
     }
@@ -87,11 +85,7 @@ public class CommentService {
         String contents = commentDto.getContents();
         comment.setContents(contents);
 
-        int isSuccess = commentMapper.updateComment(comment);
-
-        if (isSuccess != 1) {
-            throw new RuntimeException("DB error");
-        }
+        commentMapper.updateComment(comment);
 
         return comment.getId();
     }

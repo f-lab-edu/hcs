@@ -233,9 +233,11 @@ class ClubServiceTest {
     @Test
     void deleteClub() {
         //given
-        long givenClubId = 1L;
+        long givenClubId = fixtureClub.getId();
         long givenManagerId = 2L;
-        given(clubMapper.deleteClub(givenClubId, givenManagerId)).willReturn(1);
+        given(clubMapper.findById(givenClubId)).willReturn(fixtureClub);
+        given(clubMapper.deleteClub(givenClubId)).willReturn(1);
+        given(clubMapper.checkClubManager(givenClubId, givenManagerId)).willReturn(true);
 
         //when
         long deletedClubId = clubService.deleteClub(givenClubId, givenManagerId);
@@ -341,7 +343,7 @@ class ClubServiceTest {
     @DisplayName("club id 와 managerEmail, member id 가 주어지면 member 를 manager 로 만들기")
     @ParameterizedTest
     @ValueSource(ints = {5, 10, 20})
-    void makeManager(int givenNumber ) {
+    void makeManager(int givenNumber) {
         //given
         Club givenClub = fixtureClub;
         givenClub.setManagerCount(givenNumber);

@@ -34,22 +34,13 @@ public class TradePostService {
         tradePost.setSalesStatus(false);
         tradePost.setRegisterationTime(registrationTime);
 
-        int isSuccess = tradePostMapper.insertTradePost(tradePost);
-
-        if (isSuccess != 1) {
-            throw new RuntimeException("DB error");
-        }
+        tradePostMapper.insertTradePost(tradePost);
 
         return tradePost;
     }
 
     public void clickTradePost(long Id) {
-
-        int isSuccess = tradePostMapper.updateTradePostForView(Id);
-
-        if (isSuccess != 1) {
-            throw new RuntimeException("DB error");
-        }
+        tradePostMapper.updateTradePostForView(Id);
     }
 
     public long modifyTradePost(long Id, TradePostDto tradePostDto) {
@@ -59,11 +50,7 @@ public class TradePostService {
         tradePost = modelMapper.map(tradePostDto, TradePost.class);
         tradePost.setId(Id);
 
-        int isSuccess = tradePostMapper.updateTradePost(tradePost);
-
-        if (isSuccess != 1) {
-            throw new RuntimeException("DB error");
-        }
+        tradePostMapper.updateTradePost(tradePost);
 
         return tradePost.getId();
     }

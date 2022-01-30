@@ -23,11 +23,7 @@ public class UserService {
 
         User user = modelMapper.map(signUpDto, User.class);
 
-        long isSuccess = insertUser(user);
-
-        if (isSuccess != 1) {
-            throw new RuntimeException("DB error");
-        }
+        insertUser(user);
 
         return user;
     }
@@ -59,11 +55,7 @@ public class UserService {
         user = modelMapper.map(userModifyDto, User.class);
         user.setId(userId);
 
-        int isSuccess = userMapper.updateUser(user);
-
-        if (isSuccess != 1) {
-            throw new RuntimeException("DB error");
-        }
+        userMapper.updateUser(user);
 
         return user.getId();
     }

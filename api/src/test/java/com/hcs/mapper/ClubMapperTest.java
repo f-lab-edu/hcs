@@ -104,10 +104,9 @@ class ClubMapperTest {
     void deleteTest() {
         //given
         Club club = fixtureClub;
-        User manager = fixtureManager;
 
         //when
-        int result = clubMapper.deleteClub(club.getId(), manager.getId());
+        int result = clubMapper.deleteClub(club.getId());
 
         //then
         Club newClub = clubMapper.findById(club.getId());
