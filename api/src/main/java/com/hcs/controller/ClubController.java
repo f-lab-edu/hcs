@@ -4,11 +4,9 @@ import com.hcs.domain.Club;
 import com.hcs.domain.User;
 import com.hcs.dto.request.ClubSubmitDto;
 import com.hcs.dto.response.HcsResponse;
-import com.hcs.dto.response.club.ClubExpulsionDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.club.ClubInfoDto;
 import com.hcs.dto.response.club.ClubJoinDto;
-import com.hcs.dto.response.club.ClubResignDto;
 import com.hcs.dto.response.method.HcsDelete;
 import com.hcs.dto.response.method.HcsInfo;
 import com.hcs.dto.response.method.HcsList;
@@ -98,8 +96,7 @@ public class ClubController {
     public HcsResponse expulsionMember(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
         //TODO : 보안 설정 후 userEmail 변경
         Club club = clubService.expulsionMember(clubId, managerEmail, userId);
-        ClubExpulsionDto dto = new ClubExpulsionDto(userId, club.getMemberCount()); //TODO : dto 삭제예정
-        return HcsResponse.of(delete.expulsionMember(dto));
+        return HcsResponse.of(delete.expulsionMember(userId, club.getMemberCount()));
     }
 
     @DeleteMapping("/member/resign")
@@ -107,15 +104,14 @@ public class ClubController {
         //TODO : 보안 설정 후 userEmail 변경
         User user = userService.findByEmail(userEmail);
         Club club = clubService.resignMember(clubId, user.getId());
-        ClubResignDto dto = new ClubResignDto(user.getId(), club.getMemberCount()); //TODO : dto 삭제예정
-        return HcsResponse.of(delete.resignMember(dto));
+        return HcsResponse.of(delete.resignMember(user.getId(), club.getMemberCount()));
     }
 
     @PutMapping("/manager")
     public HcsResponse addManager(@RequestParam("clubId") long clubId, @RequestParam("managerEmail") String managerEmail, @RequestParam("userId") long userId) {
         //TODO : 보안 설정 후 userEmail 변경
         Club club = clubService.makeManager(clubId, managerEmail, userId);
-        return HcsResponse.of(submit.addManager(userId,club.getManagerCount()));
+        return HcsResponse.of(submit.addManager(userId, club.getManagerCount()));
     }
 
 }

@@ -2,8 +2,6 @@ package com.hcs.dto.response.method;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hcs.dto.response.club.ClubExpulsionDto;
-import com.hcs.dto.response.club.ClubResignDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +35,15 @@ public class HcsDelete {
         return hcs;
     }
 
-    public ObjectNode expulsionMember(ClubExpulsionDto dto) {
+    public ObjectNode expulsionMember(long firedId, int currentMembersCount) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
-        ObjectNode member = objectMapper.valueToTree(dto);
+        ObjectNode member = objectMapper.createObjectNode();
+
+        member.put("firedId", firedId);
+        member.put("currentMembersCount", currentMembersCount);
+
         item.set("member", member);
 
         hcs.put("status", 200);
@@ -50,11 +52,15 @@ public class HcsDelete {
         return hcs;
     }
 
-    public ObjectNode resignMember(ClubResignDto dto) {
+    public ObjectNode resignMember(long resignedId, int currentMembersCount) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
-        ObjectNode member = objectMapper.valueToTree(dto);
+        ObjectNode member = objectMapper.createObjectNode();
+
+        member.put("resignedId", resignedId);
+        member.put("currentMembersCount", currentMembersCount);
+
         item.set("member", member);
 
         hcs.put("status", 200);
