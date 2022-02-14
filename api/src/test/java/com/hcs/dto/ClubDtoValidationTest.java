@@ -23,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @EnableMockMvc
-@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 class ClubDtoValidationTest {
 

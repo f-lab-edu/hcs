@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @EnableEncryptableProperties
-@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 class CommentServiceTest {
 
