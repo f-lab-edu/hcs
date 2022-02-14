@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 
 @SpringBootTest
-@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 public class JpaWithMybatisTests {
 
