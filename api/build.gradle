@@ -63,3 +63,9 @@ task unit(type: Test) {
         events "PASSED", "FAILED", "SKIPPED"
     }
 }
+
+task print() {
+    doLast {
+        println "github push complete"
+    }
+}

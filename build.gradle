@@ -55,7 +55,7 @@ subprojects {
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
         annotationProcessor 'org.projectlombok:lombok'
 
-        runtimeOnly 'mysql:mysql-connector-java'
+        runtimeOnly 'mysql:mysql-connector-java:8.0.25'
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
@@ -67,3 +67,14 @@ subprojects {
     }
 
 }
+
+/*
+bootJar {
+    mainClass = 'com.hcs.Application'
+}
+
+bootRun {
+    String activeProfile = System.properties['spring.profiles.active']
+    systemProperty "spring.profiles.active", activeProfile
+}
+*/
