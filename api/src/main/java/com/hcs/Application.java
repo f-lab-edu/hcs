@@ -11,8 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @EnableCaching : 캐시 관리 기능 활성화
  **/
 @EnableCaching
-@MapperScan(value = {"com.hcs.mapper"})
-@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {
