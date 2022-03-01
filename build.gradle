@@ -66,5 +66,11 @@ subprojects {
         useJUnitPlatform()
     }
 
+    bootJar{
+        archivesBaseName = 'hcs-deploy'
+        archiveFileName = 'hcs-deploy.jar'
+        archiveVersion  = "0.0.1"
+    }
+
 }
 
