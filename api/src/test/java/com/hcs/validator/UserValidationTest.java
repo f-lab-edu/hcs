@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @EnableMockMvc
 @EnableEncryptableProperties
-@EnableJpaRepositories(basePackages = {"com.hcs.repository"})
 @Transactional
 public class UserValidationTest {
 
@@ -42,7 +40,6 @@ public class UserValidationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-
 
     @DisplayName("회원 가입 처리 - 입력값 오류 - @InitBinder 적용 안함")
     @Test
