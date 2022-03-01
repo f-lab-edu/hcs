@@ -21,7 +21,7 @@ subprojects {
     apply plugin: "org.springframework.boot"
 
     group = 'com.hcs'
-    version = '0.0.1-SNAPSHOT'
+    version = 'hcs-deploy-0.0.1-SNAPSHOT'
 
     sourceCompatibility = 11
     targetCompatibility = 11
@@ -66,4 +66,11 @@ subprojects {
         useJUnitPlatform()
     }
 
+    bootJar{
+        archivesBaseName = 'hcs-deploy'
+        archiveFileName = 'hcs-deploy.jar'
+        archiveVersion  = "0.0.1"
+    }
+
 }
+
