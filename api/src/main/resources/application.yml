@@ -56,3 +56,4 @@ management:
 
 domain:
   url: "https://localhost:8443/"
+  
