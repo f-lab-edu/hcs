@@ -5,7 +5,7 @@ server:
   ssl:
     enabled: true
     key-alias: fstore
-    key-store: classpath:fstore.pkcs12 
+    key-store: classpath:fstore.pkcs12
     key-store-type: pkcs12
     key-store-password: ENC(K+rAN6CootgaBSdYOvkSbtLBuEtsqnQ7)
   tomcat:
