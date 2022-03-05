@@ -1,24 +1,9 @@
-server:
-  port: 8443
-  http:
-    port: 8080
-  ssl:
-    enabled: true
-    key-alias: fstore
-    key-store: classpath:fstore.pkcs12
-    key-store-type: pkcs12
-    key-store-password: ENC(K+rAN6CootgaBSdYOvkSbtLBuEtsqnQ7)
-  tomcat:
-    remoteip:
-      host-header: x-forwarded-for
-      protocol-header: x-forwarded-proto
-
 spring:
   datasource:
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      #jdbc-url: "jdbc:mysql://localhost:3306/HCS?serverTimezone=UTC&characterEncoding=UTF-8"
-      jdbc-url: "jdbc:mysql://49.50.175.87:3306/HCS?serverTimezone=UTC&characterEncoding=UTF-8"
+      jdbc-url: "jdbc:mysql://localhost:3306/HCS?serverTimezone=UTC&characterEncoding=UTF-8"
+      #      jdbc-url: "jdbc:mysql://49.50.175.87:3306/HCS?serverTimezone=UTC&characterEncoding=UTF-8"
       username: ENC(/vfTGzkQsvDmJGsLHCRGk8WaCVxqrAkS)
       password: ENC(/7M0dZ5y6e2xyeC2YPa3Jj7kqrJCYaCn)
   jpa:
@@ -28,13 +13,12 @@ spring:
         format_sql: true
         hbm2ddl.auto: none
     open-in-view: false
-    show-sql: true
+    #    show-sql: true
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-  redis:
-    host: localhost
-    port: 6379
+    main:
+      allow-bean-definition-overriding: true
 
 mybatis:
   mapper-locations: classpath:mybatis-mapper/*.xml
@@ -47,12 +31,6 @@ mybatis:
 jasypt:
   encryptor:
     password: ${JASYPT_PASSWORD}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
 
 domain:
   url: "https://localhost:8443/"
