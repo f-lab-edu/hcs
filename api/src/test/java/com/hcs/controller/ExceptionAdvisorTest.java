@@ -1,6 +1,7 @@
 package com.hcs.controller;
 
 import com.hcs.annotation.EnableMockMvc;
+import com.hcs.common.TestSecurityConfig;
 import com.hcs.exception.ErrorCode;
 import com.jayway.jsonpath.JsonPath;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestSecurityConfig.class)
 @EnableMockMvc
 @EnableEncryptableProperties
 @Transactional

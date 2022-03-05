@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.common.JdbcTemplateHelper;
+import com.hcs.common.TestSecurityConfig;
 import com.hcs.domain.User;
 import com.hcs.dto.request.SignUpDto;
 import com.hcs.dto.request.UserModifyDto;
@@ -46,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @MethodSource : factory method가 리턴해주는 값이 parameter로 쓰이도록 주입해주는 어노테이션
  */
 
-@SpringBootTest
+@SpringBootTest(classes = TestSecurityConfig.class)
 @EnableMockMvc
 @EnableEncryptableProperties
 @Transactional
@@ -89,14 +90,6 @@ public class UserControllerTest {
         );
     }
 
-    @DisplayName("회원가입 화면 테스트")
-    @Test
-    void signUpForm() throws Exception {
-        mockMvc.perform(get("/user/sign-up"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
     @DisplayName("회원 가입 처리 - 입력값 오류")
     @ParameterizedTest(name = "#{index} - {displayName} = Test with Argument={0}, {1}, {2}")
     @MethodSource("stringListProvider")
@@ -106,7 +99,7 @@ public class UserControllerTest {
         testSignUpDto.setNickname(nickname);
         testSignUpDto.setPassword(password);
 
-        MvcResult mvcResult = mockMvc.perform(post("/user/submit")
+        MvcResult mvcResult = mockMvc.perform(post("/user/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -133,7 +126,7 @@ public class UserControllerTest {
         testSignUpDto.setEmail("noah0969@gmail.com");
         testSignUpDto.setPassword("12345678");
 
-        MvcResult mvcResult = mockMvc.perform(post("/user/submit")
+        MvcResult mvcResult = mockMvc.perform(post("/user/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -158,7 +151,7 @@ public class UserControllerTest {
     void userInfo_with_correct_req() throws Exception {
         User newUser = User.builder()
                 .nickname("noah0504")
-                .email("noah0504@naver.com")
+                .email("test@naver.com")
                 .password("12345678")
                 .location("test loc")
                 .age(10)
@@ -171,7 +164,7 @@ public class UserControllerTest {
         userMapper.insertUser(newUser);
         User user = userMapper.findByEmail(newUser.getEmail());
 
-        MvcResult mvcResult = mockMvc.perform(get("/user/info")
+        MvcResult mvcResult = mockMvc.perform(get("/user/")
                         .param("userId", String.valueOf(user.getId())))
 
                 .andDo(print())
@@ -217,7 +210,7 @@ public class UserControllerTest {
         testModifyDto.setPosition("backend");
         testModifyDto.setLocation("Seoul");
 
-        MvcResult mvcResult = mockMvc.perform(put("/user/modify")
+        MvcResult mvcResult = mockMvc.perform(put("/user/")
                         .param("userId", String.valueOf(userId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testModifyDto))
@@ -273,7 +266,7 @@ public class UserControllerTest {
         testModifyDto.setPosition(position);
         testModifyDto.setLocation(location);
 
-        MvcResult mvcResult = mockMvc.perform(put("/user/modify")
+        MvcResult mvcResult = mockMvc.perform(put("/user/")
                         .param("userId", String.valueOf(userId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testModifyDto))
@@ -310,7 +303,7 @@ public class UserControllerTest {
 
         long userId = newUser1.getId();
 
-        MvcResult mvcResult = mockMvc.perform(delete("/user/delete")
+        MvcResult mvcResult = mockMvc.perform(delete("/user/")
                         .param("userId", String.valueOf(userId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testSignUpDto))

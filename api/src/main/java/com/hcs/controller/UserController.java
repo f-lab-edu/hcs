@@ -56,11 +56,6 @@ public class UserController {
         return HcsResponse.of(submit.user(newUser.getId()));
     }
 
-//    @PostMapping("/login")
-//    public HcsResponse login() {
-//        return null;
-//    }
-
     @GetMapping("/")
     public HcsResponse userInfo(@RequestParam("userId") long userId) {
 
