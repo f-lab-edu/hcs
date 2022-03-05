@@ -1,4 +1,4 @@
-create table ChatRoom_members
+create table ChatRoom_Members
 (
     chatRoomId VARCHAR(255) NOT NULL,
     memberId   int          NOT NULL,
