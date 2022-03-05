@@ -35,6 +35,12 @@ jasypt:
 domain:
   url: "https://localhost:8443/"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+
 local:
   server:
     port: 8080
