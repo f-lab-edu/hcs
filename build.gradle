@@ -34,21 +34,24 @@ subprojects {
 
     dependencies {
         implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.5.6')
+        implementation 'org.springframework.boot:spring-boot-devtools'
         implementation 'org.springframework.boot:spring-boot-starter'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-websocket'
         implementation 'org.springframework.boot:spring-boot-starter-jdbc'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-test-autoconfigure:2.6.0'
-        implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
-        implementation 'org.modelmapper:modelmapper:2.4.4'
         implementation 'org.springframework.boot:spring-boot-starter-cache'
 
+        implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+        implementation 'org.webjars:stomp-websocket:2.3.4'
+        implementation 'org.modelmapper:modelmapper:2.4.4'
         implementation 'org.hibernate:hibernate-core:5.6.0.Final'
         implementation 'org.projectlombok:lombok'
-
         implementation 'com.sgcprojects:batchrequests:0.1'
         implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
 
@@ -66,11 +69,9 @@ subprojects {
         useJUnitPlatform()
     }
 
-    bootJar{
+    bootJar {
         archivesBaseName = 'hcs-deploy'
         archiveFileName = 'hcs-deploy.jar'
-        archiveVersion  = "0.0.1"
+        archiveVersion = "0.0.1"
     }
-
 }
-

@@ -168,3 +168,4 @@ gradle-app.setting
 src/main/resources/static/node_modules
 src/main/resources/static/node
 front/node_modules
+front/dist
