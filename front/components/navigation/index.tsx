@@ -19,16 +19,26 @@ import useStomp from "@hooks/useStomp";
 import {useHistory} from "react-router";
 import {useDispatch} from "react-redux";
 import {saveStompData} from "@actions/StompActions"
+import {getCookie, removeCookie} from "@utils/Cookie";
 
 const Navigation = () => {
 
-    const email = localStorage.getItem("email");
+    const email = useRef<string>();
+
+    if (getCookie("email")) {
+        email.current = getCookie("email")
+    } else if (localStorage.getItem("email")) {
+        email.current! = localStorage.getItem("email")!
+    }
+
+
     const {
         data: userData,
         error,
         revalidate,
         mutate
-    } = useSWR<IChatUser | undefined>(email, fetchByEmail);
+    } = useSWR<IChatUser>(email.current!, fetchByEmail);
+
 
     const dispatch = useDispatch()
     const history = useHistory();
@@ -41,6 +51,7 @@ const Navigation = () => {
             .then(() => {
                 mutate(undefined, false);
                 localStorage.removeItem("email")
+                removeCookie("email")
                 console.log("logout success");
                 console.log("cached user : " + JSON.stringify(userData));
             })
@@ -72,7 +83,7 @@ const Navigation = () => {
         return () => disconnect();
     }, []);
 
-    if (userData === undefined) {
+    if (userData === undefined && getCookie("email") === undefined) {
         console.log("redirect to login");
         return <Redirect to="/login"/>;
     }
