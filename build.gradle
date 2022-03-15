@@ -70,7 +70,7 @@ subprojects {
     test {
         useJUnitPlatform()
     }
-
+    
     bootJar {
         archivesBaseName = 'hcs-deploy'
         archiveFileName = 'hcs-deploy.jar'

@@ -30,6 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("getAttributes : " + super.loadUser(userRequest).getAttributes());
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
+
         OAuth2UserInfo oAuth2UserInfo = null;
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
@@ -46,7 +47,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String nickname = oAuth2UserInfo.getNickName();
         String email = oAuth2UserInfo.getEmail();
         String password = "oauth2pwd";
-
 
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority("ROLE_USER"));
