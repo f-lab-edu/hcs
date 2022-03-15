@@ -48,13 +48,7 @@ public class UserController {
     private final HcsModify modify;
     private final HcsDelete delete;
 
-    // 테스트 성격의 핸들러. 서비스 후반부터는 deprecated 될것임
-    @GetMapping("/sign-up")
-    public String signUpForm() {
-        return "hi, here is sign-up page";
-    }
-
-    @PostMapping("/submit")
+    @PostMapping("/")
     public HcsResponse registerUser(@Valid @RequestBody SignUpDto signUpDto) throws IOException {
 
         User newUser = userService.saveNewUser(signUpDto);
@@ -62,7 +56,12 @@ public class UserController {
         return HcsResponse.of(submit.user(newUser.getId()));
     }
 
-    @GetMapping("/info")
+//    @PostMapping("/login")
+//    public HcsResponse login() {
+//        return null;
+//    }
+
+    @GetMapping("/")
     public HcsResponse userInfo(@RequestParam("userId") long userId) {
 
         User user = userService.findById(userId);
@@ -71,7 +70,16 @@ public class UserController {
         return HcsResponse.of(info.user(userInfoDto));
     }
 
-    @PutMapping("/modify")
+    @GetMapping("/info")
+    public HcsResponse userInfoForLogin(@RequestParam("email") String email) {
+
+        User user = userService.findByEmail(email);
+        UserInfoDto userInfoDto = modelMapper.map(user, UserInfoDto.class);
+
+        return HcsResponse.of(info.user(userInfoDto));
+    }
+
+    @PutMapping("/")
     public HcsResponse modifyUser(@Valid @RequestBody UserModifyDto userModifyDto, @RequestParam("userId") long userId) throws MethodArgumentNotValidException {
 
         // TODO : 인가 체크 (본인 확인) 후 정보 수정
@@ -82,7 +90,7 @@ public class UserController {
         return HcsResponse.of(modify.user(userId));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public HcsResponse deleteUser(@RequestParam("userId") long userId) {
 
         // TODO : 인가 체크 (본인 확인) 후 삭제

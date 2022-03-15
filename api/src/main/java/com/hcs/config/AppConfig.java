@@ -76,9 +76,4 @@ public class AppConfig {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper;
     }
-
-//    @Bean(name = "mvcHandlerMappingIntrospector")
-//    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
-//        return new HandlerMappingIntrospector();
-//    }
 }
