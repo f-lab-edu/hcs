@@ -3,6 +3,7 @@ package com.hcs.dto.response.method;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hcs.dto.response.chatroom.ChatRoomListDto;
 import com.hcs.dto.response.club.ClubInListDto;
 import com.hcs.dto.response.comment.CommentListDto;
 import com.hcs.dto.response.comment.ReplyListDto;
@@ -75,6 +76,17 @@ public class HcsList {
 
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.valueToTree(replyListDto);
+
+        hcs.put("status", 200);
+        hcs.set("item", item);
+
+        return hcs;
+    }
+
+    public ObjectNode chatRoom(ChatRoomListDto chatRoomListDto) {
+
+        ObjectNode hcs = objectMapper.createObjectNode();
+        ObjectNode item = objectMapper.valueToTree(chatRoomListDto);
 
         hcs.put("status", 200);
         hcs.set("item", item);

@@ -95,13 +95,15 @@ public class HcsSubmit {
         return hcs;
     }
 
-    public ObjectNode chatRoom(String chatRoomId) {
+    public ObjectNode chatRoom(String chatRoomId, long roomMakerId, long guestId) {
         ObjectNode hcs = objectMapper.createObjectNode();
         ObjectNode item = objectMapper.createObjectNode();
 
         hcs.put("status", 200);
 
         item.put("chatRoomId", chatRoomId);
+        item.put("roomMakerId", roomMakerId);
+        item.put("guestId", guestId);
 
         hcs.set("item", item);
         return hcs;
@@ -129,7 +131,7 @@ public class HcsSubmit {
 
         hcs.put("status", 200);
 
-        item.put("manager",manager);
+        item.put("manager", manager);
 
         hcs.set("item", item);
         return hcs;
