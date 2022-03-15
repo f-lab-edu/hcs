@@ -29,8 +29,7 @@ public class ChatMessageService {
         ChatMessage chatMessage = modelMapper.map(chatMessageDto, ChatMessage.class);
         chatMessage.setCreatedAt(LocalDateTime.now());
 
-        log.info("ChatMessageService::chatMessage : " + chatMessage);
-        log.info("ChatMessageService::chatMessage roomId : " + chatMessage.getRoomId());
+        log.info("chatMessage : " + chatMessage);
 
         chatRoomService.updateLastChatMesg(chatMessage.getRoomId(), chatMessage);
 
