@@ -187,4 +187,42 @@ public class JdbcTemplateHelper {
         jdbcTemplate.update(deleteClub, clubId);
     }
 
+    public void insertTestChatRoom(String roomId, LocalDateTime createdAt) {
+
+        String insertSql = "insert into ChatRoom (id, createdAt)\n" +
+                "values (?, ?)";
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, roomId);
+            ps.setString(2, String.valueOf(createdAt));
+
+            return ps;
+        });
+    }
+
+    public void insertTestChatRoom_Members(String roomId, long member1Id, long member2Id) {
+
+        String insertSql = "insert into ChatRoom_Members (chatRoomId, memberId)\n" +
+                "values (?, ?)";
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, roomId);
+            ps.setString(2, String.valueOf(member1Id));
+
+            return ps;
+        });
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, roomId);
+            ps.setString(2, String.valueOf(member2Id));
+
+            return ps;
+        });
+    }
 }
