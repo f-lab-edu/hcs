@@ -55,7 +55,7 @@ const LogIn = () => {
                 .catch((error) => {
                     // @ts-ignore
                     console.log(error.response.status);
-                    setLogInError(error.response.status === 404)
+                    setLogInError(error.response.status === 401)
                 });
         },
         [email, password],
