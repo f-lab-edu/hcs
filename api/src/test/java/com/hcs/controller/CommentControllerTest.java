@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.common.JdbcTemplateHelper;
+import com.hcs.common.TestSecurityConfig;
 import com.hcs.domain.Comment;
 import com.hcs.dto.request.CommentDto;
 import com.hcs.exception.ErrorCode;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestSecurityConfig.class)
 @EnableMockMvc
 @EnableEncryptableProperties
 @Transactional
@@ -216,7 +217,7 @@ public class CommentControllerTest {
 
         int page = 1;
 
-        MvcResult mvcResult = mockMvc.perform(get(ROOT_URL + "/comment/reply/list")
+        MvcResult mvcResult = mockMvc.perform(get(ROOT_URL + "/reply/list")
                         .param("page", String.valueOf(page))
                         .param("tradePostId", String.valueOf(tradePostId))
                         .param("parentCommentId", String.valueOf(parentCommentId))
@@ -381,7 +382,7 @@ public class CommentControllerTest {
 
         testCommentDto.setContents(reply_contents);
 
-        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/comment/reply")
+        MvcResult mvcResult = mockMvc.perform(post(ROOT_URL + "/reply")
                         .param("authorId", String.valueOf(authorId))
                         .param("tradePostId", String.valueOf(tradePostId))
                         .param("parentCommentId", String.valueOf(parentCommentId))
@@ -435,7 +436,7 @@ public class CommentControllerTest {
 
         testCommentDto.setContents(modify_contents);
 
-        MvcResult mvcResult = mockMvc.perform(put(ROOT_URL + "/comment/")
+        MvcResult mvcResult = mockMvc.perform(put(ROOT_URL + "/comment")
                         .param("tradePostId", String.valueOf(tradePostId))
                         .param("commentId", String.valueOf(commentId))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -489,7 +490,7 @@ public class CommentControllerTest {
 
         testCommentDto.setContents(modify_contents);
 
-        MvcResult mvcResult = mockMvc.perform(put(ROOT_URL + "/comment/")
+        MvcResult mvcResult = mockMvc.perform(put(ROOT_URL + "/comment")
                         .param("tradePostId", String.valueOf(tradePostId))
                         .param("commentId", String.valueOf(commentId))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -545,7 +546,7 @@ public class CommentControllerTest {
 
         long commentId = jdbcTemplateHelper.insertTestComment(0, authorId, tradePostId, contents, comment_registerationTime);
 
-        MvcResult mvcResult = mockMvc.perform(delete(ROOT_URL + "/comment/")
+        MvcResult mvcResult = mockMvc.perform(delete(ROOT_URL + "/comment")
                         .param("tradePostId", String.valueOf(tradePostId))
                         .param("commentId", String.valueOf(commentId))
                         .accept(MediaType.APPLICATION_JSON))

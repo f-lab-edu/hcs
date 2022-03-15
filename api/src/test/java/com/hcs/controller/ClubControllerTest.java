@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.common.JdbcTemplateHelper;
+import com.hcs.common.TestSecurityConfig;
 import com.hcs.config.DomainUrlConfig;
 import com.hcs.domain.Club;
 import com.hcs.domain.User;
@@ -43,14 +44,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestSecurityConfig.class)
 @EnableMockMvc
 @EnableEncryptableProperties
 @Transactional
 class ClubControllerTest {
 
     private static ClubSubmitDto clubDto = new ClubSubmitDto();
-
+    @Autowired
+    JdbcTemplateHelper jdbcTemplateHelper;
+    User fixtureUser1;
+    User fixtureUser2;
+    Club fixtureClub;
+    User fixtureManager;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -58,17 +64,7 @@ class ClubControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    JdbcTemplateHelper jdbcTemplateHelper;
-    @Autowired
     private DomainUrlConfig domainUrlConfig;
-
-    User fixtureUser1;
-
-    User fixtureUser2;
-
-    Club fixtureClub;
-
-    User fixtureManager;
 
     static Stream<Arguments> stringListProvider() {
         return Stream.of(

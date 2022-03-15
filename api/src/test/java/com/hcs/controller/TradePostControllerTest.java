@@ -3,6 +3,7 @@ package com.hcs.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcs.annotation.EnableMockMvc;
 import com.hcs.common.JdbcTemplateHelper;
+import com.hcs.common.TestSecurityConfig;
 import com.hcs.domain.TradePost;
 import com.hcs.dto.request.TradePostDto;
 import com.hcs.service.TradePostService;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestSecurityConfig.class)
 @EnableMockMvc
 @EnableEncryptableProperties
 @Transactional
@@ -98,7 +99,7 @@ public class TradePostControllerTest {
 
         long tradePostId = jdbcTemplateHelper.insertTestTradePost(authorId, title, productStatus, category, description, price, salesStatus, registrationTime);
 
-        MvcResult mvcResult = mockMvc.perform(get("/post/tradePost/info")
+        MvcResult mvcResult = mockMvc.perform(get("/post/tradePost/")
                         .param("tradePostId", String.valueOf(tradePostId)))
 
                 .andDo(print())
@@ -234,7 +235,7 @@ public class TradePostControllerTest {
                 .price(price)
                 .build();
 
-        MvcResult mvcResult = mockMvc.perform(post("/post/tradePost/submit")
+        MvcResult mvcResult = mockMvc.perform(post("/post/tradePost/")
                         .param("authorId", String.valueOf(authorId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tradePostDto))
@@ -281,7 +282,7 @@ public class TradePostControllerTest {
                 .price(price)
                 .build();
 
-        MvcResult mvcResult = mockMvc.perform(post("/post/tradePost/submit")
+        MvcResult mvcResult = mockMvc.perform(post("/post/tradePost/")
                         .param("authorId", String.valueOf(authorId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tradePostDto))

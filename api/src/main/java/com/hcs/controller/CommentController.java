@@ -83,7 +83,7 @@ public class CommentController {
         return HcsResponse.of(list.comment(commentListDto));
     }
 
-    @GetMapping("/comment/reply/list")
+    @GetMapping("/reply/list")
     public HcsResponse replysOntheComment(@RequestParam("page") int page, @RequestParam("tradePostId") long tradePostId, @RequestParam(value = "parentCommentId") long parentCommentId) {
 
         List<Comment> replys = commentService.findReplysWithPaging(page, parentCommentId);
@@ -120,7 +120,7 @@ public class CommentController {
         return HcsResponse.of(submit.comment(tradePostId, commentId));
     }
 
-    @PostMapping("/comment/reply")
+    @PostMapping("/reply")
     public HcsResponse addreplyOnComment(@Valid @RequestBody CommentDto commentDto, @RequestParam("authorId") long authorId, @RequestParam("tradePostId") long tradePostId,
                                          @RequestParam(value = "parentCommentId") long parentCommentId) {
 

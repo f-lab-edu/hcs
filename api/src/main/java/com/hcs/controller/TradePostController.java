@@ -48,7 +48,7 @@ public class TradePostController {
     private final HcsModify modify;
     private final HcsDelete delete;
 
-    @GetMapping("/info")
+    @GetMapping("/")
     public HcsResponse tradePost(@RequestParam("tradePostId") long tradePostId) {
 
         long authorId = tradePostService.findAuthorIdById(tradePostId);
@@ -86,7 +86,7 @@ public class TradePostController {
         return HcsResponse.of(list.tradePost(tradePostListDto));
     }
 
-    @PostMapping("/submit")
+    @PostMapping("/")
     public HcsResponse saveTradePost(@Valid @RequestBody TradePostDto tradePostDto, @RequestParam("authorId") long authorId) {
 
         TradePost newTradePost = tradePostService.saveTradePost(authorId, tradePostDto);
