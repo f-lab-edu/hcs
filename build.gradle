@@ -46,6 +46,7 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-test-autoconfigure:2.6.0'
         implementation 'org.springframework.boot:spring-boot-starter-cache'
+        implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
         implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
         implementation 'org.webjars:stomp-websocket:2.3.4'

@@ -19,6 +19,28 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     main:
       allow-bean-definition-overriding: true
+    security:
+      oauth2:
+        client:
+          registration:
+            google:
+              client-id: ENC(/PiQlywrIEYu/tlUrw0xUVBi3RMQqb9dGeeKaHbfXOSwDH5cI6PWU7Cj3vJT9bsnbEa8OFDsa8jQ5G4BHHdpzV91+ksWLBmXf2RNFRMAtqvA=)
+              client-secret: ENC(/s0X7ynsF4FgUpLfDpWYtn+U0Q3/ekWs5rYE6uwcnqQBV26VsKcDOHx+zxGVve5uR)
+              redirect-uri: http://localhost:8080/login/oauth2/code/google
+              scope: email, profile
+            kakao:
+              client-id: ENC(/PpxNcs2FRZ4OccQzr3lZ9ZYXYRZNFfQ3RZrXd2ZqwJiQ/CrcKbghTpBxNvQFm8ut)
+              redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+              client-name: kakao
+              client-authentication-method: POST
+              scope: profile_nickname, account_email
+              authorization-grant-type: authorization_code
+          provider:
+            kakao:
+              authorization-uri: https://kauth.kakao.com/oauth/authorize
+              token-uri: https://kauth.kakao.com/oauth/token
+              user-info-uri: https://kapi.kakao.com/v2/user/me
+              user-name-attribute: id
 
 mybatis:
   mapper-locations: classpath:mybatis-mapper/*.xml
