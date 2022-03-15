@@ -3,7 +3,7 @@ import {IconButton, Link} from "@material-ui/core";
 
 require('dotenv').config()
 
-const loginUri = `http://localhost:8080/oauth2/authorization/naver`
+const loginUri = `/api/oauth2/authorization/naver`
 
 
 const NaverLogin = () => {
