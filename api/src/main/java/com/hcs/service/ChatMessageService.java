@@ -16,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class ChatMessageService {
 
@@ -41,7 +42,6 @@ public class ChatMessageService {
         return chatMessageRepository.findById(chatMessageId).orElseThrow();
     }
 
-    @Transactional
     public List<ChatMessage> findChatMessagesWithPaging(int page, String roomId) {
 
         int pagePerCount = 15;
@@ -50,7 +50,6 @@ public class ChatMessageService {
         PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, sort);
 
         List<ChatMessage> result = chatMessageRepository.findListsByRoomId(roomId, pageRequest).getContent();
-        System.out.println("result : " + result);
 
         return result;
     }
