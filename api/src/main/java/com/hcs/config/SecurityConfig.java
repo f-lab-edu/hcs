@@ -79,6 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/*").permitAll()
                 .antMatchers("/login/oauth2/code/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
+                .antMatchers("/ex-health-check").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
