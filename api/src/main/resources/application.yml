@@ -34,4 +34,7 @@ jasypt:
 
 domain:
   url: "https://localhost:8443/"
-  
+
+local:
+  server:
+    port: 8080

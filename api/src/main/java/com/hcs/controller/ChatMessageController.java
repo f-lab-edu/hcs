@@ -31,7 +31,8 @@ public class ChatMessageController {
     public void sendChatMessage(ChatMessageDto message) {
         // 실시간으로 방에서 채팅하기
         ChatMessage newChat = chatMessageService.createChatMessage(message);
-        log.info("received message" + message);
+
+        log.info("received message : " + message);
 
         ChatRoom room = chatRoomService.findById(message.getRoomId());
         User friend = room.getChatRoomMembers().stream().filter(m -> m.getId() != message.getAuthorId()).collect(Collectors.toList()).get(0);

@@ -25,8 +25,6 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
 
     public ChatMessage createChatMessage(ChatMessageDto chatMessageDto) {
-        log.info("chatMessageService::createChatMessage");
-        log.info("chatMessageDto : " + chatMessageDto);
 
         ChatMessage chatMessage = modelMapper.map(chatMessageDto, ChatMessage.class);
         chatMessage.setCreatedAt(LocalDateTime.now());
