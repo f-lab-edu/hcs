@@ -31,12 +31,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
+        OAuth2UserInfo oAuth2UserInfo = null;
+
         String provider = userRequest.getClientRegistration().getRegistrationId();
-        String providerId = oAuth2User.getAttribute("sub");
-        String nickname = provider + "_" + providerId.substring(10, 13); // TODO : 중복방지 코드 작성하기
-        log.info("nickname : " + nickname);
-        String password = "randompwd"; // TODO : 임의의 난수 넣어주기
-        String email = oAuth2User.getAttribute("email");
+        log.info("provider : " + provider);
+
+        if (provider.equals("google")) {
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (provider.equals("kakao")) {
+            oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+        }
+
+        log.info("oAuth2UserInfo : " + oAuth2UserInfo);
+
+        String nickname = oAuth2UserInfo.getNickName();
+        String email = oAuth2UserInfo.getEmail();
+        String password = "oauth2pwd";
 
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority("ROLE_USER"));
