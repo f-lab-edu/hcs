@@ -41,6 +41,13 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User saveNewOAuthUser(User user) {
+        user.setJoinedAt(LocalDateTime.now());
+        insertUser(user);
+
+        return user;
+    }
+
     public User findById(long userId) {
         return userMapper.findById(userId);
     }
