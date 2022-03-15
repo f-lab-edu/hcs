@@ -1,35 +1,50 @@
 package com.hcs.service;
 
+import com.hcs.domain.ChatMessage;
 import com.hcs.domain.ChatRoom;
 import com.hcs.domain.User;
-import com.hcs.mapper.ChatRoomMapper;
+import com.hcs.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
 
-    private final ChatRoomMapper chatRoomMapper;
+    private final ChatRoomRepository chatRoomRepository;
 
-    // '중고거래' 게시물에서 제공된 "판매자와 채팅" 버튼을 통해 방이 만들어지는 경우
-    public ChatRoom createChatRoom(ChatRoom newRoom, User buyer, User seller) {
-
-        newRoom.addMember(buyer);
-        newRoom.addMember(seller);
-
-        chatRoomMapper.insertChatRoom(newRoom);
-
-        return newRoom;
+    public ChatRoom findById(String chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId).orElseThrow();
     }
 
-    // 자신의 기본 DM창에서 방을 만드는 경우
-    public ChatRoom createChatRoom(ChatRoom newRoom, User curUser) {
+    public ChatRoom createChatRoomForPersonal(ChatRoom newRoom, User roomMaker, User guest) {
 
-        newRoom.addMember(curUser);
+        newRoom.addMembers(roomMaker, guest);
 
-        chatRoomMapper.insertChatRoom(newRoom);
+        return chatRoomRepository.save(newRoom);
+    }
 
-        return newRoom;
+    public List<ChatRoom> findChatRoomsWithPaging(int page, long userId) {
+
+        int pagePerCount = 7;
+
+        Sort sort = Sort.by("lastChatMesg.createdAt").descending();
+        PageRequest pageRequest = PageRequest.of(page - 1, pagePerCount, sort);
+
+        List<ChatRoom> result = chatRoomRepository.findListsByChatRoomMembersId(userId, pageRequest).getContent();
+
+        return result;
+    }
+
+    public void updateLastChatMesg(String roomId, ChatMessage chatMessage) {
+
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow();
+        chatRoom.setLastChatMesg(chatMessage);
+
+        chatRoomRepository.save(chatRoom);
     }
 }
