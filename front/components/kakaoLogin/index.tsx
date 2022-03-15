@@ -3,7 +3,7 @@ import {IconButton, Link} from "@material-ui/core";
 
 require('dotenv').config()
 
-const loginUri = `https://localhost/oauth2/authorization/kakao`;
+const loginUri = `/api/oauth2/authorization/kakao`;
 
 const KakaoLogin = () => {
 
