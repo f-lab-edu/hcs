@@ -62,6 +62,13 @@ management:
     web:
       exposure:
         include: health, info, prometheus
+      base-path: /
+      path-mapping:
+        health: ex-health-check
+  endpoint:
+    health:
+      show-details: always
+
 
 local:
   server:
