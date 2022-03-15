@@ -69,7 +69,6 @@ management:
     health:
       show-details: always
 
-
 local:
   server:
     port: 8080
