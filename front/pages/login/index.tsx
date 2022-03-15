@@ -16,6 +16,8 @@ import fetchByEmail from "@utils/fetchByEmail";
 import {IChatUser} from "@typings/db";
 import KakaoLogin from "@components/kakaoLogin";
 import GoogleLogin from "@components/googleLogin";
+import NaverLogin from "@components/naverLogin";
+import FacebookLogin from "@components/facebookLogin";
 
 const LogIn = () => {
 
@@ -88,6 +90,8 @@ const LogIn = () => {
                 <Button type="submit">로그인</Button>
                 <KakaoLogin/>
                 <GoogleLogin/>
+                <NaverLogin/>
+                <FacebookLogin/>
             </Form>
             <LinkContainer>
                 아직 회원이 아니신가요?&nbsp;

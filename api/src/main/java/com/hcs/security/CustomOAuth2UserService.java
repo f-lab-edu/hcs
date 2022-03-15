@@ -40,6 +40,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
         } else if (provider.equals("kakao")) {
             oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+        } else if(provider.equals("naver")) {
+            oAuth2UserInfo = new NaverUserInfo(oAuth2User.getAttributes());
+        } else if(provider.equals("facebook")) {
+            oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
         }
 
         log.info("oAuth2UserInfo : " + oAuth2UserInfo);
