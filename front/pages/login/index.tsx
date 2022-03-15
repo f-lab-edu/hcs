@@ -14,6 +14,8 @@ import {Link, Redirect} from 'react-router-dom';
 import useSWR from "swr";
 import fetchByEmail from "@utils/fetchByEmail";
 import {IChatUser} from "@typings/db";
+import KakaoLogin from "@components/kakaoLogin";
+import GoogleLogin from "@components/googleLogin";
 
 const LogIn = () => {
 
@@ -84,6 +86,8 @@ const LogIn = () => {
                     {logInError && <Error>이메일과 비밀번호 조합이 일치하지 않습니다.</Error>}
                 </Label>
                 <Button type="submit">로그인</Button>
+                <KakaoLogin/>
+                <GoogleLogin/>
             </Form>
             <LinkContainer>
                 아직 회원이 아니신가요?&nbsp;
