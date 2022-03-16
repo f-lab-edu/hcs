@@ -11,6 +11,10 @@ const useStomp = (client: React.MutableRefObject<Client | undefined>, destinatio
             reconnectDelay: 200000,
             heartbeatIncoming: 16000,
             heartbeatOutgoing: 16000,
+            connectHeaders: {
+                login: 'guest',
+                passcode: 'guest',
+            },
             onConnect: () => {
                 console.error("0 stomp onConnect : ");
                 client.current?.subscribe(destination, callback)

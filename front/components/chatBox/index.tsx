@@ -48,8 +48,15 @@ const ChatBox = () => {
         if (stompReducer.success) {
             console.log("dispatch for getting client is success! ")
             client.current = stompReducer.stomp
-            client.current?.subscribe('/sub/chat/room/' + chatRoomData.chatRoomId, ({body}) => {
+            client.current?.subscribe('/exchange/chat.exchange/room.' + chatRoomData.chatRoomId, ({body}) => {
                 setChatList((_chatList: IChatMessage[]) => [..._chatList, JSON.parse(body)])
+            }, {
+                // @ts-ignore
+                'auto-delete': true,
+                // @ts-ignore
+                'exclusive': false,
+                // @ts-ignore
+                'durable': false
             })
         }
         fetchChatMesgs()
@@ -61,7 +68,7 @@ const ChatBox = () => {
             console.log(chat);
             if (chat?.trim()) {
                 client.current?.publish({
-                    destination: '/pub/chat/message',
+                    destination: '/pub/chat.message',
                     body: JSON.stringify({
                         roomId: roomId,
                         authorId: userData?.userId,
