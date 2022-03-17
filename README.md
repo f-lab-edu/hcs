@@ -10,7 +10,8 @@
 
 ## HCS 프로젝트 구성도
 
-<img width="718" alt="스크린샷 2022-03-17 오후 1 47 28" src="https://user-images.githubusercontent.com/58963724/158739404-b14b3008-a2d7-461f-ac2c-165d9b3d56cc.png">
+<img width="831" alt="스크린샷 2022-03-17 오후 3 57 37" src="https://user-images.githubusercontent.com/58963724/158753911-f20beb01-b4b1-49a3-8690-bf62fc9b5983.png">
+
 
 ## ERD
 
