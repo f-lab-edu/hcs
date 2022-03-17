@@ -38,8 +38,9 @@
 ![google oauth](https://user-images.githubusercontent.com/58963724/158743769-b1d57529-f57d-4736-a5e4-84bbec66ffd1.gif)
 
 
-
 2. Facebook
+
+![facebook](https://user-images.githubusercontent.com/58963724/158751945-b2ce8dee-19a7-4e95-b8b2-9d3704c30118.gif)
 
 
 3. Kakao
@@ -48,6 +49,9 @@
 
 
 4. Naver
+
+![naver](https://user-images.githubusercontent.com/58963724/158751971-5fa7a245-3911-453d-a26b-9399bcddad48.gif)
+
 
 ## 3. 채팅하기
 ### 1. /messenger
