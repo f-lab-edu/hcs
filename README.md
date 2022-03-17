@@ -12,11 +12,6 @@
 
 <img width="831" alt="스크린샷 2022-03-17 오후 3 57 37" src="https://user-images.githubusercontent.com/58963724/158753911-f20beb01-b4b1-49a3-8690-bf62fc9b5983.png">
 
-
-## ERD
-
-<img width="541" alt="스크린샷 2022-03-17 오후 2 15 14" src="https://user-images.githubusercontent.com/58963724/158741892-cc641980-92f2-4391-8284-b9d86d3e2404.png">
-
 - REST API 를 준수하는 API 서버이며, method는 문서화되어 작성됨
 - RabbitMQ external broker를 사용하여 scale out된 서버간의 stomp 프로토콜 기반 실시간 통신 message delivery 기능 지원
 - FormLogin, OAuth 2.0(Google, Facebook, Naver, Kakao) 로그인 지원
@@ -27,6 +22,11 @@
 - Spring actuator를 이용하여 prometheus를 위한 endpoint 열기
 - Grafana로 서버들의 성능을 학인할 수 있는 모니터링 dashboard UI 제공
 - 서비스에 대한 자세한 사항은 [Notion Link](https://band-tea-4b7.notion.site/80ac25008a6a417c8fbd19c0d0192f07) 를 참고해주세요
+
+## ERD
+
+<img width="541" alt="스크린샷 2022-03-17 오후 2 15 14" src="https://user-images.githubusercontent.com/58963724/158741892-cc641980-92f2-4391-8284-b9d86d3e2404.png">
+
 
 ## 01. User Flow
 1. Form Login
