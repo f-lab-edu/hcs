@@ -65,6 +65,12 @@ spring:
             token-uri: https://nid.naver.com/oauth2.0/token
             userInfoUri: https://openapi.naver.com/v1/nid/me
             user-name-attribute: response
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
 
 mybatis:
   mapper-locations: classpath:mybatis-mapper/*.xml

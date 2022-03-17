@@ -75,7 +75,7 @@ const Navigation = () => {
     }, [])
 
     const client = useRef<Client>();
-    const [connect, disconnect] = useStomp(client, '/sub/messenger/icon/' + userData?.userId, subscribeCallback)
+    const [connect, disconnect] = useStomp(client, '/exchange/chat.exchange/icon.' + userData?.userId, subscribeCallback)
 
     useEffect(() => {
         connect();
